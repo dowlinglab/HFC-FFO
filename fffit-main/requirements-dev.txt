@@ -1,0 +1,7 @@
+numpy
+signac
+gpflow
+matplotlib
+pandas
+black
+pytest
