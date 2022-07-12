@@ -1,0 +1,5 @@
+numpy~=1.19.2
+signac
+gpflow>2.0.0
+matplotlib
+pandas

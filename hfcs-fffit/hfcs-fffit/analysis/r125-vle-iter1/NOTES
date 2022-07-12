@@ -1,0 +1,13 @@
+Ryan DeFever
+Maginn Research Group
+University of Notre Dame
+2020 Jul 06
+
+The average density difference between Cassandra and GROMACS is 13.474727017918681 kg/m^3
+The minimum density difference between Cassandra and GROMACS is 1.8885532337344557 kg/m^3
+The maximum density difference between Cassandra and GROMACS is 35.77520319097653 kg/m^3
+
+There are: 8061 viable parameter sets which are within 25 kg/m$^2$ of GROMACS liquid densities
+A total of 161 pareto efficient points were found.
+After removing similar points, we are left with 25 pareto efficient points.
+
