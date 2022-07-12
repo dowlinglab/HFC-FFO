@@ -6,6 +6,7 @@ import matplotlib.pyplot as plt
 import seaborn
 
 from sklearn import svm
+import scipy.optimize as optimize
 
 from fffit.utils import (
     shuffle_and_split,
@@ -34,6 +35,53 @@ from utils.id_new_samples import (
 
 R143a = R143aConstants()
 
+def opt_dist(distance, top_samples, constants, target_num, rand_seed = None, eval = False):
+    """
+    Calculates the distance between points such that exactly a target number of points are chosen for the next iteration
+    
+    Parameters:
+    -----------
+        distance: float, The allowable minimum distance between points
+        top_samples: pandas data frame, Collection of top liquid/vapor sampes
+        constants: utils.r143a.R143aConstants, contains the infromation for a certain refrigerant
+        target_num: int, the number of samples to choose next
+        rand_seed: int, the seed number to use: None by default
+        eval: bool, Determines whether error is calculated or new_points is returned
+    
+    Returns:
+        error: float, The squared error between the target value and number of new_points
+        OR
+        new_points: pandas data frame, a pandas data frame containing the number of points to be used 
+    """
+    if rand_seed != None:
+        np.random.seed(rand_seed)
+    new_points = pd.DataFrame()
+    discarded_points = pd.DataFrame(columns=top_samples.columns)
+    while len(top_samples > 0):
+        # Shuffle the pareto points
+        top_samples = top_samples.sample(frac=1)
+        new_points = new_points.append(top_samples.iloc[[0]])
+        # Remove anything within distance
+        l1_norm = np.sum(
+            np.abs(
+                top_samples[list(constants.param_names)].values
+                - new_points[list(constants.param_names)].iloc[[-1]].values
+            ),
+            axis=1,
+        )
+        points_to_remove = np.where(l1_norm < distance)[0]
+        discarded_points = discarded_points.append(
+            top_samples.iloc[points_to_remove]
+        )
+        top_samples.drop(
+            index=top_samples.index[points_to_remove], inplace=True
+        )
+        error = (target_num - len(new_points))**2
+    if eval == True:
+        return new_points
+    else:
+        return error
+
 ############################# QUANTITIES TO EDIT #############################
 ##############################################################################
 
@@ -43,7 +91,6 @@ gp_shuffle_seed = 3945872
 
 ##############################################################################
 ##############################################################################
-distance_seed = 10
 
 liquid_density_threshold = 500  # kg/m^3  ##>500 is liquid; <500 is gas. used for classifier
 
@@ -141,6 +188,44 @@ new_liquid_params = pd.concat(new_liquid_params)
 new_liquid_params.to_csv(csv_path + out_top_liquid_csv_name)
 new_vapor_params = pd.concat(new_vapor_params)
 new_vapor_params.to_csv(csv_path + out_top_vapor_csv_name)
+
+top_liq = pd.read_csv("../csv/r143a-density-iter1-liquid-params.csv", delimiter = ",", index_col = 0)
+top_vap = pd.read_csv("../csv/r143a-density-iter1-vapor-params.csv", delimiter = ",", index_col = 0)
+
+top_liq = top_liq.reset_index(drop=True)
+top_vap = top_vap.reset_index(drop=True)
+
+dist_guess = 1
+dist_seed = 10
+bounds = [(0,None)]
+target_num = 100
+args_v = (top_vap ,R143a, target_num, dist_seed)
+solution_v = optimize.minimize(opt_dist, dist_guess, bounds = bounds, args=args_v, method='Nelder-Mead')
+dist_opt_v = solution_v.x
+new_points_v = opt_dist(dist_opt_v, top_vap, R143a, target_num, rand_seed=dist_seed , eval = True)
+
+while len(new_points_v) != target_num:
+    dist_opt_v = solution_v.x
+    dist_seed += 1
+    new_points_v = opt_dist(dist_opt_v, top_vap, R143a, target_num, rand_seed=dist_seed , eval = True)
+    
+print(len(new_points_v), "top vapor density points are left after removing similar points using a distance of", np.round(dist_opt_v,5))
+
+args_l = (top_liq ,R143a, target_num, dist_seed)
+solution_l = optimize.minimize(opt_dist, dist_guess, bounds = bounds, args=args_l, method='Nelder-Mead')
+dist_opt_l = solution_l.x
+new_points_l = opt_dist(dist_opt_l, top_liq, R143a, target_num, rand_seed=dist_seed , eval = True)
+
+while len(new_points_v) != target_num:
+    dist_opt_l = solution_l.x
+    dist_seed += 1
+    new_points_l = opt_dist(dist_opt_l, top_vap, R143a, target_num, rand_seed=dist_seed , eval = True)
+    
+print(len(new_points_l), "top liquid density points are left after removing similar points using a distance of", np.round(dist_opt_l,5))
+print(type(new_points_l))
+new_points_l.to_csv(csv_path + out_top_liquid_csv_name)
+new_points_v.to_csv(csv_path + out_top_vapor_csv_name)
+
 '''# Search to ID well spaced points
 # Top Liquid density
 distance = 2.14
