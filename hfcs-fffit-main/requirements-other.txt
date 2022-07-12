@@ -1,3 +1,0 @@
-gromacs 2020 (https://manual.gromacs.org/)
-block_average (https://github.com/rsdefever/block_average)
-fffit (https://github.com/dowlinglab/fffit)
