@@ -86,8 +86,8 @@ def opt_dist(distance, top_samples, constants, target_num, rand_seed = None, eva
 ##############################################################################
 
 iternum = 1
-cl_shuffle_seed = 6928457
-gp_shuffle_seed = 3945872
+cl_shuffle_seed = 6928457 #classifier
+gp_shuffle_seed = 3945872 #GP seed 
 
 ##############################################################################
 ##############################################################################
@@ -222,9 +222,8 @@ while len(new_points_v) != target_num:
     new_points_l = opt_dist(dist_opt_l, top_vap, R143a, target_num, rand_seed=dist_seed , eval = True)
     
 print(len(new_points_l), "top liquid density points are left after removing similar points using a distance of", np.round(dist_opt_l,5))
-print(type(new_points_l))
-new_points_l.to_csv(csv_path + out_top_liquid_csv_name)
-new_points_v.to_csv(csv_path + out_top_vapor_csv_name)
+
+pd.concat([new_points_l,new_points_v], axis=0).to_csv(csv_path + out_csv_name)
 
 '''# Search to ID well spaced points
 # Top Liquid density
