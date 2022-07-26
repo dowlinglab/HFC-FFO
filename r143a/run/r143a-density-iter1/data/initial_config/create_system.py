@@ -27,7 +27,7 @@ def main():
 
 def _generate_r143a_xml():
 
-    content = """<ForceField name="HFC-143a GAFF", version="1.0">
+    content = """<ForceField>
  <AtomTypes>
   <Type name="C1" class="c3" element="C" mass="12.010" def="C(C)(F)(F)(F)" desc="carbon bonded to 3 Fs and another carbon"/>
   <Type name="C2" class="c3" element="C" mass="12.010" def="C(C)(H)(H)(H)" desc="carbon bonded to 3 Hs and another carbon"/>
@@ -49,10 +49,10 @@ def _generate_r143a_xml():
   <Proper class1="f" class2="c3" class3="c3" class4="hc" periodicity1="3" k1="0.0" phase1="0.0" periodicity2="1" k2="0.794946" phase2="0"/>
  </PeriodicTorsionForce>
  <NonbondedForce coulomb14scale="0.833333" lj14scale="0.5">
-  <Atom type="C1" charge="0.78821"  sigma="0.340" epsilon="0.45773"/>
-  <Atom type="C2" charge="-0.583262"  sigma="0.340" epsilon="0.45773"/>
-  <Atom type="F1" charge="-0.252614" sigma="0.3118" epsilon="0.255221"/>
-  <Atom type="H1" charge="0.184298"  sigma="0.265" epsilon="0.065693"/>
+  <Atom type="C1" charge="0.78821"  sigma="{sigma_C1:0.6f}" epsilon="{epsilon_C1:0.6f}"/>
+  <Atom type="C2" charge="-0.583262"  sigma="{sigma_C2:0.6f}" epsilon="{epsilon_C2:0.6f}"/>
+  <Atom type="F1" charge="-0.252614" sigma="{sigma_F1:0.6f}" epsilon="{epsilon_F1:0.6f}"/>
+  <Atom type="H1" charge="0.184298"  sigma="{sigma_H1:0.6f}" epsilon="{epsilon_H1:0.6f}"/>
  </NonbondedForce>
 </ForceField>
 """.format(

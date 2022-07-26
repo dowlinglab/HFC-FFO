@@ -5,7 +5,7 @@
 #$ -pe smp {{ np_global }}
 #$ -r n
 #$ -m ae
-#$ -q long@@maginn_d12chas
+#$ -q long
 #$ -M nwang2@nd.edu
 
 module load gcc/9.1.0
