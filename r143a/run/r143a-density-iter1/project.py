@@ -66,7 +66,7 @@ def fix_topology(job):
 
     top_contents[
         defaults_line + 2
-    ] = "1               2               no              0.5       0.8333333\n"
+    ] = "1               2               yes              0.5       0.8333333\n" #changed no to yes
 
     with open(job.fn("system.top"), "w") as fout:
         for line in top_contents:
@@ -181,9 +181,9 @@ def calculate_density(job):
 ################# HELPER FUNCTIONS BEYOND THIS POINT ################
 #####################################################################
 
-def _generate_r143a_xml():
+def _generate_r143a_xml(job):
 
-    content = """<ForceField name="HFC-143a GAFF", version="1.0">
+    content = """<ForceField>
  <AtomTypes>
   <Type name="C1" class="c3" element="C" mass="12.010" def="C(C)(F)(F)(F)" desc="carbon bonded to 3 Fs and another carbon"/>
   <Type name="C2" class="c3" element="C" mass="12.010" def="C(C)(H)(H)(H)" desc="carbon bonded to 3 Hs and another carbon"/>
