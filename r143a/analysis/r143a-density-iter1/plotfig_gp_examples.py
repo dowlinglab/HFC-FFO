@@ -45,17 +45,15 @@ in_csv_names = ["r143a-density-iter" + str(i) + "-results.csv" for i in range(1,
 out_csv_name = "r143a-density-iter" + str(iternum + 1) + "-params.csv"
 
 # Read files
+
 df_csvs = [pd.read_csv(csv_path + in_csv_name, index_col=0) for in_csv_name in in_csv_names]
 df_csv = pd.concat(df_csvs)
-df_all = prepare_df_density(df_csv, R143a,liquid_density_threshold=500)
-df_all
-df_all = pd.DataFrame(df_all)
-print(type(df_all))
-df_all
+df_all, df_liq, df_vap = prepare_df_density(df_csv, R143a,liquid_density_threshold=500)
+df_all = df_liq #Set df_all to df_liq to only plot liquid GP parity plots
 
 ### Fit GP Model to liquid density
 param_names = list(R143a.param_names) + ["temperature"]
-property_name = "sim_liq_density"
+property_name = "md_density"
 x_train, y_train, x_test, y_test = shuffle_and_split(
     df_all, param_names, property_name, shuffle_seed=gp_shuffle_seed, fraction_train=0.8
 )
@@ -94,7 +92,7 @@ figs = plot_slices_temperature(
 
 for fig in figs:
     pdf.savefig(fig)
-del figs
+# del figs
 
 # Plot parameter slices
 for param_name in R143a.param_names:
@@ -109,7 +107,7 @@ for param_name in R143a.param_names:
     )
     for fig in figs:
         pdf.savefig(fig)
-    del figs
+#     del figs
 
 # Loop over test params
 for test_params in x_test[:,:R143a.n_params]:
