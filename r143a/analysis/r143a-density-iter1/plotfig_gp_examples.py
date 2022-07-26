@@ -90,9 +90,12 @@ figs = plot_slices_temperature(
     property_name="Liquid Density [kg/m^3]",
 )
 
-for fig in figs:
-    pdf.savefig(fig)
-# del figs
+try:
+    for fig in figs:
+        pdf.savefig(fig)
+except:
+    pdf.savefig(figs)
+del figs
 
 # Plot parameter slices
 for param_name in R143a.param_names:
@@ -105,9 +108,12 @@ for param_name in R143a.param_names:
         R143a.liq_density_bounds,
         property_name="Liquid Density [kg/m^3]",
     )
-    for fig in figs:
-        pdf.savefig(fig)
-#     del figs
+    try:
+        for fig in figs:
+            pdf.savefig(fig)
+    except:
+        pdf.savefig(figs)
+    del figs
 
 # Loop over test params
 for test_params in x_test[:,:R143a.n_params]:
