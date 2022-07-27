@@ -95,13 +95,14 @@ gp_shuffle_seed = 3945872 #GP seed
 liquid_density_threshold = 500  # kg/m^3  ##>500 is liquid; <500 is gas. used for classifier
 
 csv_path = "/scratch365/nwang2/ff_development/HFC_143a_FFO_FF/r143a/analysis/csv/"
-in_csv_name = "r143a-density-iter" + str(iternum) + "-results.csv"
+in_csv_names = ["r143a-density-iter" + str(iternum) + "-results.csv" for i in range(1, iternum+1)]
 out_csv_name = "r143a-density-iter" + str(iternum + 1) + "-params.csv"
 out_top_liquid_csv_name = "r143a-density-iter" + str(iternum ) + "-liquid-params.csv"
 out_top_vapor_csv_name = "r143a-density-iter" + str(iternum ) + "-vapor-params.csv"
 
 # Read file
-df_csv = pd.read_csv(csv_path + in_csv_name, index_col=0)
+df_csvs = [pd.read_csv(csv_path + in_csv_name, index_col=0) for in_csv_name in in_csv_names]
+df_csv = pd.concat(df_csvs)
 df_all, df_liquid, df_vapor = prepare_df_density(
     df_csv, R143a, liquid_density_threshold
 )
@@ -186,20 +187,21 @@ new_vapor_params = [
 # Concatenate into a single dataframe and save to CSV
 new_liquid_params = pd.concat(new_liquid_params)
 new_liquid_params.to_csv(csv_path + out_top_liquid_csv_name)
-#new_vapor_params = pd.concat(new_vapor_params)
-#new_vapor_params.to_csv(csv_path + out_top_vapor_csv_name)
+new_vapor_params = pd.concat(new_vapor_params)
+new_vapor_params.to_csv(csv_path + out_top_vapor_csv_name)
 top_liq = pd.read_csv(csv_path + out_top_liquid_csv_name, delimiter = ",", index_col = 0)
+top_vap = pd.read_csv(csv_path + out_top_vapor_csv_name, delimiter = ",", index_col = 0)
 #top_liq = pd.read_csv("../csv/r143a-density-iter2-liquid-params.csv", delimiter = ",", index_col = 0)
 #top_vap = pd.read_csv("../csv/r143a-density-iter2-vapor-params.csv", delimiter = ",", index_col = 0)
 
 top_liq = top_liq.reset_index(drop=True)
-#top_vap = top_vap.reset_index(drop=True)
+top_vap = top_vap.reset_index(drop=True)
 
 dist_guess = 1
 dist_seed = 10
 bounds = [(0,None)]
-target_num = 200
-''''args_v = (top_vap ,R143a, target_num, dist_seed)
+target_num = 100
+args_v = (top_vap ,R143a, target_num, dist_seed)
 solution_v = optimize.minimize(opt_dist, dist_guess, bounds = bounds, args=args_v, method='Nelder-Mead')
 dist_opt_v = solution_v.x
 new_points_v = opt_dist(dist_opt_v, top_vap, R143a, target_num, rand_seed=dist_seed , eval = True)
@@ -210,7 +212,7 @@ while len(new_points_v) != target_num:
     new_points_v = opt_dist(dist_opt_v, top_vap, R143a, target_num, rand_seed=dist_seed , eval = True)
     
 print(len(new_points_v), "top vapor density points are left after removing similar points using a distance of", np.round(dist_opt_v,5))
-'''
+
 args_l = (top_liq ,R143a, target_num, dist_seed)
 solution_l = optimize.minimize(opt_dist, dist_guess, bounds = bounds, args=args_l, method='Nelder-Mead')
 dist_opt_l = solution_l.x
@@ -223,7 +225,7 @@ while len(new_points_l) != target_num:
     
 print(len(new_points_l), "top liquid density points are left after removing similar points using a distance of", np.round(dist_opt_l,5))
 
-pd.concat([new_points_l], axis=0).to_csv(csv_path + out_csv_name)
+pd.concat([new_points_l,new_points_v], axis=0).to_csv(csv_path + out_csv_name)
 
 '''# Search to ID well spaced points
 # Top Liquid density
