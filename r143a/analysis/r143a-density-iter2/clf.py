@@ -102,6 +102,12 @@ out_top_liquid_csv_name = "r143a-density-iter" + str(iternum ) + "-liquid-params
 out_top_vapor_csv_name = "r143a-density-iter" + str(iternum ) + "-vapor-params.csv"
 
 # Read file
+in_csv_name_only1iter = "r143a-density-iter" + str(1) + "-results.csv" 
+df_only1iter = pd.read_csv(csv_path + in_csv_name_only1iter, index_col=0) 
+df_all_only1iter, df_liquid_only1iter, df_vapor_only1iter = prepare_df_density(
+    df_only1iter, R143a, liquid_density_threshold
+)
+
 df_csvs = [pd.read_csv(csv_path + in_csv_name, index_col=0) for in_csv_name in in_csv_names]
 df_csv = pd.concat(df_csvs)
 df_all, df_liquid, df_vapor = prepare_df_density(
@@ -114,7 +120,7 @@ df_all, df_liquid, df_vapor = prepare_df_density(
 param_names = list(R143a.param_names) + ["temperature"]
 property_name = "is_liquid"
 x_train, y_train, x_test, y_test = shuffle_and_split(
-    df_all, param_names, property_name, shuffle_seed=cl_shuffle_seed
+    df_all_only1iter, param_names, property_name, shuffle_seed=cl_shuffle_seed
 )
 
 # Create and fit classifier
@@ -123,7 +129,7 @@ classifier.fit(x_train, y_train)
 test_score = classifier.score(x_test, y_test)
 print(f"Classifer is {test_score*100.0}% accurate on the test set.")
 plot_confusion_matrix(classifier, x_test, y_test)  
-plt.savefig("classifier.pdf")
+plt.savefig("classifier_only1iter.pdf")
 
 
 ### Fit GP Model
