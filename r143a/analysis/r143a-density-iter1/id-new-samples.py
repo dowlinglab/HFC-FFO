@@ -216,7 +216,7 @@ solution_l = optimize.minimize(opt_dist, dist_guess, bounds = bounds, args=args_
 dist_opt_l = solution_l.x
 new_points_l = opt_dist(dist_opt_l, top_liq, R143a, target_num, rand_seed=dist_seed , eval = True)
 
-while len(new_points_v) != target_num:
+while len(new_points_l) != target_num: #This had "new_points_v instead of new_points_l"
     dist_opt_l = solution_l.x
     dist_seed += 1
     new_points_l = opt_dist(dist_opt_l, top_vap, R143a, target_num, rand_seed=dist_seed , eval = True)
