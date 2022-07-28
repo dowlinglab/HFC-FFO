@@ -41,16 +41,16 @@ gp_shuffle_seed = 8278573
 ##############################################################################
 
 csv_path = "../csv/"
-#in_csv_names = ["r143a-density-iter" + str(i) + "-results.csv" for i in range(1, iternum+1)]
-in_csv_names = "r143a-density-iter" + str(iternum) + "-results.csv" 
+in_csv_names = ["r143a-density-iter" + str(i) + "-results.csv" for i in range(1, iternum+1)]
+#in_csv_names = "r143a-density-iter" + str(iternum) + "-results.csv" 
 out_csv_name = "r143a-density-iter" + str(iternum + 1) + "-params.csv"
 
 # Read files
 
-#df_csvs = [pd.read_csv(csv_path + in_csv_name, index_col=0) for in_csv_name in in_csv_names]
-df_csvs = pd.read_csv(csv_path + in_csv_names, index_col=0) 
-#df_csv = pd.concat(df_csvs)
-df_csv = df_csvs
+df_csvs = [pd.read_csv(csv_path + in_csv_name, index_col=0) for in_csv_name in in_csv_names]
+#df_csvs = pd.read_csv(csv_path + in_csv_names, index_col=0) 
+df_csv = pd.concat(df_csvs)
+#df_csv = df_csvs
 df_all, df_liq, df_vap = prepare_df_density(df_csv, R143a,liquid_density_threshold=500)
 df_all = df_liq #Set df_all to df_liq to only plot liquid GP parity plots
 
