@@ -31,11 +31,6 @@ R143a = R143aConstants()
 
 pdf = PdfPages('fig_gp_examples.pdf')
 
-#To put files in different PDFS change line 32 to 
-# pdf_model = PdfPages('fig_gp_examples_model.pdf')
-# pdf_params = PdfPages('fig_gp_examples_params.pdf')
-# pdf_train_test = PdfPages('fig_gp_examples_train_test.pdf')
-
 ############################# QUANTITIES TO EDIT #############################
 ##############################################################################
 
@@ -46,19 +41,18 @@ gp_shuffle_seed = 8278573
 ##############################################################################
 
 csv_path = "../csv/"
-#in_csv_names = ["r143a-density-iter" + str(i) + "-results.csv" for i in range(1, iternum+1)]
-in_csv_names = "r143a-density-iter" + str(iternum) + "-results.csv" 
-out_csv_name = "r143a-density-iter" + str(iternum + 1) + "-params.csv"
+in_csv_names = ["r143a-density-iter" + str(i) + "-results.csv" for i in range(1, iternum+1)]
+#in_csv_names = "r143a-density-iter" + str(iternum) + "-results.csv" 
+#out_csv_name = "r143a-density-iter" + str(iternum + 1) + "-params.csv"
 
 # Read files
 
-#df_csvs = [pd.read_csv(csv_path + in_csv_name, index_col=0) for in_csv_name in in_csv_names]
-df_csvs = pd.read_csv(csv_path + in_csv_names, index_col=0) 
-#df_csv = pd.concat(df_csvs)
-df_csv = df_csvs
+df_csvs = [pd.read_csv(csv_path + in_csv_name, index_col=0) for in_csv_name in in_csv_names]
+#df_csvs = pd.read_csv(csv_path + in_csv_names, index_col=0) 
+df_csv = pd.concat(df_csvs)
+#df_csv = df_csvs
 df_all, df_liq, df_vap = prepare_df_density(df_csv, R143a,liquid_density_threshold=500)
 df_all = df_liq #Set df_all to df_liq to only plot liquid GP parity plots
-#Print len df_all to troubleshoot # of plots
 
 ### Fit GP Model to liquid density
 param_names = list(R143a.param_names) + ["temperature"]
@@ -66,7 +60,6 @@ property_name = "md_density"
 x_train, y_train, x_test, y_test = shuffle_and_split(
     df_all, param_names, property_name, shuffle_seed=gp_shuffle_seed, fraction_train=0.8
 )
-#Print len(x_train) to troubleshoot # of plots
 
 # Fit model
 models = {}
@@ -102,12 +95,9 @@ figs = plot_slices_temperature(
 
 try:
     for fig in figs:
-        #pdf_model.savefig(fig)
         pdf.savefig(fig)
 except:
-    #pdf_model.savefig(figs)
     pdf.savefig(figs)
-    
 del figs
 
 # Plot parameter slices
@@ -123,10 +113,8 @@ for param_name in R143a.param_names:
     )
     try:
         for fig in figs:
-            #pdf_params.savefig(fig)
             pdf.savefig(fig)
     except:
-        #pdf_params.savefig(figs)
         pdf.savefig(figs)
     del figs
 
@@ -156,18 +144,6 @@ for test_params in x_test[:,:R143a.n_params]:
             property_name="Liquid Density [kg/m^3]"
         )
     )
-    
-#     pdf_train_test.savefig(
-#         plot_model_vs_test(
-#             models,
-#             test_params,
-#             np.asarray(train_points),
-#             np.asarray(test_points),
-#             R143a.temperature_bounds,
-#             R143a.liq_density_bounds,
-#             property_name="Liquid Density [kg/m^3]"
-#         )
-#     )
 '''
 ### Fit GP Model to vapor density
 param_names = list(R143a.param_names) + ["temperature"]
