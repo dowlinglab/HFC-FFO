@@ -96,7 +96,7 @@ gp_shuffle_seed = 3945872 #GP seed
 liquid_density_threshold = 500  # kg/m^3  ##>500 is liquid; <500 is gas. used for classifier
 
 csv_path = "/scratch365/nwang2/ff_development/HFC_143a_FFO_FF/r143a/analysis/csv/"
-in_csv_names = ["r143a-density-iter" + str(iternum) + "-results.csv" for i in range(1, iternum+1)]
+in_csv_names = ["r143a-density-iter" + str(i) + "-results.csv" for i in range(1, iternum+1)]
 out_csv_name = "r143a-density-iter" + str(iternum + 1) + "-params.csv"
 out_top_liquid_csv_name = "r143a-density-iter" + str(iternum ) + "-liquid-params.csv"
 out_top_vapor_csv_name = "r143a-density-iter" + str(iternum ) + "-vapor-params.csv"
