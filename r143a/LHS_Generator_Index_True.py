@@ -10,5 +10,5 @@ sample = pd.DataFrame(sample)
 sample.columns = ['1','2','3','4','5','6','7','8']
 sample.set_index('1')
 
-filename = 'LHS_'+str(n)+'_x_'+str(d)+'TEST.csv'
+filename = 'LHS_'+str(n)+'_x_'+str(d)+'I_True.csv'
 sample.to_csv(filename, index = True)
