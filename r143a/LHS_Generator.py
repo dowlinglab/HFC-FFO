@@ -8,6 +8,7 @@ sample = sampler.random(n)
 print(sample)
 
 
+# with open('LHS_'+str(n)+'_x_'+str(d)+'TEST.csv', 'w', newline='') as file:
 with open('LHS_'+str(n)+'_x_'+str(d)+'.csv', 'w', newline='') as file:
     mywriter = csv.writer(file, delimiter=',')
     mywriter.writerows(sample)
