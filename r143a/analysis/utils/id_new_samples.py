@@ -270,7 +270,7 @@ def rank_samples(samples, gp_model, molecule, property_name, property_offset=0.0
             "Invalid property_name {}. Supported property_names are "
             "{}".format(property_name, valid_property_names)
         )
-
+    print("Include properties:",property_name)
     temperature_bounds = molecule.temperature_bounds
     if property_name == "sim_liq_density":
         expt_property = molecule.expt_liq_density
@@ -284,12 +284,13 @@ def rank_samples(samples, gp_model, molecule, property_name, property_offset=0.0
     elif property_name == "sim_Hvap":
         expt_property = molecule.expt_Hvap
         property_bounds = molecule.Hvap_bounds
-
+    print("Property bounds are",property_bounds)
     # Apply GP model and calculate mean squared errors (MSE) between
     # GP model predictions and experimental data for all parameter samples
     mse = _calc_gp_mse(
         gp_model, samples, expt_property, property_bounds, temperature_bounds, property_offset
     )
+    print("MSE is", mse)
     # Make pandas dataframes, rank, and return
     samples_mse = np.hstack((samples, mse.reshape(-1, 1)))
     samples_mse = pd.DataFrame(
@@ -306,8 +307,10 @@ def _calc_gp_mse(
     """Calculate the MSE between the GP model and experiment for samples"""
 
     all_errs = np.empty(shape=(samples.shape[0], len(expt_property.keys())))
+    print("Initialize all errors!")
     col_idx = 0
     for (temp, density) in expt_property.items():
+        print("Trying temp", temp, "and density",density)
         scaled_temp = values_real_to_scaled(temp, temperature_bounds)
         xx = np.hstack((samples, np.tile(scaled_temp, (samples.shape[0], 1))))
         means_scaled, vars_scaled = gp_model.predict_f(xx)

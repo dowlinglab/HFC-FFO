@@ -22,7 +22,7 @@ matplotlib.rc("font", serif="Arial")
 ##############################################################################
 
 liquid_density_threshold=500 #kg/m3
-iternum = 1
+iternum = 4
 
 ##############################################################################
 ##############################################################################
@@ -41,19 +41,127 @@ dfs = [prepare_df_density(df_csv, R143a, liquid_density_threshold)[0] for df_csv
 
 
 def main():
-
     #seaborn.set_palette("Set2")
     seaborn.set_palette("colorblind")
     # Create a dataframe with one row per parameter set
     dfs_paramsets = [prepare_df_density_errors(df, R143a) for df in dfs]
-
+    print(dfs_paramsets)
     name = "mape_liq_density"
+
+    num=0
+    vapnum=[]
+    order=dfs_paramsets[0].sort_values(name)[name].index
+    print(order)
+    for i in order:
+        if dfs_paramsets[0].iloc[i][8] <= 500:
+            num=num+1
+        if dfs_paramsets[0].iloc[i][9] <= 500:
+            num=num+1
+        if dfs_paramsets[0].iloc[i][10] <= 500:
+            num=num+1
+        if dfs_paramsets[0].iloc[i][11] <= 500:
+            num=num+1
+        if dfs_paramsets[0].iloc[i][12] <= 500:
+            num=num+1
+        vapnum.append(num)
+    print(vapnum)
     fig, ax = plt.subplots()
-    axins = inset_axes(ax, width="100%", height="100%",
-            bbox_to_anchor=(0.65, 0.10, 0.25, 0.45),
-            bbox_transform=ax.transAxes, loc=3)
+    #axins = inset_axes(ax, width="100%", height="100%",
+    #        bbox_to_anchor=(0.65, 0.10, 0.25, 0.45),
+    #        bbox_transform=ax.transAxes, loc=3)
     ax.set_box_aspect(1.2)
     ax.plot(
+    vapnum,
+    np.arange(1, 201,1),
+    '-s',
+    markersize=6,
+    linewidth=3,
+    alpha=0.4,
+    label="LD-1",
+    )
+
+    num=0
+    vapnum=[]
+    order=dfs_paramsets[1].sort_values(name)[name].index
+    print(order)
+    for i in order:
+        if dfs_paramsets[1].iloc[i][8] <= 500:
+            num=num+1
+        if dfs_paramsets[1].iloc[i][9] <= 500:
+            num=num+1
+        if dfs_paramsets[1].iloc[i][10] <= 500:
+            num=num+1
+        if dfs_paramsets[1].iloc[i][11] <= 500:
+            num=num+1
+        if dfs_paramsets[1].iloc[i][12] <= 500:
+            num=num+1
+        vapnum.append(num)
+    print(vapnum)
+    ax.plot(
+    vapnum,
+    np.arange(1, 201,1),
+    '-s',
+    markersize=6,
+    linewidth=3,
+    alpha=0.4,
+    label="LD-2",
+    )
+
+    num=0
+    vapnum=[]
+    order=dfs_paramsets[2].sort_values(name)[name].index
+    print(order)
+    for i in order:
+        if dfs_paramsets[2].iloc[i][8] <= 500:
+            num=num+1
+        if dfs_paramsets[2].iloc[i][9] <= 500:
+            num=num+1
+        if dfs_paramsets[2].iloc[i][10] <= 500:
+            num=num+1
+        if dfs_paramsets[2].iloc[i][11] <= 500:
+            num=num+1
+        if dfs_paramsets[2].iloc[i][12] <= 500:
+            num=num+1
+        vapnum.append(num)
+    print(vapnum)
+    ax.plot(
+    vapnum,
+    np.arange(1, 201,1),
+    '-s',
+    markersize=6,
+    linewidth=3,
+    alpha=0.4,
+    label="LD-3",
+    )
+
+    num=0
+    vapnum=[]
+    order=dfs_paramsets[3].sort_values(name)[name].index
+    print(order)
+    for i in order:
+        if dfs_paramsets[3].iloc[i][8] <= 500:
+            num=num+1
+        if dfs_paramsets[3].iloc[i][9] <= 500:
+            num=num+1
+        if dfs_paramsets[3].iloc[i][10] <= 500:
+            num=num+1
+        if dfs_paramsets[3].iloc[i][11] <= 500:
+            num=num+1
+        if dfs_paramsets[3].iloc[i][12] <= 500:
+            num=num+1
+        vapnum.append(num)
+    print(vapnum)
+    ax.plot(
+    vapnum,
+    np.arange(1, 201,1),
+    '-s',
+    markersize=6,
+    linewidth=3,
+    alpha=0.4,
+    label="LD-4",
+    )
+
+    '''ax.plot(
         dfs_paramsets[0].sort_values(name)[name],
         np.arange(1, 201,1),
         '-s',
@@ -62,7 +170,7 @@ def main():
         alpha=0.4,
         label="LD-1",
     )
-    '''ax.plot(
+    ax.plot(
         dfs_paramsets[1].sort_values(name)[name],
         np.arange(1, 201,1),
         '-s',
@@ -91,9 +199,9 @@ def main():
     )'''
 
     ax.set_ylim(0,205)
-    ax.set_xlim(0,100)
+    ax.set_xlim(0,300)
     ax.set_yticks([0,50,100,150,200])
-    ax.xaxis.set_major_locator(MultipleLocator(20))
+    ax.xaxis.set_major_locator(MultipleLocator(100))
     ax.xaxis.set_minor_locator(AutoMinorLocator(2))
     ax.yaxis.set_major_locator(MultipleLocator(50))
     ax.yaxis.set_minor_locator(AutoMinorLocator(2))
@@ -103,7 +211,8 @@ def main():
     ax.yaxis.set_ticks_position("both")
 
     ax.set_ylabel(r"$N_\mathrm{cumu.}$ parameter sets", fontsize=20, labelpad=20)
-    ax.set_xlabel("Liquid density MAPE", fontsize=20, labelpad=15)
+    #ax.set_xlabel("Liquid density MAPE", fontsize=20, labelpad=15)
+    ax.set_xlabel("number of vapor simulations", fontsize=20, labelpad=15)
     ax.legend(fontsize=16, loc=(-0.06,1.05), ncol=2, columnspacing=1, handletextpad=0.5)
 
     '''axins.plot(
