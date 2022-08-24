@@ -232,6 +232,7 @@ result, pareto_points, dominated_points = find_pareto_set(
 )
 vle_mses = vle_mses.join(pd.DataFrame(result, columns=["is_pareto"]))
 
+vle_mses.to_csv(csv_path + "vle_mses.csv")
 
 # Plot pareto points vs. MSEs
 g = seaborn.pairplot(
@@ -246,7 +247,7 @@ g = seaborn.pairplot(vle_mses, vars=list(R143a.param_names), hue="is_pareto")
 g.set(xlim=(-0.1, 1.1), ylim=(-0.1, 1.1))
 g.savefig("figs/R143a-pareto-params.pdf")
 
-# Find new points for next iteration
+'''# Find new points for next iteration
 pareto_points = vle_mses[vle_mses["is_pareto"] == True]
 print(f"A total of {len(pareto_points)} pareto efficient points were found.")
 new_points = pareto_points.sort_values("mse_liq_density").iloc[[0]]
@@ -272,7 +273,7 @@ while int(len(next_iter_points)) != int(target_num):
     dist_opt = solution.x
     next_iter_points = opt_dist(dist_opt, new_points, R143a, target_num, rand_seed=dist_seed , eval = True)
     dist_seed += 1
-    print("Trying seed", dist_seed)
+    print("Trying seed", dist_seed)'''
    
 '''distance = 2.14
 discarded_points = pd.DataFrame(columns=pareto_points.columns)
@@ -298,7 +299,7 @@ while len(pareto_points > 0):
     pareto_points.drop(
         index=pareto_points.index[points_to_remove], inplace=True
     )'''
-print(
+'''print(
     f"After removing similar points, we are left with {len(next_iter_points)} pareto efficient points."
 )
 
@@ -319,4 +320,4 @@ next_iter_points.drop(
     ],
     inplace=True,
 )
-next_iter_points.to_csv(csv_path + out_csv_name)
+next_iter_points.to_csv(csv_path + out_csv_name)'''

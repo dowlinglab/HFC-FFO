@@ -67,10 +67,11 @@ def main():
         R143a.Hvap_bounds,
         axis_name="Enthalpy of vaporization [kJ/kg]",
     )
-
+    d = pd.DataFrame({'T':list(values_scaled_to_real(df_all["temperature"],R143a.temperature_bounds)) , 'sim_Pvap':list(values_scaled_to_real(df_all["sim_Pvap"], R143a.Pvap_bounds)) }, columns=['T', 'sim_Pvap'])
+    print(d.loc[d['T'] == 240])
     # Create a dataframe with one row per parameter set
     df_paramsets = prepare_df_vle_errors(df_all, R143a)
-
+    print(df_paramsets["sim_Pvap_240K"])
     # Plot MSE for each property
     fig, (ax1, ax2, ax3, ax4, ax5, ax6) = plt.subplots(6, figsize=(5, 10))
     fig.suptitle("Mean square errors", y=1.05, x=0.6)
@@ -163,7 +164,7 @@ def main():
     fig.legend(fontsize=12)
     fig.tight_layout()
     fig.savefig("figs/mape_sorted.png", dpi=300)
-
+    
     # Plot VLE envelopes
     # Generate colors for param sets
     phi = np.linspace(0, 2 * np.pi, len(df_paramsets))

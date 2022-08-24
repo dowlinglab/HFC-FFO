@@ -82,12 +82,10 @@ def prepare_df_vle_errors(df, molecule):
     """
     new_data = []
     for group, values in df.groupby(list(molecule.param_names)):
-
         # Temperatures
         temps = values_scaled_to_real(
             values["temperature"], molecule.temperature_bounds
         )
-
         # Liquid density
         sim_liq_density = values_scaled_to_real(
             values["sim_liq_density"], molecule.liq_density_bounds
@@ -142,7 +140,6 @@ def prepare_df_vle_errors(df, molecule):
                 for temp, Pvap in zip(temps, sim_Pvap)
             }
         )
-
         # Enthalpy of vaporization
         sim_Hvap = values_scaled_to_real(
             values["sim_Hvap"], molecule.Hvap_bounds
@@ -181,7 +178,7 @@ def prepare_df_vle_errors(df, molecule):
             np.abs((rhoc - molecule.expt_rhoc) / molecule.expt_rhoc) * 100.0
         )
         properties.update({"sim_rhoc": rhoc})
-
+        print(properties)
         new_quantities = {
             **properties,
             "mse_liq_density": mse_liq_density,
@@ -197,10 +194,9 @@ def prepare_df_vle_errors(df, molecule):
             "mape_Tc": mape_Tc,
             "mape_rhoc": mape_rhoc,
         }
-
+        
         new_data.append(list(group) + list(new_quantities.values()))
-
+    print(new_quantities.keys())
     columns = list(molecule.param_names) + list(new_quantities.keys())
     new_df = pd.DataFrame(new_data, columns=columns)
-
     return new_df

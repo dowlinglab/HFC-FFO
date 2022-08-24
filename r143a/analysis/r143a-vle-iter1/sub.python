@@ -1,6 +1,6 @@
 #!/bin/bash
 
-#$ -pe smp 2
+#$ -pe smp 12
 #$ -m ae
 #$ -r n
 #$ -M nwang2@nd.edu
@@ -9,5 +9,5 @@
 
 conda activate hfcs-fffit
 module load gcc/11.1.0
-python3 id-new-samples.py
+python id-new-samples.py
 

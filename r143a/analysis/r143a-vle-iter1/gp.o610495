@@ -1,0 +1,74 @@
+2022-08-18 12:09:27.280905: I tensorflow/core/platform/cpu_feature_guard.cc:193] This TensorFlow binary is optimized with oneAPI Deep Neural Network Library (oneDNN) to use the following CPU instructions in performance-critical operations:  AVX2 FMA
+To enable them in other operations, rebuild TensorFlow with the appropriate compiler flags.
+2022-08-18 12:13:02.465532: W tensorflow/core/framework/cpu_allocator_impl.cc:82] Allocation of 11056000000 exceeds 10% of free system memory.
+2022-08-18 12:13:03.635121: W tensorflow/core/framework/cpu_allocator_impl.cc:82] Allocation of 11056000000 exceeds 10% of free system memory.
+2022-08-18 12:13:05.006992: W tensorflow/core/framework/cpu_allocator_impl.cc:82] Allocation of 11056000000 exceeds 10% of free system memory.
+2022-08-18 12:13:05.511727: W tensorflow/core/framework/cpu_allocator_impl.cc:82] Allocation of 11056000000 exceeds 10% of free system memory.
+2022-08-18 12:13:07.602732: W tensorflow/core/framework/cpu_allocator_impl.cc:82] Allocation of 11056000000 exceeds 10% of free system memory.
+<IPython.core.display.HTML object>
+<IPython.core.display.HTML object>
+<IPython.core.display.HTML object>
+<IPython.core.display.HTML object>
+<IPython.core.display.HTML object>
+<IPython.core.display.HTML object>
+<IPython.core.display.HTML object>
+<IPython.core.display.HTML object>
+<IPython.core.display.HTML object>
+<IPython.core.display.HTML object>
+<IPython.core.display.HTML object>
+<IPython.core.display.HTML object>
+The average density difference between Cassandra and GROMACS is 13.676728433732398 kg/m^3
+The minimum density difference between Cassandra and GROMACS is -8.517589471427073 kg/m^3
+The maximum density difference between Cassandra and GROMACS is 65.73044927942522 kg/m^3
+Include properties: sim_liq_density
+Property bounds are [ 822.31 1127.  ]
+Initialize all errors!
+Trying temp 240 and density 1127.0
+Trying temp 260 and density 1067.2
+Trying temp 280 and density 1000.4
+Trying temp 300 and density 922.32
+Trying temp 320 and density 822.31
+MSE is [ 60524.69040502   7654.44720228  20002.65462757 ...  29322.39744399
+   5294.09665552 208057.69416964]
+Ranking samples complete!
+There are: 4833 viable parameter sets which are within 25 kg/m$^2$ of GROMACS liquid densities
+Include properties: sim_liq_density
+Property bounds are [ 822.31 1127.  ]
+Initialize all errors!
+Trying temp 240 and density 1127.0
+Trying temp 260 and density 1067.2
+Trying temp 280 and density 1000.4
+Trying temp 300 and density 922.32
+Trying temp 320 and density 822.31
+MSE is [  60.92284076  248.82497091 1310.89010783 ...   77.43018806   68.40353327
+  282.28268037]
+Include properties: sim_vap_density
+Property bounds are [  8.5946 109.18  ]
+Initialize all errors!
+Trying temp 240 and density 8.5946
+Trying temp 260 and density 17.796
+Trying temp 280 and density 33.738
+Trying temp 300 and density 60.818
+Trying temp 320 and density 109.18
+MSE is [  3.29390908  15.34538394  13.48674856 ...  62.60626872 190.96103819
+  11.748255  ]
+Include properties: sim_Pvap
+Property bounds are [ 1.8902 21.483 ]
+Initialize all errors!
+Trying temp 240 and density 1.8902
+Trying temp 260 and density 4.0251
+Trying temp 280 and density 7.6276
+Trying temp 300 and density 13.234000000000002
+Trying temp 320 and density 21.483
+MSE is [0.26679444 0.81456793 0.07604516 ... 0.5060849  2.69796226 0.5395303 ]
+Include properties: sim_Hvap
+Property bounds are [124.85 216.4 ]
+Initialize all errors!
+Trying temp 240 and density 216.4
+Trying temp 260 and density 200.09
+Trying temp 280 and density 180.78
+Trying temp 300 and density 156.88
+Trying temp 320 and density 124.85
+MSE is [ 71.7043919   78.14846318  43.1594346  ... 210.49756392 428.74600509
+  95.27487655]
+Completed calculating other properties!
