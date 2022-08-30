@@ -105,10 +105,10 @@ def main():
     ax.spines['right'].set_linewidth(2.0)
 
     # Add GAFF
-    ax.plot(x_vals[-1], 22.37/bounds[-1][1], markersize=12, color="gray", marker="s", clip_on=False, zorder=200)
-    ax.plot(x_vals[-2], 46.05/bounds[-2][1], markersize=12, color="gray", marker="s", clip_on=False, zorder=200)
-    ax.plot(x_vals[-3], 50.52/bounds[-3][1], markersize=12, color="gray", marker="s", clip_on=False, zorder=200)
-    ax.plot(x_vals[-4], 2.92/bounds[-4][1], markersize=12, color="gray", marker="s", clip_on=False, zorder=200)
+    #ax.plot(x_vals[-1], 22.37/bounds[-1][1], markersize=12, color="gray", marker="s", clip_on=False, zorder=200)
+    #ax.plot(x_vals[-2], 46.05/bounds[-2][1], markersize=12, color="gray", marker="s", clip_on=False, zorder=200)
+    #ax.plot(x_vals[-3], 50.52/bounds[-3][1], markersize=12, color="gray", marker="s", clip_on=False, zorder=200)
+    #ax.plot(x_vals[-4], 2.92/bounds[-4][1], markersize=12, color="gray", marker="s", clip_on=False, zorder=200)
 
 
     # Remove space between subplots

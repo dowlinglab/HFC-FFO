@@ -25,7 +25,7 @@ def main():
     top10 = df.loc[df.filter(regex="mape*").mean(axis=1).sort_values()[:10].index]
     data = top10[list(R143a.param_names)].values
 
-    N = 10
+    N = 8
     #theta = radar_factory(N, frame='polygon')
     theta = radar_factory(N, frame='circle')
 
@@ -70,7 +70,7 @@ def main():
     # Plot all
     data = df[list(R143a.param_names)].values
 
-    N = 10
+    N = 8
     #theta = radar_factory(N, frame='polygon')
     theta = radar_factory(N, frame='circle')
 
