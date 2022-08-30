@@ -81,6 +81,9 @@ def prepare_df_vle_errors(df, molecule):
         critical temperature, critical density
     """
     new_data = []
+    #sort by temperature -- added by Ning Wang
+    df=df.sort_values(by=["temperature"])
+
     for group, values in df.groupby(list(molecule.param_names)):
         # Temperatures
         temps = values_scaled_to_real(
@@ -178,7 +181,6 @@ def prepare_df_vle_errors(df, molecule):
             np.abs((rhoc - molecule.expt_rhoc) / molecule.expt_rhoc) * 100.0
         )
         properties.update({"sim_rhoc": rhoc})
-        print(properties)
         new_quantities = {
             **properties,
             "mse_liq_density": mse_liq_density,
@@ -196,7 +198,6 @@ def prepare_df_vle_errors(df, molecule):
         }
         
         new_data.append(list(group) + list(new_quantities.values()))
-    print(new_quantities.keys())
     columns = list(molecule.param_names) + list(new_quantities.keys())
     new_df = pd.DataFrame(new_data, columns=columns)
     return new_df
