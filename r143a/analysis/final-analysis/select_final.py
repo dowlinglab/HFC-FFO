@@ -40,20 +40,20 @@ def main():
     
     
     ### Choosing Final Parameter Sets (R-32)
-    # Filter for parameter sets with less than 2.5 % error in all properties
+    # Filter for parameter sets with less than 3 % error in all properties
     
     r143a_final = r143a_final[
-                    (r143a_final["mape_Pvap"]<=2.5) &
-                    (r143a_final["mape_Hvap"]<=2.5) &
-                    (r143a_final["mape_liq_density"]<=2.5) &
-                    (r143a_final["mape_vap_density"]<=2.5) &
-                    (r143a_final["mape_Tc"]<=2.5) &
-                    (r143a_final["mape_rhoc"]<=2.5)
+                    (r143a_final["mape_Pvap"]<=3) &
+                    (r143a_final["mape_Hvap"]<=3) &
+                    (r143a_final["mape_liq_density"]<=3) &
+                    (r143a_final["mape_vap_density"]<=3) &
+                    (r143a_final["mape_Tc"]<=3) &
+                    (r143a_final["mape_rhoc"]<=3)
     ]
    
     # Save CSV files
     #r32_final.to_csv("../csv/r32-final-4.csv")
-    r143a_final.to_csv("../csv/r143a-final-4.csv")
+    r143a_final.to_csv("../csv/r143a-final.csv")
 
 
 if __name__ == "__main__":
