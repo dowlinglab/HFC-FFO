@@ -38,8 +38,8 @@ def main():
     data_f = dff[list(R143a.param_names)].values
     results_f = values_real_to_scaled(dff[["mape_liq_density", "mape_vap_density", "mape_Pvap", "mape_Hvap"]].values, result_bounds)
     param_bounds = R143a.param_bounds
-    param_bounds[:5] = param_bounds[:5] * NM_TO_ANGSTROM
-    param_bounds[5:] = param_bounds[5:] * KJMOL_TO_K
+    param_bounds[:4] = param_bounds[:4] * NM_TO_ANGSTROM
+    param_bounds[4:] = param_bounds[4:] * KJMOL_TO_K
 
     data = np.hstack((data, results))
     data_f = np.hstack((data_f, results_f))
