@@ -170,7 +170,6 @@ gp_shuffle_seed = 3945872 #GP seed
 liquid_density_threshold = 500  # kg/m^3  ##>500 is liquid; <500 is gas. used for classifier
 
 csv_path = "/scratch365/nwang2/ff_development/HFC_143a_FFO_FF/r134a/analysis/csv/"
-in_csv_names = ["r134a-density-iter" + str(i) + "-results.csv" for i in range(1, iternum+1)]
 
 # Load in all parameter csvs and result csvs
 param_csv_names = [
@@ -205,7 +204,6 @@ df_mse = (
 scaled_param_values = values_real_to_scaled(
     df_mse[list(R134a.param_names)], R134a.param_bounds
 )
-print(scaled_param_values.shape)
 param_idxs = []
 param_vals = []
 for params1 in scaled_param_values:
@@ -224,8 +222,8 @@ dist_seed = 115
 #target_num_v = 43
 target_num_l = 25 
 
-zero_array = np.zeros(top_liq.shape[1])
-one_array = np.ones(top_liq.shape[1])
+zero_array = np.zeros(top_param_set.shape[1])
+one_array = np.ones(top_param_set.shape[1])
 ub_array = one_array - zero_array
 
 # lower_bound = 1e-8
@@ -245,5 +243,4 @@ print(len(new_points_vle), "top liquid density points are left after removing si
 new_points_vle.drop(columns=["mse"], inplace=True)
 new_points_vle.drop(columns=["param_idx"], inplace=True)
 new_points_vle.to_csv(csv_path + "r134a-vle-iter1-params.csv")
-#pd.concat([new_points_vle,], axis=0).to_csv(csv_path + "r134a-vle-iter1-params.csv")
 
