@@ -81,12 +81,18 @@ models["Matern52"] = run_gpflow_scipy(
 pdf.savefig(plot_model_performance(models, x_train, y_train, R50.liq_density_bounds))
 pdf.savefig(plot_model_performance(models, x_test, y_test, R50.liq_density_bounds))
 
+#Find Temperature bounds for plots
+plot_bounds = R50.temperature_bounds
+plot_bounds[0] -= 10
+plot_bounds[1] += 10
+
 # Plot temperature slices
 figs = plot_slices_temperature(
     models,
     R50.n_params,
     R50.temperature_bounds,
     R50.liq_density_bounds,
+    plot_bounds,
     property_name="Liquid Density [kg/m^3]",
 )
 
@@ -138,6 +144,7 @@ for test_params in x_test[:,:R50.n_params]:
             np.asarray(test_points),
             R50.temperature_bounds,
             R50.liq_density_bounds,
+            plot_bounds,
             property_name="Liquid Density [kg/m^3]"
         )
     )

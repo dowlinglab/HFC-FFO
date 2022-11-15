@@ -58,6 +58,11 @@ x_train, y_train, x_test, y_test = shuffle_and_split(
     df_all, param_names, property_name, shuffle_seed=gp_shuffle_seed, fraction_train=0.8
 )
 
+#Find Temperature bounds for plots
+plot_bounds = R50.temperature_bounds
+plot_bounds[0] -= 10
+plot_bounds[1] += 10
+
 # Fit model
 models = {}
 models["RBF"] = run_gpflow_scipy(
@@ -87,6 +92,7 @@ figs = plot_slices_temperature(
     R50.n_params,
     R50.temperature_bounds,
     R50.liq_density_bounds,
+    plot_bounds,
     property_name="Liquid Density [kg/m^3]",
 )
 
@@ -138,6 +144,7 @@ for test_params in x_test[:,:R50.n_params]:
             np.asarray(test_points),
             R50.temperature_bounds,
             R50.liq_density_bounds,
+            plot_bounds,
             property_name="Liquid Density [kg/m^3]"
         )
     )
