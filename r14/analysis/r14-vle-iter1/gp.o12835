@@ -1,0 +1,69 @@
+2023-01-11 15:06:16.750552: I tensorflow/core/platform/cpu_feature_guard.cc:193] This TensorFlow binary is optimized with oneAPI Deep Neural Network Library (oneDNN) to use the following CPU instructions in performance-critical operations:  AVX2 FMA
+To enable them in other operations, rebuild TensorFlow with the appropriate compiler flags.
+<IPython.core.display.HTML object>
+<IPython.core.display.HTML object>
+<IPython.core.display.HTML object>
+<IPython.core.display.HTML object>
+<IPython.core.display.HTML object>
+<IPython.core.display.HTML object>
+<IPython.core.display.HTML object>
+<IPython.core.display.HTML object>
+<IPython.core.display.HTML object>
+<IPython.core.display.HTML object>
+<IPython.core.display.HTML object>
+<IPython.core.display.HTML object>
+The average density difference between Cassandra and GROMACS is -0.11770589737144838 kg/m^3
+The minimum density difference between Cassandra and GROMACS is -31.102449226062845 kg/m^3
+The maximum density difference between Cassandra and GROMACS is 15.946170376078953 kg/m^3
+Include properties: sim_liq_density
+Property bounds are [1142.5 1681.5]
+Initialize all errors!
+Trying temp 130 and density 1681.5
+Trying temp 150 and density 1576.8
+Trying temp 170 and density 1461.2
+Trying temp 190 and density 1325.3
+Trying temp 210 and density 1142.5
+MSE is [ 61487.13769153  27567.36229615 850789.0667856  ... 479915.81785536
+ 108610.6498309   35080.03321535]
+Ranking samples complete!
+There are: 1903 viable parameter sets which are within 25 kg/m$^2$ of GROMACS liquid densities
+Include properties: sim_liq_density
+Property bounds are [1142.5 1681.5]
+Initialize all errors!
+Trying temp 130 and density 1681.5
+Trying temp 150 and density 1576.8
+Trying temp 170 and density 1461.2
+Trying temp 190 and density 1325.3
+Trying temp 210 and density 1142.5
+MSE is [ 153.09748221  213.70840402  119.71457713 ...  757.08789976 1206.59033289
+ 1424.74846293]
+Include properties: sim_vap_density
+Property bounds are [  2.5091 169.76  ]
+Initialize all errors!
+Trying temp 130 and density 2.5091
+Trying temp 150 and density 10.432
+Trying temp 170 and density 30.641
+Trying temp 190 and density 74.361
+Trying temp 210 and density 169.76
+MSE is [ 14.37213738   4.62471207 110.78434648 ... 795.27001459 786.70086765
+   4.16447656]
+Include properties: sim_Pvap
+Property bounds are [ 0.30392 21.864  ]
+Initialize all errors!
+Trying temp 130 and density 0.30392
+Trying temp 150 and density 1.412
+Trying temp 170 and density 4.4054
+Trying temp 190 and density 10.663
+Trying temp 210 and density 21.864
+MSE is [0.02911944 0.12909289 0.08089834 ... 6.9477789  9.50155664 2.56804598]
+Include properties: sim_Hvap
+Property bounds are [ 75.63 142.  ]
+Initialize all errors!
+Trying temp 130 and density 142.0
+Trying temp 150 and density 131.72
+Trying temp 170 and density 118.77
+Trying temp 190 and density 101.5
+Trying temp 210 and density 75.63
+MSE is [ 8.56795042  9.04408625  6.11282513 ... 81.16918383 54.24406218
+ 17.89312249]
+Completed calculating other properties!
