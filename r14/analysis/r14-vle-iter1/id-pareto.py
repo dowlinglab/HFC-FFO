@@ -11,14 +11,14 @@ from fffit.utils import (
 
 sys.path.append("../")
 
-from utils.r170 import R170Constants
+from utils.r14 import R14Constants
 from utils.id_new_samples import prepare_df_vle
 from utils.analyze_samples import prepare_df_vle_errors
 from utils.plot import plot_property, render_mpl_table
 
 from fffit.pareto import find_pareto_set, is_pareto_efficient
 
-R170 = R170Constants()
+R14 = R14Constants()
 
 import matplotlib._color_data as mcd
 
@@ -30,11 +30,11 @@ iternum = 1
 ##############################################################################
 ##############################################################################
 
-csv_path = "/scratch365/nwang2/ff_development/HFC_143a_FFO_FF/r170/analysis/csv/"
+csv_path = "/scratch365/nwang2/ff_development/HFC_143a_FFO_FF/r14/analysis/csv/"
 in_csv_names = [
-    "r170-vle-iter" + str(i) + "-results.csv" for i in range(1, iternum + 1)
+    "r14-vle-iter" + str(i) + "-results.csv" for i in range(1, iternum + 1)
 ]
-out_csv_name = "r170-pareto-iter1.csv"
+out_csv_name = "r14-pareto-iter1.csv"
 
 # Read files
 df_csvs = [
@@ -42,12 +42,12 @@ df_csvs = [
     for in_csv_name in in_csv_names
 ]
 df_csv = pd.concat(df_csvs)
-df_all = prepare_df_vle(df_csv, R170)
+df_all = prepare_df_vle(df_csv, R14)
 
 def main():
 
     # Create a dataframe with one row per parameter set
-    df_paramsets = prepare_df_vle_errors(df_all, R170)
+    df_paramsets = prepare_df_vle_errors(df_all, R14)
 
     # ID pareto points
     result, pareto_points, dominated_points = find_pareto_set(
