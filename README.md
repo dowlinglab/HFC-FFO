@@ -131,12 +131,14 @@ To run liquid density iterations, follow the following steps:
 3. Create Force Fields
     - **Ning, where to cd to?**
     -  .. code-block:: bash
+    
             python project.py run -o create_forcefield
             python project.py run -o generate_inputs
 4. Create Systems
     - **Note: rm -r workspace/ signac_project_document.json signac.rc will remove everything and allow you to start fresh if you mess up**
     - **Ning, where to cd to?**
     - .. code-block:: bash
+    
             python project.py run -o create_system  --bundle=24
 5. Fix Topology
     - **Ning, where to cd to?**
@@ -150,14 +152,17 @@ To run liquid density iterations, follow the following steps:
     - Ensure that experimental data is correct and that the class name has been updated
 8. Calculate Density
     - .. code-block:: bash
+    
             cd HFC-FFO/rXX/run/rXX-density-iter1
             python project.py submit -o calculate_density --bundle=24 --parallel
     - Extract density using
        .. code-block:: bash
+       
            python extract_rXX_density.py ZZ
 9. Run GP Validation
     - **Ning, where to cd to?**
     - .. code-block:: bash
+   
             python id-new-samples.py
             python r143a-cumu-density.py
             python clf.py
