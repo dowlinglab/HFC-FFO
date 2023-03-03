@@ -112,17 +112,15 @@ performed under ``HFC-FFO/r##/runs/rXX-density-iter1/``.
 To run liquid density iterations, follow the following steps:
 1. Create The Initial Configuration
    - Go to the data folder and use the run.sh file
-        -  .. code-block:: bash
-
-              cd HFC-FFO/rXX/run/rXX-density-iter1/data
-              python source run.sh
+        - .. code-block:: bash
+                cd HFC-FFO/rXX/run/rXX-density-iter1/data
+                python source run.sh
               
    - Leave ''HFC-FFO/rXX/run/rXX-density-iter1/data'' untouched
    - Initialize files for simulation use
         - .. code-block:: bash
-
-             cd HFC-FFO/rXX/run/rXX-density-iter1/
-             python init.py
+                cd HFC-FFO/rXX/run/rXX-density-iter1/
+                python init.py
              
         - (Ning, what does signac.rc and workspace/ do? What order do they go in?)
 2. Check status a few times throughout the process
@@ -134,8 +132,8 @@ To run liquid density iterations, follow the following steps:
     - **Ning, where to cd to?**
     - .. code-block:: bash
     
-        python project.py run -o create_forcefield
-        python project.py run -o generate_inputs
+            python project.py run -o create_forcefield
+            python project.py run -o generate_inputs
 4. Create Systems
     - **Note: rm -r workspace/ signac_project_document.json signac.rc will remove everything and allow you to start fresh if you mess up**
     - **Ning, where to cd to?**
