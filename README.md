@@ -108,7 +108,6 @@ instructions assume a working knowledge of that software.
 The first iteration of the liquid density simulations were
 performed under ``HFC-FFO/r##/runs/rXX-density-iter1/``.
 
-**Ning, where can I find these?**
 To run liquid density iterations, follow the following steps:
 1. Create The Initial Configuration
    - Prepare rXX_gaff.xml
@@ -176,7 +175,7 @@ To run liquid density iterations, follow the following steps:
 
 
 **Ning, I copied and commented out the LD and VLE iter guide that Bridgette wrote here. Feel free to add anything from here that you think is necessary**
-<!-- A Latin hypercube with 500000 parameter sets exists under
+<!-- **Ning, where can I find these for each sample. It's not consistent?** A Latin hypercube with 500000 parameter sets exists under
 ``HFC-FFO/analysis/rXX-density-iter1/LHS_500000_x_10.csv``.
 The signac workspace is created by ``hfcs-fffit/runs/rXX-density-iter1/init.py``.
 
