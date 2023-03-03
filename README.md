@@ -143,10 +143,12 @@ To run liquid density iterations, follow the following steps:
 5. Fix Topology
     - **Ning, where to cd to?**
     - .. code-block:: bash
+    
             python project.py run -o fix_topology    
 6. Run Simulation
     - **Ning, where to cd to?**
     - .. code-block:: bash
+    
             python python project.py submit -o simulate --bundle=24 --parallel
 7. Prepare rXX.py in HFC_FFO/rXX/analysis/utils
     - Ensure that experimental data is correct and that the class name has been updated
