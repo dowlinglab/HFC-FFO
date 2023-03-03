@@ -98,7 +98,7 @@ An example of the procedure is provided below:
 
 <!-- Usage: Provide instructions on how to use the project, including any configuration or customization options. Examples of usage scenarios can also be added. -->
 ## Usage
-**Ning, Please update the repo so that files are organized nicely. This is super hard to write at present because there's no order**
+**Ning, Please update the repo so that files are organized nicely. This is super hard to write at present because there's no file organization**
 ### Liquid Density Optimization
 
 **NOTE**: We use signac and signac flow (`<https://signac.io/>`_)
@@ -111,10 +111,12 @@ performed under ``HFC-FFO/r##/runs/rXX-density-iter1/``.
 **Ning, where can I find these?**
 To run liquid density iterations, follow the following steps:
 1. Create The Initial Configuration
+   - Prepare rXX_gaff.xml
    - Go to the data folder and use the run.sh file
         - .. code-block:: bash
+                conda activate hfcs-fffit
                 cd HFC-FFO/rXX/run/rXX-density-iter1/data
-                python source run.sh
+                python create_system.py  ff.xml  run.sh
               
    - Leave ''HFC-FFO/rXX/run/rXX-density-iter1/data'' untouched
    - Initialize files for simulation use
@@ -139,7 +141,7 @@ To run liquid density iterations, follow the following steps:
     - **Ning, where to cd to?**
     - .. code-block:: bash
     
-            python project.py run -o create_system  --bundle=24
+            python project.py run -o create_system
 5. Fix Topology
     - **Ning, where to cd to?**
     - .. code-block:: bash
@@ -157,7 +159,7 @@ To run liquid density iterations, follow the following steps:
     
             cd HFC-FFO/rXX/run/rXX-density-iter1
             python project.py submit -o calculate_density --bundle=24 --parallel
-    - Extract density using
+    - Extract density using the following after each LD iteration
        .. code-block:: bash
        
            python extract_rXX_density.py ZZ
@@ -165,12 +167,15 @@ To run liquid density iterations, follow the following steps:
     - **Ning, where to cd to?**
     - .. code-block:: bash
    
-            python id-new-samples.py
-            python r143a-cumu-density.py
-            python clf.py
-            python classifier.py
-            python plotfig_gp_examples.py 
-                       
+           module load gcc/11.1.0
+           python id-new-samples.py
+           python plotfig_gp_examples.py 
+           python r134a-cumu-density.py
+           python clf.py
+
+
+
+**Ning, I copied and commented out the LD and VLE iter guide that Bridgette wrote here. Feel free to add anything from here that you think is necessary**
 <!-- A Latin hypercube with 500000 parameter sets exists under
 ``HFC-FFO/analysis/rXX-density-iter1/LHS_500000_x_10.csv``.
 The signac workspace is created by ``hfcs-fffit/runs/rXX-density-iter1/init.py``.
@@ -236,7 +241,83 @@ the simulation results from both iterations 1 and 2. -->
 
 ### VLE Optimization
 
-The optimization for the vapor-liquid equilibrium iterations is very similar.
+To run vapor-liquid-equilbrium iterations, follow the following steps:
+1. Get the parameters
+   - Go to the data folder and use the run.sh file
+        - Note: JJ represents the density iteration you want to run
+        - .. code-block:: bash
+                conda activate hfcs-fffit
+                cd HFC-FFO/rXX/run/rXX-density-iterJJ/
+                module load gcc/11.2.0
+                python id-new-samples.py
+              
+   - Initialize files for simulation use
+        - .. code-block:: bash
+                cd HFC-FFO/rXX/run/rXX-vle-iter1/
+                python init.py
+             
+        - (Ning, what does signac.rc and workspace/ do? What order do they go in?)
+2. Check status a few times throughout the process
+    - **Ning, where to cd to? Does it matter?**
+    - .. code-block:: bash
+
+          python project.py status -d
+          
+3. Create Force Fields
+    - **Ning, where to cd to?**
+    - .. code-block:: bash
+            cd HFC-FFO/rXX/run/rXX-vle-iter1
+            python project.py run -o create_forcefield
+            
+4. Create Systems
+    - .. code-block:: bash
+    
+            cd HFC-FFO/rXX/run/rXX-vle-iter1
+            python project.py run -o calc_vapboxl
+            python project.py run -o calc_liqboxl
+            
+5. Run Simulation
+    - **Ning, where to cd to?**
+    - .. code-block:: bash
+    
+6. Calculate VLE Properties
+    - .. code-block:: bash
+    
+            cd HFC-FFO/rXX/run/rXX-vle-iter1        
+            python project.py submit -o equilibrate_liqbox --bundle=12 --parallel
+            python project.py run -o extract_final_liqbox
+            python project.py submit -o run_gemc --bundle=12 --parallel
+            python project.py run -o calculate_props
+
+    - Extract VLE properties using the following after each vle iteration
+       .. code-block:: bash
+       
+           python extract_rXX_vle.py ZZ
+7. Analyze Data
+    - .. code-block:: bash
+           cd HFC-FFO/rXX/run/rXX-vle-iter1
+           module load gcc/11.1.0
+           python id-new-samples.py
+           python get-new-samples.py 
+           python analysis.py -> figs/ 
+
+
+### Final Analysis
+The pareto optimal parameter sets and final processing steps can be ran using the following:
+1. Summarize data
+    - **Ning, where to cd to?**
+    - KK represents final VLE iteration
+    - .. code-block:: bash
+            cd HFC-FFO/rXX/run/rXX-vle-iterKK
+            python id-pareto.py
+            cd HFC-FFO/rXX/analysis/final-analysis
+            python select_final.py
+            cd HFC-FFO/rXX/analysis/final-figs
+            python plotfig-r143a-parallel.py
+            python  plotfig-r143a-parallel-zoomed.py
+            python plotfig-r143a-radar.py
+
+<!-- The optimization for the vapor-liquid equilibrium iterations is very similar.
 The final (iteration 4) liquid density analysis saves the parameters as
 ``HFC-FFO/rXX/analysis/csv/rXX-vle-iter1-params.csv``. The first VLE iteration
 begins with these parameters. Once again, the simulations are performed under:
@@ -256,11 +337,12 @@ hypercube with 1e6 prospective parameter sets, and identifies the top-performing
 parameter sets which will be evaluated with molecular simulations during the
 subsequent iteration. For example, the parameter sets to be used for the second
 VLE iteration are saved to ``HFC-FFO/rXX/analysis/csv/rXX-vle-iter2-params.csv``.
-Each subsequent VLE iteration is performed in the same manner.
+Each subsequent VLE iteration is performed in the same manner. -->
 
 <!-- Contributing: Explain how people can contribute to the project, such as reporting issues or submitting pull requests. Also provide guidelines for contributions, such as coding conventions, commit message formatting, and branch naming conventions. -->
 
 <!-- Credits: Acknowledge any contributors or sources of inspiration for the project. -->
+
 ## Credits
 This work is funnded by the National Science Foundation, EFRI DChem: Next-generation Low Global Warming Refrigerants, Award no. 2029354 and uses the computing resources provided by the Center for Research Computing (CRC) at the University of Notre Dame. The authors would like to thank Bridgette Befort as her work is used as the basis of this method.
 
