@@ -165,7 +165,6 @@ To run liquid density iterations, follow the following steps:
 9. Run GP Validation
     - **Ning, where to cd to?**
     - .. code-block:: bash
-   
            module load gcc/11.1.0
            python id-new-samples.py
            python plotfig_gp_examples.py 
