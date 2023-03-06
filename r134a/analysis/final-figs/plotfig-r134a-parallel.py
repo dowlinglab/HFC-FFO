@@ -24,8 +24,8 @@ KJMOL_TO_K = 1.0 / K_B
 
 def main():
     # ID the top ten by lowest average MAPE
-    df = pd.read_csv("../csv/r134a-pareto.csv", index_col=0)
-    dff = pd.read_csv("../csv/r134a-final.csv", index_col=0)
+    df = pd.read_csv("../csv/r134a-pareto-iter2.csv", index_col=0)
+    dff = pd.read_csv("../csv/r134a-final-iter2.csv", index_col=0)
 
     seaborn.set_palette('bright', n_colors=len(df))
     data = df[list(R134a.param_names)].values
@@ -41,7 +41,7 @@ def main():
     data = np.hstack((data, results))
     data_f = np.hstack((data_f, results_f))
     bounds = np.vstack((param_bounds, result_bounds))
-
+    
     col_names = [
         r"$\sigma_{C1}$",
         r"$\sigma_{C2}$",
@@ -106,8 +106,8 @@ def main():
     ax.spines['bottom'].set_visible(False)
     ax.spines['right'].set_linewidth(2.0)
 
-    '''# Add GAFF
-    df_gaff=pd.read_csv("../../gaff/results.csv")
+    # Add 10.1021/jp806213w
+    '''df_gaff=pd.read_csv("../../gaff/results.csv")
     mape_gaff=[]
     for i in range(df_gaff["temperature"].shape[0]):
         ape=[]
@@ -126,17 +126,17 @@ def main():
         ape.append(np.abs(df_gaff["Hvap"][i]-R134a.expt_Hvap[int(df_gaff["temperature"][i])]*R134a.molecular_weight/1000)/(R134a.expt_Hvap[int(df_gaff["temperature"][i])]*R134a.molecular_weight/1000)) #convert j/g to kj/mol for experimental values in R134a constants
     mape_gaff.append(np.mean(ape))
 
-    print(mape_gaff)
-    ax.plot(x_vals[-1], mape_gaff[-1]*100/bounds[-1][1], markersize=12, color="gray", marker="s", clip_on=False, zorder=200)
-    ax.plot(x_vals[-2], mape_gaff[-2]*100/bounds[-2][1], markersize=12, color="gray", marker="s", clip_on=False, zorder=200)
-    ax.plot(x_vals[-3], mape_gaff[-3]*100/bounds[-3][1], markersize=12, color="gray", marker="s", clip_on=False, zorder=200)
-    ax.plot(x_vals[-4], mape_gaff[-4]*100/bounds[-4][1], markersize=12, color="gray", marker="s", clip_on=False, zorder=200)'''
+    print(mape_gaff)'''
+    ax.plot(x_vals[-1], 2.2/bounds[-1][1], markersize=12, color="#0989d9", marker="^", alpha=0.5, clip_on=False, zorder=200,label="Peguin et al.")
+    ax.plot(x_vals[-2], 3.1/bounds[-2][1], markersize=12, color="#0989d9", marker="^", alpha=0.5, clip_on=False, zorder=200)
+    ax.plot(x_vals[-3], 4.4/bounds[-3][1], markersize=12, color="#0989d9", marker="^", alpha=0.5, clip_on=False, zorder=200)
+    ax.plot(x_vals[-4], 0.7/bounds[-4][1], markersize=12, color="#0989d9", marker="^", alpha=0.5, clip_on=False, zorder=200)
 
     # Remove space between subplots
     plt.subplots_adjust(wspace=0, bottom=0.3)
     #plt.tight_layout()
     #fig.subplots_adjust(left=0, right=50, bottom=0, top=25)
-    
+    plt.legend(fontsize=16)  
     fig.savefig("pdfs/fig_r134a-parallel.png",dpi=360)
 
 

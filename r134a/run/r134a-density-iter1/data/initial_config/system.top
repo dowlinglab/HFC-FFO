@@ -1,0 +1,101 @@
+;
+;   File system.top  was generated
+;   By user: nwang2 (239877)
+;   On host: maginnfe.crc.nd.edu
+;   At date: Fri. September  5 10:06:58 2022
+;
+;   This is a standalone topology file
+;
+;   Created by:
+;   ParmEd:       create_system.py, VERSION 3.4.3
+;   Executable:   create_system.py
+;   Library dir:  /afs/crc.nd.edu/group/maginn/group_members/Ryan_DeFever/software/gromacs-2020/gromacs-dp/share/gromacs/top
+;   Command line:
+;     create_system.py
+;
+
+[ defaults ]
+; nbfunc        comb-rule       gen-pairs       fudgeLJ fudgeQQ
+1               2               yes             0.5          0.833333    
+
+[ atomtypes ]
+; name    at.num    mass    charge ptype  sigma      epsilon
+F2             9  18.998403  0.00000000  A         0.3118       0.235989
+C2             6  12.010780  0.00000000  A           0.34       0.322119
+C1             6  12.010780  0.00000000  A           0.34       0.322119
+F1             9  18.998403  0.00000000  A         0.3118       0.235989
+H1             1   1.007947  0.00000000  A          0.247       0.058999
+
+
+[ moleculetype ]
+; Name            nrexcl
+RES          3
+
+[ atoms ]
+;   nr       type  resnr residue  atom   cgnr    charge       mass  typeB    chargeB      massB
+; residue    1 RES rtp RES q -0.0
+    1         F2      1    RES      F      1 -0.19355600  18.998403   ; qtot -0.193556
+    2         C2      1    RES      C      2 -0.02070900  12.010780   ; qtot -0.214265
+    3         C1      1    RES      C      3 0.61542000  12.010780   ; qtot 0.401155
+    4         F1      1    RES      F      4 -0.21042700  18.998403   ; qtot 0.190728
+    5         F1      1    RES      F      5 -0.21042700  18.998403   ; qtot -0.019699
+    6         F1      1    RES      F      6 -0.21042700  18.998403   ; qtot -0.230126
+    7         H1      1    RES      H      7 0.11506300   1.007947   ; qtot -0.115063
+    8         H1      1    RES      H      8 0.11506300   1.007947   ; qtot -0.000000
+
+[ bonds ]
+;    ai     aj funct         c0         c1         c2         c3
+      2      8     1   0.10930 281080.350000
+      2      1     1   0.13440 304427.360000
+      2      7     1   0.10930 281080.350000
+      3      2     1   0.15350 253634.310000
+      3      6     1   0.13440 304427.360000
+      4      3     1   0.13440 304427.360000
+      5      3     1   0.13440 304427.360000
+
+[ pairs ]
+;    ai     aj funct         c0         c1         c2         c3
+      1      4     1
+      1      5     1
+      1      6     1
+      4      7     1
+      5      7     1
+      6      7     1
+      4      8     1
+      5      8     1
+      6      8     1
+
+[ angles ]
+;    ai     aj     ak funct         c0         c1         c2         c3
+      1      2      3     1   109.4097287 544.130000
+      1      2      7     1   107.8501376 431.540000
+      1      2      8     1   107.8501376 431.540000
+      2      3      4     1   109.4097287 544.130000
+      2      3      5     1   109.4097287 544.130000
+      2      3      6     1   109.4097287 544.130000
+      3      2      7     1   110.0697761 387.940000
+      3      2      8     1   110.0697761 387.940000
+      4      3      5     1   107.1597235 596.300000
+      4      3      6     1   107.1597235 596.300000
+      5      3      6     1   107.1597235 596.300000
+      7      2      8     1   109.5501034 327.860000
+
+[ dihedrals ]
+;    ai     aj     ak     al funct         c0         c1         c2         c3         c4         c5
+      1      2      3      4     1  180.0000000  5.0207707  1
+      1      2      3      5     1  180.0000000  5.0207707  1
+      1      2      3      6     1  180.0000000  5.0207707  1
+      4      3      2      7     1  0.0000000  0.7949457  1
+      4      3      2      8     1  0.0000000  0.7949457  1
+      5      3      2      7     1  0.0000000  0.7949457  1
+      5      3      2      8     1  0.0000000  0.7949457  1
+      6      3      2      7     1  0.0000000  0.7949457  1
+      6      3      2      8     1  0.0000000  0.7949457  1
+
+[ system ]
+; Name
+Generic title
+
+[ molecules ]
+; Compound       #mols
+RES                150
