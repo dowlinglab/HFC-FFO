@@ -1,0 +1,16 @@
+<ForceField name="R50 GAFF" version="1.0">
+ <AtomTypes>
+  <Type name="C1" class="c3" element="C" mass="12.010" def="C(H)(H)(H)(H)" desc="carbon"/>
+  <Type name="H1" class="hc" element="H" mass="1.008" def="HC(H)(H)H" desc="H bonded to C"/>
+ </AtomTypes>
+ <HarmonicBondForce>
+  <Bond class1="c3" class2="hc" length="0.1092" k="282252.68637877"/>
+ </HarmonicBondForce>
+ <HarmonicAngleForce>
+  <Angle class1="hc" class2="c3" class3="hc" angle="1.89106424" k="329.95108893"/>
+ </HarmonicAngleForce>
+ <NonbondedForce coulomb14scale="0.833333" lj14scale="0.5">
+  <Atom type="C1" charge="-0.512608"  sigma="0.340" epsilon="0.45773"/>
+  <Atom type="H1" charge="0.128152" sigma="0.265" epsilon="0.06569256"/>
+ </NonbondedForce>
+</ForceField>

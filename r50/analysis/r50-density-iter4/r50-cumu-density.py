@@ -104,8 +104,8 @@ def main():
 
     ax.set_ylabel(r"$N_\mathrm{cumu.}$ parameter sets", fontsize=20, labelpad=20)
     ax.set_xlabel("Liquid density MAPE", fontsize=20, labelpad=15)
-    ax.legend(fontsize=16, loc=(-0.06,1.05), ncol=2, columnspacing=1, handletextpad=0.5)
-    ax.text(25,20,r"R-50",fontsize=16)
+    #ax.legend(fontsize=16, loc=(-0.06,1.05), ncol=2, columnspacing=1, handletextpad=0.5)
+    ax.set_title(r"R-50",fontsize=16)
 
     axins.plot(
         dfs_paramsets[0].sort_values(name)[name],
