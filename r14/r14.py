@@ -1,7 +1,7 @@
 import numpy as np
 import unyt as u
 
-class R125Constants:
+class R14Constants:
     """Experimental data and other constants for R14"""
     def __init__(self):
         assert (
@@ -37,15 +37,9 @@ class R125Constants:
 
         param_names = (
             "sigma_C1",
-            "sigma_C2",
             "sigma_F1",
-            "sigma_F2",
-            "sigma_H1",
             "epsilon_C1",
-            "epsilon_C2",
             "epsilon_F1",
-            "epsilon_F2",
-            "epsilon_H1",
         )
 
         return param_names
@@ -58,11 +52,8 @@ class R125Constants:
             (
                 np.asarray(
                     [
-                        [3.0, 4.0],  # C
-                        [3.0, 4.0],  # C
+                        [2.0, 4.0],  # C
                         [2.5, 3.5],  # F
-                        [2.5, 3.5],  # F
-                        [1.7, 2.7],  # H
                     ]
                 )
                 * u.Angstrom
@@ -75,11 +66,8 @@ class R125Constants:
             (
                 np.asarray(
                     [
-                        [20.0, 60.0],  # C
-                        [20.0, 60.0],  # C
-                        [15.0, 40.0],  # F
-                        [15.0, 40.0],  # F
-                        [2.0, 10.0],  # H
+                        [10.0, 75.0],  # C
+                        [15.0, 50.0],  # F
                     ]
                 )
                 * u.K

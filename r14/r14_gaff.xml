@@ -1,0 +1,16 @@
+<ForceField name="R14 GAFF" version="1.0">
+ <AtomTypes>
+  <Type name="C1" class="c3" element="C" mass="12.010" def="C(F)(F)(F)(F)" desc="carbon"/>
+  <Type name="F1" class="f" element="F" mass="19.000" def="FC(F)(F)F" desc="F bonded to C"/>
+ </AtomTypes>
+ <HarmonicBondForce>
+  <Bond class1="c3" class2="f" length="0.1344" k="304427.36"/>
+ </HarmonicBondForce>
+ <HarmonicAngleForce>
+  <Angle class1="f" class2="c3" class3="f" angle="1.87029" k="596.30"/>
+ </HarmonicAngleForce>
+ <NonbondedForce coulomb14scale="0.833333" lj14scale="0.5">
+  <Atom type="C1" charge="0.781024"  sigma="0.340" epsilon="0.45773"/>
+  <Atom type="F1" charge="-0.195256" sigma="0.3118" epsilon="0.255221"/>
+ </NonbondedForce>
+</ForceField>
