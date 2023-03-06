@@ -118,12 +118,12 @@ def main():
 
     text = axes[5].set_ylabel(r"$N_\mathrm{cumu.}$ parameter sets", fontsize=20, labelpad=14)
     text.set_y(3)
-    axes[0].text(15,18,r"R-14",fontsize=16)
+    axes[0].set_title(r"R-14",fontsize=16)
     axes[5].set_xlabel("Property MAPE", fontsize=20, labelpad=10)
     axes[5].tick_params(labelbottom=True)
     plt.subplots_adjust(hspace=.0)
     plt.subplots_adjust(left = 0.18, right=0.92, top=0.84, bottom=0.15)
-    axes[0].legend(fontsize=16, loc=(0.1,1.07), ncol=2, columnspacing=1, handletextpad=0.5)
+    #axes[0].legend(fontsize=16, loc=(0.1,1.07), ncol=2, columnspacing=1, handletextpad=0.5)
     fig.set_size_inches(5, 6)
     fig.savefig("pdfs/fig2_r14-cumu-vle.png",dpi=300)
 

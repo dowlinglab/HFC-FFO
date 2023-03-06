@@ -113,9 +113,9 @@ def main():
 
     ax.set_ylabel(r"$N_\mathrm{cumu.}$ parameter sets", fontsize=20, labelpad=20)
     ax.set_xlabel("Liquid density MAPE", fontsize=20, labelpad=15)
-    ax.legend(fontsize=16, loc=(-0.06,1.05), ncol=2, columnspacing=1, handletextpad=0.5)
+    ax.legend(fontsize=16, loc=(1.2,0.05), ncol=2, columnspacing=1, handletextpad=0.5)
     #props = dict(boxstyle='square', facecolor='none', alpha=0.3)  
-    ax.text(25,20,r"R-14",fontsize=16)#,bbox=props)    
+    ax.set_title(r"R-14",fontsize=16)#,bbox=props)    
 
     axins.plot(
         dfs_paramsets[0].sort_values(name)[name],
@@ -175,7 +175,7 @@ def main():
     axins.yaxis.set_ticks_position("both")
 
     fig.tight_layout()
-    fig.savefig("fig2_r14-density-cumu.png",dpi=300)
+    fig.savefig("fig2_r14-density-cumu.png",dpi=300,bbox_inches = 'tight')
 
 if __name__ == "__main__":
     main()
