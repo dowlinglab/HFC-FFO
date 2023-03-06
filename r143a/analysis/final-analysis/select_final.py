@@ -4,7 +4,7 @@ import pandas as pd
 def main():
 
     #r32 = pd.read_csv("../csv/r32-pareto.csv",index_col=0)
-    r143a = pd.read_csv("../csv/r143a-pareto.csv",index_col=0)
+    r143a = pd.read_csv("../csv/r143a-pareto-iter2.csv",index_col=0)
 
     '''r32_final = r32.drop(
         columns = [
@@ -53,7 +53,7 @@ def main():
    
     # Save CSV files
     #r32_final.to_csv("../csv/r32-final-4.csv")
-    r143a_final.to_csv("../csv/r143a-final.csv")
+    r143a_final.to_csv("../csv/r143a-final-iter2.csv")
 
 
 if __name__ == "__main__":

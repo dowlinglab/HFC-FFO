@@ -191,6 +191,8 @@ for params1 in scaled_param_values:
             param_idxs.append(idx)
             param_vals.append(params2)
             break
+print(df_mse)
+print(param_idxs)
 df_mse["param_idx"] = param_idxs
 df_mse[list(R143a.param_names)] = param_vals
 
@@ -292,4 +294,4 @@ g.savefig("R143a-greedy-MSE.lt.100.pdf")
 
 final_param_set_mse100.drop(columns=["mse"], inplace=True)
 final_param_set_mse100.drop(columns=["param_idx"], inplace=True)
-final_param_set_mse100.to_csv(csv_path + "r143a-vle-iter1-params.csv")
+#final_param_set_mse100.to_csv(csv_path + "r143a-vle-iter1-params.csv")

@@ -29,16 +29,17 @@ def main():
     dff = pd.read_csv("../csv/r143a-final-4.csv", index_col=0)
 
     seaborn.set_palette('bright', n_colors=len(df))
-    top10 = df.loc[df.filter(regex="mape*").mean(axis=1).sort_values()[:10].index]
-    print(top10)
-    data = top10[list(R143a.param_names)].values
-    #data = df[list(R143a.param_names)].values
+    #No need to plot top ten (this should be a multi-objective optimization)
+    #top10 = df.loc[df.filter(regex="mape*").mean(axis=1).sort_values()[:10].index] #only sorted by one column
+    #print(top10)
+    #data = top10[list(R143a.param_names)].values
+    data = df[list(R143a.param_names)].values
     result_bounds = np.array([[0, 10], [0, 20], [0, 20], [0, 10]])
     results = values_real_to_scaled(top10[["mape_liq_density", "mape_vap_density", "mape_Pvap", "mape_Hvap"]].values, result_bounds)
     data_f = dff[list(R143a.param_names)].values
     results_f = values_real_to_scaled(dff[["mape_liq_density", "mape_vap_density", "mape_Pvap", "mape_Hvap"]].values, result_bounds)
     param_bounds = R143a.param_bounds
-    param_bounds[:4] = param_bounds[:4] * NM_TO_ANGSTROM
+    param_bounds[:4] = param_bounds[:4] * NM_TO_ANGSTROM # need to change 4 to (the number of sigma or epsilon)
     param_bounds[4:] = param_bounds[4:] * KJMOL_TO_K
 
     data = np.hstack((data, results))

@@ -8,12 +8,12 @@ import seaborn
 
 sys.path.append("../")
 
-from utils.r32 import R32Constants
+from utils.r143a import R143aConstants
 from utils.id_new_samples import prepare_df_vle
 from utils.analyze_samples import prepare_df_vle_errors
 from utils.analyze_samples import prepare_df_density_errors
 
-R32 = R32Constants()
+R143a = R143aConstants()
 
 matplotlib.rc("font", family="sans-serif")
 matplotlib.rc("font", serif="Arial")
@@ -21,14 +21,14 @@ matplotlib.rc("font", serif="Arial")
 ############################# QUANTITIES TO EDIT #############################
 ##############################################################################
 
-iternum = 3
+iternum = 4
 
 ##############################################################################
 ##############################################################################
 
 csv_path = "../csv/"
 in_csv_names = [
-    "r32-vle-iter" + str(i) + "-results.csv" for i in range(1, iternum + 1)
+    "r143a-vle-iter" + str(i) + "-results.csv" for i in range(1, iternum + 1)
 ]
 
 # Read files
@@ -36,13 +36,13 @@ df_csvs = [
     pd.read_csv(csv_path + in_csv_name, index_col=0)
     for in_csv_name in in_csv_names
 ]
-dfs = [prepare_df_vle(df_csv, R32) for df_csv in df_csvs]
+dfs = [prepare_df_vle(df_csv, R143a) for df_csv in df_csvs]
 
 
 def main():
 
     # Create a dataframe with one row per parameter set
-    dfs_paramsets = [prepare_df_vle_errors(df, R32) for df in dfs]
+    dfs_paramsets = [prepare_df_vle_errors(df, R143a) for df in dfs]
 
     names = {
         "mape_liq_density": "Liquid density",
@@ -62,7 +62,7 @@ def main():
             np.arange(1, 26,1),
             '-o',
             markersize=6,
-            alpha=0.8,
+            alpha=0.4,
             label="VLE-1",
         )
         axes[piter].plot(
@@ -70,7 +70,7 @@ def main():
             np.arange(1, 26, 1),
             '-o',
             markersize=6,
-            alpha=0.8,
+            alpha=0.4,
             label="VLE-2",
         )
         axes[piter].plot(
@@ -78,22 +78,38 @@ def main():
             np.arange(1, 26, 1),
             '-o',
             markersize=6,
-            alpha=0.8,
+            alpha=0.4,
             label="VLE-3",
         )
+        axes[piter].plot(
+            dfs_paramsets[3].sort_values(name)[name],
+            np.arange(1, 26, 1),
+            '-o',
+            markersize=6,
+            alpha=0.4,
+            label="VLE-4",
+        )
+        '''axes[piter].plot(
+            dfs_paramsets[4].sort_values(name)[name],
+            np.arange(1, 26, 1),
+            '-o',
+            markersize=6,
+            alpha=0.4,
+            label="VLE-5",
+        )'''
         axes[piter].text(
-            9.7, 2.5,
+            19.6, 2.5,
             label,
             verticalalignment="bottom",
             horizontalalignment="right",
             fontsize=16,
         )
         axes[piter].set_ylim(0,28)
-        axes[piter].set_xlim(0,10)
+        axes[piter].set_xlim(0,20)
         axes[piter].set_yticks([0,10,20])
         axes[piter].set_yticks([5,15], minor=True)
-        axes[piter].xaxis.set_major_locator(MultipleLocator(2))
-        axes[piter].xaxis.set_minor_locator(AutoMinorLocator(2))
+        axes[piter].xaxis.set_major_locator(MultipleLocator(5))
+        axes[piter].xaxis.set_minor_locator(AutoMinorLocator(5))
         axes[piter].tick_params("both", direction="in", which="both", labelbottom=False, length=2, labelsize=16)
         axes[piter].tick_params("both", which="major", length=4)
         axes[piter].xaxis.set_ticks_position("both")
@@ -102,14 +118,14 @@ def main():
 
     text = axes[5].set_ylabel(r"$N_\mathrm{cumu.}$ parameter sets", fontsize=20, labelpad=14)
     text.set_y(3)
+    axes[0].set_title(r"HFC-143a",fontsize=16)
+    plt.legend(fontsize=16, loc=(0.1,7), ncol=2, columnspacing=1, handletextpad=0.5)
     axes[5].set_xlabel("Property MAPE", fontsize=20, labelpad=10)
     axes[5].tick_params(labelbottom=True)
     plt.subplots_adjust(hspace=.0)
     plt.subplots_adjust(left = 0.18, right=0.92, top=0.84, bottom=0.15)
-    axes[0].legend(fontsize=16, loc=(-0.07,1.07), ncol=3, columnspacing=1, handletextpad=0.5)
-    #print(fig.get_size_inches())
     fig.set_size_inches(5, 6)
-    fig.savefig("pdfs/fig2_r32-cumu-vle.pdf")
+    fig.savefig("pdfs/r143a-cumu-vle.png",dpi=300,bbox_inches='tight')
 
 if __name__ == "__main__":
     main()

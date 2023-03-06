@@ -14,7 +14,6 @@ from utils.r143a import R143aConstants
 from matplotlib import ticker
 
 R143a = R143aConstants()
-
 matplotlib.rc("font", family="sans-serif")
 matplotlib.rc("font", serif="Arial")
 
@@ -26,15 +25,16 @@ KJMOL_TO_K = 1.0 / K_B
 def main():
     # ID the top ten by lowest average MAPE
     df = pd.read_csv("../csv/r143a-pareto.csv", index_col=0)
-    dff = pd.read_csv("../csv/r143a-final-4.csv", index_col=0)
+    dff = pd.read_csv("../csv/r143a-final.csv", index_col=0)
 
     seaborn.set_palette('bright', n_colors=len(df))
     data = df[list(R143a.param_names)].values
-    result_bounds = np.array([[0, 25], [0, 50], [0, 50], [0, 25]])
+    result_bounds = np.array([[0, 25], [0, 50], [0, 50], [0, 35]])
     results = values_real_to_scaled(df[["mape_liq_density", "mape_vap_density", "mape_Pvap", "mape_Hvap"]].values, result_bounds)
     data_f = dff[list(R143a.param_names)].values
     results_f = values_real_to_scaled(dff[["mape_liq_density", "mape_vap_density", "mape_Pvap", "mape_Hvap"]].values, result_bounds)
     param_bounds = R143a.param_bounds
+    print(param_bounds)
     param_bounds[:4] = param_bounds[:4] * NM_TO_ANGSTROM
     param_bounds[4:] = param_bounds[4:] * KJMOL_TO_K
 
@@ -47,10 +47,10 @@ def main():
         r"$\sigma_{C2}$",
         r"$\sigma_{F1}$",
         r"$\sigma_{H1}$",
-        r"$\epsilon_{C1}$",
-        r"$\epsilon_{C2}$",
-        r"$\epsilon_{F1}$",
-        r"$\epsilon_{H1}$",
+        r"$\epsilon_{C1}/k_B$",
+        r"$\epsilon_{C2}/k_B$",
+        r"$\epsilon_{F1}/k_B$",
+        r"$\epsilon_{H1}/k_B$",
         "MAPE\n" + r"$\rho^l_{\mathrm{sat}}$",
         "MAPE\n" + r"$\rho^v_{\mathrm{sat}}$",
         "MAPE\n" + r"$P_{\mathrm{vap}}$",
@@ -105,16 +105,37 @@ def main():
     ax.spines['right'].set_linewidth(2.0)
 
     # Add GAFF
-    #ax.plot(x_vals[-1], 22.37/bounds[-1][1], markersize=12, color="gray", marker="s", clip_on=False, zorder=200)
-    #ax.plot(x_vals[-2], 46.05/bounds[-2][1], markersize=12, color="gray", marker="s", clip_on=False, zorder=200)
-    #ax.plot(x_vals[-3], 50.52/bounds[-3][1], markersize=12, color="gray", marker="s", clip_on=False, zorder=200)
-    #ax.plot(x_vals[-4], 2.92/bounds[-4][1], markersize=12, color="gray", marker="s", clip_on=False, zorder=200)
+    df_gaff=pd.read_csv("../../gaff/results.csv")
+    mape_gaff=[]
+    for i in range(df_gaff["temperature"].shape[0]):
+        ape=[]
+        ape.append(np.abs(df_gaff["liq_density"][i]-R143a.expt_liq_density[int(df_gaff["temperature"][i])])/R143a.expt_liq_density[int(df_gaff["temperature"][i])])
+    mape_gaff.append(np.mean(ape))
+    for i in range(df_gaff["temperature"].shape[0]):
+        ape=[]
+        ape.append(np.abs(df_gaff["vap_density"][i]-R143a.expt_vap_density[int(df_gaff["temperature"][i])])/R143a.expt_vap_density[int(df_gaff["temperature"][i])])
+    mape_gaff.append(np.mean(ape))
+    for i in range(df_gaff["temperature"].shape[0]):
+        ape=[]
+        ape.append(np.abs(df_gaff["Pvap"][i]-R143a.expt_Pvap[int(df_gaff["temperature"][i])])/R143a.expt_Pvap[int(df_gaff["temperature"][i])])
+    mape_gaff.append(np.mean(ape))
+    for i in range(df_gaff["temperature"].shape[0]):
+        ape=[]
+        ape.append(np.abs(df_gaff["Hvap"][i]-R143a.expt_Hvap[int(df_gaff["temperature"][i])]*R143a.molecular_weight/1000)/(R143a.expt_Hvap[int(df_gaff["temperature"][i])]*R143a.molecular_weight/1000)) #convert j/g to kj/mol for experimental values in R143a constants
+    mape_gaff.append(np.mean(ape))
 
+    print(mape_gaff)
+    ax.plot(x_vals[-1], mape_gaff[-1]*100/bounds[-1][1], markersize=12, color="gray", marker="s", alpha=0.5, clip_on=False, zorder=200,label="GAFF")
+    ax.plot(x_vals[-2], mape_gaff[-2]*100/bounds[-2][1], markersize=12, color="gray", marker="s", alpha=0.5, clip_on=False, zorder=200)
+    ax.plot(x_vals[-3], mape_gaff[-3]*100/bounds[-3][1], markersize=12, color="gray", marker="s", alpha=0.5, clip_on=False, zorder=200)
+    ax.plot(x_vals[-4], mape_gaff[-4]*100/bounds[-4][1], markersize=12, color="gray", marker="s", alpha=0.5, clip_on=False, zorder=200)
 
     # Remove space between subplots
-    plt.subplots_adjust(wspace=0, bottom=0.2)
-    
-    fig.savefig("pdfs/fig_r143a-parallel.pdf")
+    plt.subplots_adjust(wspace=0, bottom=0.3)
+    #plt.tight_layout()
+    #fig.subplots_adjust(left=0, right=50, bottom=0, top=25)
+    plt.legend(fontsize=16)
+    fig.savefig("pdfs/fig_r143a-parallel.png",dpi=360)
 
 
 def set_ticks_for_axis(ax, param_bounds, nticks):

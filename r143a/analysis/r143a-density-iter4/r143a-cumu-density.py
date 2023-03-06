@@ -50,7 +50,7 @@ def main():
     name = "mape_liq_density"
     fig, ax = plt.subplots()
     axins = inset_axes(ax, width="100%", height="100%",
-            bbox_to_anchor=(0.65, 0.10, 0.25, 0.45),
+            bbox_to_anchor=(0.65, 0.10, 0.25, 0.4),
             bbox_transform=ax.transAxes, loc=3)
     ax.set_box_aspect(1.2)
     ax.plot(
@@ -104,7 +104,8 @@ def main():
 
     ax.set_ylabel(r"$N_\mathrm{cumu.}$ parameter sets", fontsize=20, labelpad=20)
     ax.set_xlabel("Liquid density MAPE", fontsize=20, labelpad=15)
-    ax.legend(fontsize=16, loc=(-0.06,1.05), ncol=2, columnspacing=1, handletextpad=0.5)
+    #ax.legend(fontsize=16, loc=(-0.06,1.05), ncol=2, columnspacing=1, handletextpad=0.5)
+    ax.set_title(r"HFC-143a",fontsize=16)
 
     axins.plot(
         dfs_paramsets[0].sort_values(name)[name],
@@ -144,7 +145,7 @@ def main():
     )
 
     axins.set_xlim(0,2.5)
-    axins.set_ylim(0,200)
+    axins.set_ylim(0,105)
     axins.tick_params("both", direction="in", which="both", length=3, labelsize=12)
     axins.tick_params("both", which="major", length=6)
     axins.xaxis.set_major_locator(MultipleLocator(1))
@@ -155,7 +156,7 @@ def main():
     axins.yaxis.set_ticks_position("both")
 
     fig.tight_layout()
-    fig.savefig("fig2_r143a-density-cumu.pdf")
+    fig.savefig("fig2_r143a-density-cumu.png",dpi=300)
 
 if __name__ == "__main__":
     main()
