@@ -157,6 +157,9 @@ def prepare_df_vle(df_csv, molecule):
     scaled_temperature = values_real_to_scaled(
         df_all["temperature"], molecule.temperature_bounds
     )
+    scaled_temperature_pvap = values_real_to_scaled(
+        np.exp(1./df_all["temperature"]), np.exp(1./molecule.temperature_bounds)[::-1]
+    )
     scaled_sim_liq_density = values_real_to_scaled(
         df_all["sim_liq_density"], molecule.liq_density_bounds
     )
@@ -183,6 +186,7 @@ def prepare_df_vle(df_csv, molecule):
     )
     df_all[list(molecule.param_names)] = scaled_param_values
     df_all["temperature"] = scaled_temperature
+    df_all["temperature_pvap"] = scaled_temperature_pvap
     df_all["sim_liq_density"] = scaled_sim_liq_density
     df_all["sim_vap_density"] = scaled_sim_vap_density
     df_all["sim_Pvap"] = scaled_sim_Pvap

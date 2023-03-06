@@ -25,6 +25,16 @@ class R170Constants:
     def expt_rhoc(self):
         """Critical density in kg/m^3"""
         return 206.18
+    
+    @property
+    def trappe_Tc(self):
+        """Critical temperature in K"""
+        return 302.8
+
+    @property
+    def trappe_rhoc(self):
+        """Critical density in kg/m^3"""
+        return 218
 
     @property
     def n_params(self):
@@ -100,6 +110,22 @@ class R170Constants:
         return expt_liq_density
 
     @property
+    def trappe_liq_density(self):
+        """
+        http://trappe.oit.umn.edu
+        """
+        trappe_liq_density = {
+            212: 505.73,
+            236: 469.4,
+            256: 434.42,
+            275: 394.05,
+            280: 381.4,
+            290: 352.4,
+        }
+
+        return trappe_liq_density
+
+    @property
     def expt_vap_density(self):
         """Dictionary with experimental vapor density
 
@@ -118,6 +144,22 @@ class R170Constants:
         return expt_vap_density
 
     @property
+    def trappe_vap_density(self):
+        """
+        http://trappe.oit.umn.edu
+        """
+        trappe_vap_density = {
+            212: 9.42,
+            236: 20.19,
+            256: 35.4,
+            275: 59.9,
+            280: 68.3,
+            290: 93,
+        }
+
+        return trappe_vap_density
+
+    @property
     def expt_Pvap(self):
         """Dictionary with experimental vapor pressure
 
@@ -134,6 +176,22 @@ class R170Constants:
         }
 
         return expt_Pvap
+
+    @property
+    def trappe_Pvap(self):
+        """
+        http://trappe.oit.umn.edu
+        """
+        trappe_Pvap = {
+            212:(500 * u.kPa).to_value(u.bar),
+            236:(1102 * u.kPa).to_value(u.bar),
+            256:(1901 * u.kPa).to_value(u.bar),
+            275:(2995 * u.kPa).to_value(u.bar),
+            280:(3320 * u.kPa).to_value(u.bar),
+            290:(4080 * u.kPa).to_value(u.bar),
+        }
+
+        return trappe_Pvap
 
     @property
     def expt_Hvap(self):
