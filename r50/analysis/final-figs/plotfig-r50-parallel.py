@@ -120,7 +120,7 @@ def main():
         ape.append(np.abs(df_gaff["Hvap"][i]-R50.expt_Hvap[int(df_gaff["temperature"][i])]*R50.molecular_weight/1000)/(R50.expt_Hvap[int(df_gaff["temperature"][i])]*R50.molecular_weight/1000)) #convert j/g to kj/mol for experimental values in R50 constants
     mape_gaff.append(np.mean(ape))
 
-    print(mape_gaff)
+    print("GAFF MAPEs: ", mape_gaff)
     ax.plot(x_vals[-1], mape_gaff[-1]*100/bounds[-1][1], markersize=12, color="gray", marker="s", alpha=0.5, clip_on=False, zorder=200,label="GAFF")
     ax.plot(x_vals[-2], mape_gaff[-2]*100/bounds[-2][1], markersize=12, color="gray", marker="s", alpha=0.5, clip_on=False, zorder=200)
     ax.plot(x_vals[-3], mape_gaff[-3]*100/bounds[-3][1], markersize=12, color="gray", marker="s", alpha=0.5, clip_on=False, zorder=200)
