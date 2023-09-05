@@ -6,9 +6,9 @@ Authors: Ning Wang, Montana Carlozo, Eliseo Marin-Rimoldi, Bridgette Belfort, Al
 
 ## Citation
 This work has been submitted for review. In the meantime, you
-may cite the `preprint <LINK HERE>` as:
+may cite the `https://doi.org/10.1021/acs.jctc.3c00338` as:
 
-    FILL IN LATER
+Ning Wang, Montana N. Carlozo, Eliseo Marin-Rimoldi, Bridgette J. Befort, Alexander W. Dowling, and Edward J. Maginn*, “Machine Learning-Enabled Development of Accurate Force Fields for Re- frigerants”, J. Chem. Theory Comput., 2023, 19, 14, 4546–4558
    
 ## Available Data
 
