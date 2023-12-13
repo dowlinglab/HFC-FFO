@@ -2,11 +2,10 @@
 Authors: Ning Wang, Montana Carlozo, Eliseo Marin-Rimoldi, Bridgette Belfort, Alexander W. Dowling, and Edward J. Maginn
 <!-- Introduction: Provide a brief introduction to the project, including its purpose, goals, and any key features or benefits. -->
 ## Introduction
-**HFC-FFO** is a repository used to rapidly calibrate the LJ parameters of HFC forcefields given experimental data. The key feature of this work is using machine learning tools in the form of Gaussian processes (GPs) which allow us to cheaply estimate the resuls of a molecular simulation given temperature state points and thermophysical property data.
+**HFC-FFO** is a repository used to rapidly calibrate the LJ parameters of HFC forcefields given experimental data. The key feature of this work is using machine learning tools in the form of Gaussian processes (GPs) which allow us to cheaply estimate the results of a molecular simulation given temperature state points and thermophysical property data.
 
 ## Citation
-This work has been submitted for review. In the meantime, you
-may cite the `https://doi.org/10.1021/acs.jctc.3c00338` as:
+This work has been published on JCTC, whose link is `https://doi.org/10.1021/acs.jctc.3c00338`. Please cite as:
 
 Ning Wang, Montana N. Carlozo, Eliseo Marin-Rimoldi, Bridgette J. Befort, Alexander W. Dowling, and Edward J. Maginn*, “Machine Learning-Enabled Development of Accurate Force Fields for Refrigerants”, J. Chem. Theory Comput., 2023, 19, 14, 4546–4558
    
@@ -16,8 +15,8 @@ Ning Wang, Montana N. Carlozo, Eliseo Marin-Rimoldi, Bridgette J. Befort, Alexan
 The non-dominated and best parameter sets for each HFC are
 provided under ``HFC-FFO/rXX/analysis/csv/``. Where XX represents a different HFC. For example r-143a, r-14, r-170. The non-dominated
 sets are found in ``rXX-pareto.csv``, and
-the best sets are found in ``rXX-final.csv``. The parameter values in the csv files are
-normalized between 0 and 1 based upon the parameter bounds for each
+the best sets are found in ``rXX-final.csv``. The parameter values in the CSV files are
+normalized between 0 and 1 based on the parameter bounds for each
 atom type (see manuscript, or ``HFC-FFO/rXX/analysis/utils/rXX.py`` for definitions of
 the upper and lower parameter bounds for each refrigerant).
 
@@ -35,7 +34,7 @@ is the molecule, ``YY`` is the stage (liquid density or VLE), and
 ### Surrogate Modeling Analysis
 All of the scripts for the surrogate modeling are provided in
 ``HFC-FFO/r##/analysis``, following the same naming structure as
-the csv files.
+the CSV files.
 
 ### Figures
 All scripts required to generate the primary figures in the
@@ -59,12 +58,11 @@ An example of the procedure is provided below:
 
     # First clone hfcs-fffit and install pip/conda available dependencies
     # with a new conda environment named hfcs-fffit
-    git clone git@github.com:dowlinglab/hfcs-fffit.git
-    cd hfcs-fffit/
-    conda create --name hfcs-fffit python=3.7 -c conda-forge
+    git clone https://github.com/emarinri/hfcs-fffit.git
+    git switch -c update-dependencies origin/update-dependencies
+    cd hfcs-fffit
+    conda env create -f ./devtools/conda-envs/hfcs-fffit.yaml
     conda activate hfcs-fffit
-    python3 -m pip install -r requirements-pip.txt
-    conda install --file requirements-conda.txt -c conda-forge
     cd ../
 
     # Now clone and install  other dependencies
@@ -86,11 +84,11 @@ An example of the procedure is provided below:
 
 ### Liquid Density Optimization
 
-**NOTE**: We use signac and signac flow (`<https://signac.io/>`)
+**NOTE**: We use Signac and signac flow (`<https://signac.io/>`)
 to manage the setup and execution of the molecular simulations. These
 instructions assume a working knowledge of that software.
 
-The first iteration of the liquid density simulations were
+The first iteration of the liquid density simulations was
 performed under ``HFC-FFO/r##/runs/rXX-density-iter1/``.
 
 To run liquid density iterations, follow the following steps:
@@ -102,7 +100,7 @@ To run liquid density iterations, follow the following steps:
      cd HFC-FFO/rXX/run/rXX-density-iter1/data
      source run.sh
    ```
-2. Initialize signac workflow              
+2. Initialize Signac workflow              
    - Leave ''HFC-FFO/rXX/run/rXX-density-iter1/data'' untouched
    - Initialize files for simulation use
     ```   
@@ -134,11 +132,11 @@ To run liquid density iterations, follow the following steps:
 8. Calculate density
    ```
      python project.py submit -o calculate_density --bundle=24 --parallel
-9. Extract density using the following after each LD iteration in analysis/ folder
+9. Extract density using the following after each LD iteration in the analysis/ folder
    ```
      python extract_rXX_density.py ZZ
    ```
-10. Run GP optimization and get samples for the next iteration in analysis/ folder
+10. Run GP optimization and get samples for the next iteration in the analysis/ folder
    ```
      module load gcc/11.2.0
      python id-new-samples.py
@@ -147,7 +145,7 @@ To run liquid density iterations, follow the following steps:
 
 ### VLE Optimization
 
-To run vapor-liquid-equilbrium iterations, follow the following steps:
+To run vapor-liquid-equilibrium iterations, follow the following steps:
 1. Use analysis/csv/rXX-vle-iter1-params.csv to initialize files for simulation use
    ```
      cd HFC-FFO/rXX/run/rXX-vle-iter1/
@@ -176,7 +174,7 @@ To run vapor-liquid-equilbrium iterations, follow the following steps:
    ```
      python project.py run -o calculate_props
    ```
-7. Extract VLE properties using the following after each vle iteration in analysis/ folder
+7. Extract VLE properties using the following after each VLE iteration in the analysis/ folder
    ```
      python extract_rXX_vle.py ZZ
    ```
@@ -189,17 +187,27 @@ To run vapor-liquid-equilbrium iterations, follow the following steps:
    ```
 
 ### Final Analysis
-The nondominated parameter sets and final processing steps can be ran using the following:
+The nondominated parameter sets and final processing steps can be run using the following:
 1. Summarize data
    ```
      cd HFC-FFO/rXX/run/rXX-vle-iterKK
      python id-pareto.py
      cd HFC-FFO/rXX/analysis/final-analysis
      python select_final.py
-2. Plots in paper were generated by codes in HFC-FFO/rXX/analysis/final-figs/
+2. Plots in the paper were generated by codes in HFC-FFO/rXX/analysis/final-figs/
+
+### Known Issues
+The instructions outlined above seem to be system-dependent. In some cases, users have the following error:
+```
+ImportError: /lib64/libstdc++.so.6: version `GLIBCXX_3.4.29' not found
+```
+If you observe this, please try the following in the terminal
+```
+export LD_LIBRARY_PATH=$CONDA_PREFIX/lib:$LD_LIBRARY_PATH
+```
 
 ## Credits
-This work is funded by the National Science Foundation, EFRI DChem: Next-generation Low Global Warming Refrigerants, Award no. 2029354 and uses the computing resources provided by the Center for Research Computing (CRC) at the University of Notre Dame. The authors would like to thank Bridgette Befort as her work is used as the basis of this method.
+This work is funded by the National Science Foundation, EFRI DChem: Next-generation Low Global Warming Refrigerants, Award no. 2029354, and uses the computing resources provided by the Center for Research Computing (CRC) at the University of Notre Dame. The authors would like to thank Bridgette Befort as her work is used as the basis of this method.
 
 ## Contact
 Please contact Ning Wang (nwang2@nd.edu), Eliseo Marin Rimoldi (emarinri@nd.edu), or Montana Carlozo (mcarlozo@nd.edu) with any questions, suggestions, or issues.
