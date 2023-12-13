@@ -10,7 +10,7 @@ from utils.r50 import R50Constants
 def init_project():
 
     # Initialize project
-    project = signac.init_project("r50-vle-iter1")
+    project = signac.init_project()
      # Define temps
     temps = [
         130.0 * u.K,

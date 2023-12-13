@@ -10,7 +10,7 @@ from utils.r170 import R170Constants
 def init_project():
 
     # Initialize project
-    project = signac.init_project("r170-vle-iter1")
+    project = signac.init_project()
     
     # Define temps
     temps = [

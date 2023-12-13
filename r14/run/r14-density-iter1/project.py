@@ -10,8 +10,8 @@ class Project(FlowProject):
     pass
 
 
-@Project.operation
 @Project.post.isfile("ff.xml")
+@Project.operation
 def create_forcefield(job):
     """Create the forcefield .xml file for the job"""
 
@@ -21,10 +21,10 @@ def create_forcefield(job):
         ff.write(content)
 
 
-@Project.operation
 @Project.pre.after(create_forcefield)
 @Project.post.isfile("system.gro")
 @Project.post.isfile("unedited.top")
+@Project.operation
 def create_system(job):
     """Construct the system in mbuild and apply the forcefield"""
 
@@ -46,9 +46,9 @@ def create_system(job):
     shutil.copy("data/initial_config/system_em.gro", job.fn("system.gro"))
 
 
-@Project.operation
 @Project.pre.after(create_system)
 @Project.post.isfile("system.top")
+@Project.operation
 def fix_topology(job):
     """Fix the LJ14 section of the topology file
 
@@ -73,10 +73,10 @@ def fix_topology(job):
             fout.write(line)
 
 
-@Project.operation
 @Project.post.isfile("em.mdp")
 @Project.post.isfile("eq.mdp")
 @Project.post.isfile("prod.mdp")
+@Project.operation
 def generate_inputs(job):
     """Generate mdp files for energy minimization, equilibration, production"""
 
@@ -120,15 +120,13 @@ def prod_complete(job):
         return False
 
 
-@Project.operation
 @Project.pre.after(create_system)
 @Project.pre.after(fix_topology)
 @Project.pre.after(generate_inputs)
 @Project.post(em_complete)
 @Project.post(eq_complete)
 @Project.post(prod_complete)
-@flow.with_job
-@flow.cmd
+@Project.operation
 def simulate(job):
     """Run the minimization, equilibration, and production simulations"""
 
@@ -144,10 +142,10 @@ def simulate(job):
     return command
 
 
-@Project.operation
 @Project.pre.after(simulate)
 @Project.post(lambda job: "density" in job.doc)
 @Project.post(lambda job: "density_unc" in job.doc)
+@Project.operation
 def calculate_density(job):
     """Calculate the density"""
 

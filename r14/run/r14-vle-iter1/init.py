@@ -10,7 +10,7 @@ from utils.r14 import R14Constants
 def init_project():
 
     # Initialize project
-    project = signac.init_project("r14-vle-iter1")
+    project = signac.init_project()
 
     # Define temps
     temps = [

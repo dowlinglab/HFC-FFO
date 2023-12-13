@@ -10,7 +10,7 @@ from utils.r134a import R134aConstants
 def init_project():
 
     # Initialize project
-    project = signac.init_project("r134a-vle-iter1")
+    project = signac.init_project()
 
     # Define temps
     temps = [

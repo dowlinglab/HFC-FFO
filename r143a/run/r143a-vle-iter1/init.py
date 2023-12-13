@@ -10,7 +10,7 @@ from utils.r143a import R143aConstants
 def init_project():
 
     # Initialize project
-    project = signac.init_project("r143a-vle-iter1")
+    project = signac.init_project()
 
     # Define temps
     temps = [
