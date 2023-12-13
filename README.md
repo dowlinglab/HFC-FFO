@@ -205,7 +205,7 @@ If you observe this, please try the following in the terminal
 ```
 export LD_LIBRARY_PATH=$CONDA_PREFIX/lib:$LD_LIBRARY_PATH
 ```
-which should fix the problem. This is not an optimal solution and is something we would like to address. We found that related projects (`1<https://github.com/openmm/openmm/issues/3943>`_)(`2 <https://github.com/conda/conda/issues/12410>`_) have similar issues.
+which should fix the problem. This is not an optimal solution and is something we would like to address. We found that related projects [1](https://github.com/openmm/openmm/issues/3943), [2](https://github.com/conda/conda/issues/12410) have similar issues.
 If you are aware of a robust solution to this issue, please let us know by raising an issue or sending an email!
 
 ## Credits
