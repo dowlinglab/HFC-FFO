@@ -205,6 +205,8 @@ If you observe this, please try the following in the terminal
 ```
 export LD_LIBRARY_PATH=$CONDA_PREFIX/lib:$LD_LIBRARY_PATH
 ```
+which should fix the problem. This is not an optimal solution and is something we would like to address. We found that related projects (`1<https://github.com/openmm/openmm/issues/3943>`_)(`2 <https://github.com/conda/conda/issues/12410>`_) have similar issues.
+If you are aware of a robust solution to this issue, please let us know by raising an issue or sending an email!
 
 ## Credits
 This work is funded by the National Science Foundation, EFRI DChem: Next-generation Low Global Warming Refrigerants, Award no. 2029354, and uses the computing resources provided by the Center for Research Computing (CRC) at the University of Notre Dame. The authors would like to thank Bridgette Befort as her work is used as the basis of this method.
