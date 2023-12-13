@@ -1,4 +1,4 @@
-# Machine Learning Enabled Development of Accurate Force Fields for Hydrofluorocarbons
+# Machine Learning-Enabled Development of Accurate Force Fields for Refrigerants
 Authors: Ning Wang, Montana Carlozo, Eliseo Marin-Rimoldi, Bridgette Belfort, Alexander W. Dowling, and Edward J. Maginn
 <!-- Introduction: Provide a brief introduction to the project, including its purpose, goals, and any key features or benefits. -->
 ## Introduction
@@ -8,7 +8,7 @@ Authors: Ning Wang, Montana Carlozo, Eliseo Marin-Rimoldi, Bridgette Belfort, Al
 This work has been submitted for review. In the meantime, you
 may cite the `https://doi.org/10.1021/acs.jctc.3c00338` as:
 
-Ning Wang, Montana N. Carlozo, Eliseo Marin-Rimoldi, Bridgette J. Befort, Alexander W. Dowling, and Edward J. Maginn*, “Machine Learning-Enabled Development of Accurate Force Fields for Re- frigerants”, J. Chem. Theory Comput., 2023, 19, 14, 4546–4558
+Ning Wang, Montana N. Carlozo, Eliseo Marin-Rimoldi, Bridgette J. Befort, Alexander W. Dowling, and Edward J. Maginn*, “Machine Learning-Enabled Development of Accurate Force Fields for Refrigerants”, J. Chem. Theory Comput., 2023, 19, 14, 4546–4558
    
 ## Available Data
 
