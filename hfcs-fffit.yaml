@@ -1,0 +1,25 @@
+name: hfcs-fffit
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - foyer
+  - python >=3.9
+  - numpy
+  - pip
+  - signac
+  - signac-flow
+  - unyt
+  - git-lfs
+  - panedr
+  - matplotlib
+  - pandas
+  - seaborn
+  - scikit-learn
+  - mbuild
+  - mosdef_cassandra >=0.4.0
+  - gmso >=0.11.2
+  - ipython
+
+  - pip:
+    - gpflow
