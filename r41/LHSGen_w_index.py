@@ -2,7 +2,7 @@ from scipy.stats import qmc
 import pandas as pd
 import csv
 
-d= 4 #Number of dimensions
+d= 6 #Number of dimensions
 #n= int(5e5) ## of samples
 n=200
 sampler = qmc.LatinHypercube(d)
