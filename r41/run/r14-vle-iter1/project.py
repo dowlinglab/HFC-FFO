@@ -14,7 +14,7 @@ class Project(FlowProject):
 def create_forcefield(job):
     """Create the forcefield .xml file for the job"""
 
-    content = _generate_r14_xml(job)
+    content = _generate_r41_xml(job)
 
     with open(job.fn("ff.xml"), "w") as ff:
         ff.write(content)
@@ -91,7 +91,7 @@ def equilibrate_liqbox(job):
     ff = foyer.Forcefield(job.fn("ff.xml"))
 
     # Load the compound and apply the ff
-    compound = mbuild.load("C(F)(F)(F)F", smiles=True)
+    compound = mbuild.load("CF", smiles=True)
     compound_ff = ff.apply(compound)
 
     # Create box list and species list
@@ -235,7 +235,7 @@ def run_gemc(job):
     ff = foyer.Forcefield(job.fn("ff.xml"))
 
     # Load the compound and apply the ff
-    compound = mbuild.load("C(F)(F)(F)F", smiles=True)
+    compound = mbuild.load("CF", smiles=True)
     compound_ff = ff.apply(compound)
 
     # Create box list and species list
@@ -426,30 +426,38 @@ def calculate_props(job):
 #####################################################################
 ################# HELPER FUNCTIONS BEYOND THIS POINT ################
 #####################################################################
-def _generate_r14_xml(job): 
+def _generate_r41_xml(job):
 
     content = """<ForceField>
  <AtomTypes>
-  <Type name="C1" class="c3" element="C" mass="12.010" def="C(F)(F)(F)(F)" desc="carbon"/>
-  <Type name="F1" class="f" element="F" mass="19.000" def="FC(F)(F)F" desc="F bonded to C"/>
+  <Type name="C1" class="c3" element="C" mass="12.010" def="C(F)" desc="carbon"/>
+  <Type name="F1" class="f" element="F" mass="19.000" def="F(C)" desc="F bonded to C1"/>
+  <Type name="H1" class="h1" element="H" mass="1.008" def="H(C)" desc="H bonded to C1"/>
  </AtomTypes>
  <HarmonicBondForce>
   <Bond class1="c3" class2="f" length="0.1344" k="304427.36"/>
+  <Bond class1="c3" class2="h1" length="0.1093" k="281080.35"/>
  </HarmonicBondForce>
  <HarmonicAngleForce>
-  <Angle class1="f" class2="c3" class3="f" angle="1.87029" k="596.30"/>
+  <Angle class1="f" class2="c3" class3="h1" angle="1.8823376" k="431.53717916"/>
+  <Angle class1="h1" class2="c3" class3="h1" angle="1.9120082" k="327.85584464"/>
  </HarmonicAngleForce>
  <NonbondedForce coulomb14scale="0.833333" lj14scale="0.5">
-  <Atom type="C1" charge="0.781024"  sigma="{sigma_C1:0.6f}" epsilon="{epsilon_C1:0.6f}"/>
-  <Atom type="F1" charge="-0.195256" sigma="{sigma_F1:0.6f}" epsilon="{epsilon_F1:0.6f}"/>
+  <Atom type="C1" charge="0.119281"  sigma="{sigma_C1:0.6f}" epsilon="{epsilon_C1:0.6f}"/>
+  <Atom type="F1" charge="-0.274252" sigma="{sigma_F1:0.6f}" epsilon="{epsilon_F1:0.6f}"/>
+  <Atom type="H1" charge="0.051657"  sigma="{sigma_H1:0.6f}" epsilon="{epsilon_H1:0.6f}"/>
  </NonbondedForce>
 </ForceField>
 """.format(
         sigma_C1=job.sp.sigma_C1,
         sigma_F1=job.sp.sigma_F1,
+        sigma_H1=job.sp.sigma_H1,
         epsilon_C1=job.sp.epsilon_C1,
         epsilon_F1=job.sp.epsilon_F1,
+        epsilon_H1=job.sp.epsilon_H1,
+        
     )
+
 
     return content
 if __name__ == "__main__":

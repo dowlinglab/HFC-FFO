@@ -4,23 +4,33 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn
+from sklearn.metrics import plot_confusion_matrix
+
+from sklearn import svm
 import scipy.optimize as optimize
 
 from fffit.utils import (
     shuffle_and_split,
+    values_real_to_scaled,
     values_scaled_to_real,
+    variances_scaled_to_real,
 )
 
+from fffit.plot import (
+    plot_model_performance,
+    plot_slices_temperature,
+    plot_slices_params,
+    plot_model_vs_test,
+)
 
 from fffit.models import run_gpflow_scipy
-from fffit.pareto import find_pareto_set, is_pareto_efficient
 
 sys.path.append("../")
 
 from utils.r41 import R41Constants
 from utils.id_new_samples import (
     prepare_df_density,
-    prepare_df_vle,
+    classify_samples,
     rank_samples,
 )
 
@@ -34,7 +44,7 @@ def opt_dist(distance, top_samples, constants, target_num, rand_seed = None, eva
     -----------
         distance: float, The allowable minimum distance between points
         top_samples: pandas data frame, Collection of top liquid/vapor sampes
-        constants: utils.r143a.R143aConstants, contains the infromation for a certain refrigerant
+        constants: utils.r41.R41Constants, contains the infromation for a certain refrigerant
         target_num: int, the number of samples to choose next
         rand_seed: int, the seed number to use: None by default
         eval: bool, Determines whether error is calculated or new_points is returned
@@ -73,6 +83,15 @@ def opt_dist(distance, top_samples, constants, target_num, rand_seed = None, eva
         )
 #     error = target_num - len(new_points)
     len_new_points = len(new_points)
+    
+#     print("Error = ",error)
+#     return error
+    if eval == True:
+        return new_points
+    else:
+#         return error
+        return len_new_points
+
 
 def bisection(lower_bound, upper_bound, error_tol, top_samples, constants, target_num, rand_seed = None, verbose = False):
     """
@@ -84,7 +103,7 @@ def bisection(lower_bound, upper_bound, error_tol, top_samples, constants, targe
         upper_bound: float, lower bound of the distance, must be > lower_bound
         error_tol: floar, tolerance of error
         top_samples: pandas data frame, Collection of top liquid/vapor sampes
-        constants: utils.r143a.R143aConstants, contains the infromation for a certain refrigerant
+        constants: utils.r41.R41Constants, contains the infromation for a certain refrigerant
         target_num: int, the number of samples to choose next
         rand_seed: int, the seed number to use: None by default
         
@@ -123,7 +142,7 @@ def bisection(lower_bound, upper_bound, error_tol, top_samples, constants, targe
         if verbose == True:
             print('distance = %0.6f and error = %0.6f' % (midpoint, error))
         
-        # Set the upper or lower bound depending on sign  
+        # Set the upper or lower bound depending on sign
         if eval_midpoint == target_num:
             #Terminate loop if error < error_tol
             terminate = abs(eval_midpoint) < error_tol 
@@ -142,167 +161,146 @@ def bisection(lower_bound, upper_bound, error_tol, top_samples, constants, targe
 ##############################################################################
 
 iternum = 1
-gp_shuffle_seed = 584745
+cl_shuffle_seed = 6928457 #classifier
+gp_shuffle_seed = 3945872 #GP seed 
+
 ##############################################################################
 ##############################################################################
 
-md_gp_shuffle_seed = 1
-distance_seed = 10
-liquid_density_threshold = 500  # kg/m^3
+liquid_density_threshold = 500  # kg/m^3  ##>500 is liquid; <500 is gas. used for classifier
 
+csv_path = "../csv/"
+in_csv_names = ["r41-density-iter" + str(i) + "-results.csv" for i in range(1, iternum+1)]
+out_csv_name = "r41-density-iter" + str(iternum + 1) + "-params.csv"
+out_top_liquid_csv_name = "r41-density-iter" + str(iternum ) + "-liquid-params.csv"
+out_top_vapor_csv_name = "r41-density-iter" + str(iternum ) + "-vapor-params.csv"
 
-# Read VLE files
-csv_path = "/scratch365/mcarlozo/HFC-FFO/r41/analysis/csv/"
-in_csv_names = [
-    "r41-vle-iter" + str(i) + "-results.csv" for i in range(1, iternum + 1)
-]
-out_csv_name = "r41-vle-iter" + str(iternum + 1) + "-params.csv"
-df_csvs = [
-    pd.read_csv(csv_path + in_csv_name, index_col=0)
-    for in_csv_name in in_csv_names
-]
-df_csv = pd.concat(df_csvs)
-df_vle = prepare_df_vle(df_csv, R41)
-
-# Read liquid density files
-max_density_iter = 4
-in_csv_names = [
-    "r41-density-iter" + str(i) + "-results.csv"
-    for i in range(1, max_density_iter + 1)
-]
-df_csvs = [
-    pd.read_csv(csv_path + in_csv_name, index_col=0)
-    for in_csv_name in in_csv_names
-]
+# Read file
+df_csvs = [pd.read_csv(csv_path + in_csv_name, index_col=0) for in_csv_name in in_csv_names]
 df_csv = pd.concat(df_csvs)
 df_all, df_liquid, df_vapor = prepare_df_density(
     df_csv, R41, liquid_density_threshold
 )
 
-### Fit GP models to VLE data
+### Step 2: Fit classifier and GP models
+
 # Create training/test set
 param_names = list(R41.param_names) + ["temperature"]
-property_names = ["sim_liq_density", "sim_vap_density", "sim_Pvap", "sim_Hvap"]
-
-vle_models = {}
-for property_name in property_names:
-    # Get train/test
-    x_train, y_train, x_test, y_test = shuffle_and_split(
-        df_vle, param_names, property_name, shuffle_seed=gp_shuffle_seed
-    )
-
-    # Fit model
-    vle_models[property_name] = run_gpflow_scipy(
-        x_train,
-        y_train,
-        gpflow.kernels.RBF(lengthscales=np.ones(R41.n_params + 1)),
-    )
-
-# For vapor density replace with Matern52 kernel
-property_name = "sim_vap_density"
-# Get train/test
+property_name = "is_liquid"
 x_train, y_train, x_test, y_test = shuffle_and_split(
-    df_vle, param_names, property_name, shuffle_seed=gp_shuffle_seed
-)
-# Fit model
-vle_models[property_name] = run_gpflow_scipy(
-    x_train,
-    y_train,
-    gpflow.kernels.Matern52(lengthscales=np.ones(R41.n_params + 1)),
+    df_all, param_names, property_name, shuffle_seed=cl_shuffle_seed
 )
 
-### Fit GP models to liquid density data
-# Get train/test
+# Create and fit classifier
+classifier = svm.SVC(kernel="rbf")
+classifier.fit(x_train, y_train)
+test_score = classifier.score(x_test, y_test)
+print(f"Classifer is {test_score*100.0}% accurate on the test set.")
+plot_confusion_matrix(classifier, x_test, y_test)  
+plt.savefig("classifier.pdf")
+
+
+### Fit GP Model
+# Create training/test set
+param_names = list(R41.param_names) + ["temperature"]
 property_name = "md_density"
 x_train, y_train, x_test, y_test = shuffle_and_split(
-    df_liquid, param_names, property_name, shuffle_seed=md_gp_shuffle_seed
+    df_liquid, param_names, property_name, shuffle_seed=gp_shuffle_seed
 )
 
 # Fit model
-md_model = run_gpflow_scipy(
+model = run_gpflow_scipy(
     x_train,
     y_train,
     gpflow.kernels.RBF(lengthscales=np.ones(R41.n_params + 1)),
 )
 
 
-# Get difference between GROMACS/Cassandra density
-df_test_points = df_vle[
-    list(R41.param_names) + ["temperature", "sim_liq_density"]
-]
-xx = df_test_points[list(R41.param_names) + ["temperature"]].values
-means, vars_ = md_model.predict_f(xx)
-diff = values_scaled_to_real(
-    df_test_points["sim_liq_density"].values.reshape(-1, 1),
-    R41.liq_density_bounds,
-) - values_scaled_to_real(means, R41.liq_density_bounds)
-print(
-    f"The average density difference between Cassandra and GROMACS is {np.mean(diff)} kg/m^3"
-)
-print(
-    f"The minimum density difference between Cassandra and GROMACS is {np.min(diff)} kg/m^3"
-)
-print(
-    f"The maximum density difference between Cassandra and GROMACS is {np.max(diff)} kg/m^3"
-)
+### Step 3: Find new parameters for MD simulations
 
-
-### Step 3: Find new parameters for simulations
-max_mse = 625  # kg^2/m^6
+# SVM to classify hypercube regions as liquid or vapor
 latin_hypercube = np.loadtxt("LHS_500000_x_4.csv", delimiter=",")
-ranked_samples = rank_samples( # compare and downselect with MD density results first
-    latin_hypercube, md_model, R41, "sim_liq_density", property_offset=13.5
-)
-print("Ranking samples complete!")
-viable_samples = ranked_samples[ranked_samples["mse"] < max_mse].drop(
-    columns="mse"
-)
-viable_samples = viable_samples.values
+liquid_samples, vapor_samples = classify_samples(latin_hypercube, classifier)
+# Find the lowest MSE points from the GP in both sets
+ranked_liquid_samples = rank_samples(liquid_samples, model, R41, "sim_liq_density")
+ranked_vapor_samples = rank_samples(vapor_samples, model, R41, "sim_liq_density")#both l and g compared to liquid density
+
+# Make a set of the lowest MSE parameter sets
+top_liquid_samples = ranked_liquid_samples[
+    ranked_liquid_samples["mse"] < 625.0
+]
+top_vapor_samples = ranked_vapor_samples[ranked_vapor_samples["mse"] < 625.0]
 print(
     "There are:",
-    viable_samples.shape[0],
-    "viable parameter sets which are within 25 kg/m$^2$ of GROMACS liquid densities",
+    top_liquid_samples.shape[0],
+    "liquid parameter sets which produce densities within 25 kg/m$^2$ of experimental densities",
+)
+print(
+    "There are:",
+    top_vapor_samples.shape[0],
+    " vapor parameter sets which produce densities within 25 kg/m$^2$ of experimental densities",
 )
 
-# Calculate other properties
-vle_predicted_mses = {}
-for property_name, model in vle_models.items():
-    vle_predicted_mses[property_name] = rank_samples(
-        viable_samples, model, R41, property_name
-    )
-print("Completed calculating other properties!")
-
-# Merge into single DF
-vle_mses = vle_predicted_mses["sim_liq_density"].merge(
-    vle_predicted_mses["sim_vap_density"], on=R41.param_names
-)
-vle_mses = vle_mses.rename(
-    {"mse_x": "mse_liq_density", "mse_y": "mse_vap_density"}, axis="columns"
-)
-vle_mses = vle_mses.merge(vle_predicted_mses["sim_Pvap"], on=R41.param_names)
-vle_mses = vle_mses.merge(vle_predicted_mses["sim_Hvap"], on=R41.param_names)
-vle_mses = vle_mses.rename(
-    {"mse_x": "mse_Pvap", "mse_y": "mse_Hvap"}, axis="columns"
-)
-
-# Find pareto efficient points
-result, pareto_points, dominated_points = find_pareto_set(
-    vle_mses.drop(columns=list(R41.param_names)).values, is_pareto_efficient
-)
-vle_mses = vle_mses.join(pd.DataFrame(result, columns=["is_pareto"]))
-
-vle_mses.to_csv(csv_path + "vle_mses.csv")
-
-# Plot pareto points vs. MSEs
-g = seaborn.pairplot(
-    vle_mses,
-    vars=["mse_liq_density", "mse_vap_density", "mse_Pvap", "mse_Hvap"],
-    hue="is_pareto",
-)
-g.savefig("figs/R41-pareto-mses.pdf")
-
-# Plot pareto points vs. params
-g = seaborn.pairplot(vle_mses, vars=list(R41.param_names), hue="is_pareto")
+#### Visualization: Low MSE parameter sets
+# Create a pairplot of the top "liquid" parameter values
+column_names = list(R41.param_names)
+g = seaborn.pairplot(top_liquid_samples.drop(columns=["mse"]))
 g.set(xlim=(-0.1, 1.1), ylim=(-0.1, 1.1))
-g.savefig("figs/R41-pareto-params.pdf")
+g.savefig("liq_mse_below625.pdf")
+
+# Create a pairplot of the top "vapor" parameter values
+column_names = list(R41.param_names)
+g = seaborn.pairplot(top_vapor_samples.drop(columns=["mse"]))
+g.set(xlim=(-0.1, 1.1), ylim=(-0.1, 1.1))
+g.savefig("vap_mse_below625.pdf")
+
+new_liquid_params = [
+    top_liquid_samples.drop(columns=["mse"])
+]
+new_vapor_params = [
+    top_vapor_samples.drop(columns=["mse"])
+]
+
+# Concatenate into a single dataframe and save to CSV
+new_liquid_params = pd.concat(new_liquid_params)
+new_liquid_params.to_csv(csv_path + out_top_liquid_csv_name)
+new_vapor_params = pd.concat(new_vapor_params)
+new_vapor_params.to_csv(csv_path + out_top_vapor_csv_name)
+top_liq = pd.read_csv(csv_path + out_top_liquid_csv_name, delimiter = ",", index_col = 0)
+top_vap = pd.read_csv(csv_path + out_top_vapor_csv_name, delimiter = ",", index_col = 0)
+
+top_liq = top_liq.reset_index(drop=True)
+top_vap = top_vap.reset_index(drop=True)
+
+from numpy.linalg import norm
+dist_seed = 115
+target_num_v = 96
+target_num_l = 104 # just for liquid; vapor less than 100 and use all
+
+zero_array = np.zeros(top_liq.shape[1])
+one_array = np.ones(top_liq.shape[1])
+ub_array = one_array - zero_array
+
+# lower_bound = 1e-8
+lower_bound = 0
+#IL norm between the highest high parameter space, and lowest low parameter space value
+upper_bound = norm(ub_array, 1) # This number will be 10, the number of dimensions
+error_tol = 1e-5
+
+distance_opt_v,number_points_v = bisection(lower_bound, upper_bound, error_tol, top_vap, R41, target_num_v, dist_seed)
+print('\nRequired Distance for vapor is : %0.8f and there are %0.1f points too few' % (distance_opt_v, number_points_v) )
+
+distance_opt_l,number_points_l = bisection(lower_bound, upper_bound, error_tol, top_liq, R41, target_num_l, dist_seed)
+print('\nRequired Distance for liquid is : %0.8f and there are %0.1f points too few' % (distance_opt_l, number_points_l) )
+
+new_points_l = opt_dist(distance_opt_l, top_liq, R41, target_num_l, rand_seed=dist_seed , eval = True)
+    
+print(len(new_points_l), "top liquid density points are left after removing similar points using a distance of", np.round(distance_opt_l,5))
+
+new_points_v = opt_dist(distance_opt_v, top_vap, R41, target_num_v, rand_seed=dist_seed , eval = True)
+    
+print(len(new_points_v), "top vapor density points are left after removing similar points using a distance of", np.round(distance_opt_v,5))
+
+#pd.concat([top_liq,new_points_v], axis=0).to_csv(csv_path + out_csv_name)
+pd.concat([new_points_l,new_points_v], axis=0).to_csv(csv_path + out_csv_name)
 

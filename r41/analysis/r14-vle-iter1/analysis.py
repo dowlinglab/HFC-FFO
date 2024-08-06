@@ -11,12 +11,12 @@ from fffit.utils import (
 
 sys.path.append("../")
 
-from utils.r14 import R14Constants
+from utils.r41 import R41Constants
 from utils.id_new_samples import prepare_df_vle
 from utils.analyze_samples import prepare_df_vle_errors
 from utils.plot import plot_property, render_mpl_table
 
-R14 = R14Constants()
+R41 = R41Constants()
 
 import matplotlib._color_data as mcd
 
@@ -28,11 +28,11 @@ iternum = 1
 ##############################################################################
 ##############################################################################
 
-csv_path = "/scratch365/nwang2/ff_development/HFC_143a_FFO_FF/r14/analysis/csv/"
+csv_path = "/scratch365/mcarlozo/HFC-FFO/r41/analysis/csv/"
 in_csv_names = [
-    "r14-vle-iter" + str(i) + "-results.csv" for i in range(1, iternum + 1)
+    "r41-vle-iter" + str(i) + "-results.csv" for i in range(1, iternum + 1)
 ]
-out_csv_name = "r14-vle-iter" + str(iternum + 1) + "-params.csv"
+out_csv_name = "r41-vle-iter" + str(iternum + 1) + "-params.csv"
 
 # Read files
 df_csvs = [
@@ -40,7 +40,7 @@ df_csvs = [
     for in_csv_name in in_csv_names
 ]
 df_csv = pd.concat(df_csvs)
-df_all = prepare_df_vle(df_csv, R14)
+df_all = prepare_df_vle(df_csv, R41)
 
 
 def main():
@@ -49,28 +49,28 @@ def main():
     plot_property(
         df_all,
         "liq_density",
-        R14.liq_density_bounds,
+        R41.liq_density_bounds,
         axis_name="Liquid Density [kg/m$^3$]",
     )
     plot_property(
         df_all,
         "vap_density",
-        R14.vap_density_bounds,
+        R41.vap_density_bounds,
         axis_name="Vapor Density [kg/m$^3$]",
     )
     plot_property(
-        df_all, "Pvap", R14.Pvap_bounds, axis_name="Vapor Pressure [bar]"
+        df_all, "Pvap", R41.Pvap_bounds, axis_name="Vapor Pressure [bar]"
     )
     plot_property(
         df_all,
         "Hvap",
-        R14.Hvap_bounds,
+        R41.Hvap_bounds,
         axis_name="Enthalpy of vaporization [kJ/kg]",
     )
-    d = pd.DataFrame({'T':list(values_scaled_to_real(df_all["temperature"],R14.temperature_bounds)) , 'sim_Pvap':list(values_scaled_to_real(df_all["sim_Pvap"], R14.Pvap_bounds)) }, columns=['T', 'sim_Pvap'])
+    d = pd.DataFrame({'T':list(values_scaled_to_real(df_all["temperature"],R41.temperature_bounds)) , 'sim_Pvap':list(values_scaled_to_real(df_all["sim_Pvap"], R41.Pvap_bounds)) }, columns=['T', 'sim_Pvap'])
     #print(d.loc[d['T'] == 240])
     # Create a dataframe with one row per parameter set
-    df_paramsets = prepare_df_vle_errors(df_all, R14)
+    df_paramsets = prepare_df_vle_errors(df_all, R41)
     #print(df_paramsets["sim_Pvap_240K"])
     # Plot MSE for each property
     fig, (ax1, ax2, ax3, ax4, ax5, ax6) = plt.subplots(6, figsize=(5, 10))
@@ -183,7 +183,7 @@ def main():
     ax.set_xlim(0, 2000)
     ax.set_ylim(120, 300)
 
-    temps = R14.expt_liq_density.keys()
+    temps = R41.expt_liq_density.keys()
     for temp in temps:
         ax.scatter(
             df_paramsets.filter(regex=(f"liq_density_{float(temp):.0f}K")),
@@ -207,35 +207,35 @@ def main():
         alpha=0.5,
     )
     ax.scatter(
-        R14.expt_liq_density.values(),
-        R14.expt_liq_density.keys(),
+        R41.expt_liq_density.values(),
+        R41.expt_liq_density.keys(),
         color="black",
         marker="x",
         s=80,
     )
     ax.scatter(
-        R14.expt_vap_density.values(),
-        R14.expt_vap_density.keys(),
+        R41.expt_vap_density.values(),
+        R41.expt_vap_density.keys(),
         color="black",
         marker="x",
         s=80,
     )
-    ax.scatter(R14.expt_rhoc, R14.expt_Tc, color="black", marker="x", s=80)
+    ax.scatter(R41.expt_rhoc, R41.expt_Tc, color="black", marker="x", s=80)
     '''ax.scatter(
-        R14.trappe_liq_density.values(),
-        R14.trappe_liq_density.keys(),
+        R41.trappe_liq_density.values(),
+        R41.trappe_liq_density.keys(),
         color="red",
         marker="x",
         s=80,
     )
     ax.scatter(
-        R14.trappe_vap_density.values(),
-        R14.trappe_vap_density.keys(),
+        R41.trappe_vap_density.values(),
+        R41.trappe_vap_density.keys(),
         color="red",
         marker="x",
         s=80,
     )
-    ax.scatter(R14.trappe_rhoc, R14.expt_Tc, color="red", marker="x", s=80)'''
+    ax.scatter(R41.trappe_rhoc, R41.expt_Tc, color="red", marker="x", s=80)'''
 
     fig.tight_layout()
     fig.savefig("figs/vle-envelope.png", dpi=300)
@@ -257,15 +257,15 @@ def main():
             alpha=0.5,
         )
     ax.scatter(
-        R14.expt_Pvap.keys(),
-        R14.expt_Pvap.values(),
+        R41.expt_Pvap.keys(),
+        R41.expt_Pvap.values(),
         color="black",
         marker="x",
         s=80,
     )
     '''ax.scatter(
-        R14.trappe_Pvap.keys(),
-        R14.trappe_Pvap.values(),
+        R41.trappe_Pvap.keys(),
+        R41.trappe_Pvap.values(),
         color="red",
         marker="x",
         s=80,
@@ -291,8 +291,8 @@ def main():
             alpha=0.5,
         )
     ax.scatter(
-        R14.expt_Hvap.keys(),
-        R14.expt_Hvap.values(),
+        R41.expt_Hvap.keys(),
+        R41.expt_Hvap.values(),
         color="black",
         marker="x",
         s=80,

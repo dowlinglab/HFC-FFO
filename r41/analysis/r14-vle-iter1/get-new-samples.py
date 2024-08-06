@@ -17,14 +17,14 @@ from fffit.pareto import find_pareto_set, is_pareto_efficient
 
 sys.path.append("../")
 
-from utils.r14 import R14Constants
+from utils.r41 import R41Constants
 from utils.id_new_samples import (
     prepare_df_density,
     prepare_df_vle,
     rank_samples,
 )
 
-R14 = R14Constants()
+R41 = R41Constants()
 
 ############################# QUANTITIES TO EDIT #############################
 ##############################################################################
@@ -153,12 +153,12 @@ def bisection(lower_bound, upper_bound, error_tol, top_samples, constants, targe
  
     return midpoint, error
 
-liquid_density_threshold = 1100  # kg/m^3
+liquid_density_threshold = 500  # kg/m^3
 
 
 # Read VLE files
-csv_path = "/scratch365/nwang2/ff_development/HFC_143a_FFO_FF/r14/analysis/csv/"
-out_csv_name = "r14-vle-iter" + str(iternum + 1) + "-params.csv"
+csv_path = "/scratch365/mcarlozo/HFC-FFO/r41/analysis/csv/"
+out_csv_name = "r41-vle-iter" + str(iternum + 1) + "-params.csv"
 
 vle_mses = pd.read_csv(csv_path + "vle_mses.csv",index_col=0)
 
@@ -187,10 +187,10 @@ lower_bound = 0
 upper_bound = norm(ub_array, 1) # This number will be 8, the number of dimensions
 error_tol = 1e-5
 
-distance_opt, number_points = bisection(lower_bound, upper_bound, error_tol, pareto_points, R14, target_num, dist_seed)
+distance_opt, number_points = bisection(lower_bound, upper_bound, error_tol, pareto_points, R41, target_num, dist_seed)
 print('\nRequired Distance for vapor is : %0.8f and there are %0.1f points too few' % (distance_opt, number_points) )
 
-new_points = opt_dist(distance_opt, pareto_points, R14, target_num, rand_seed=dist_seed , eval = True)
+new_points = opt_dist(distance_opt, pareto_points, R41, target_num, rand_seed=dist_seed , eval = True)
 
 # Save to CSV
 new_points.drop(
