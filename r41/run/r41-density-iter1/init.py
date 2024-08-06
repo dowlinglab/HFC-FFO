@@ -21,23 +21,23 @@ def init_project():
 
     # Run at vapor pressure
     press = {
-        210: (218.52 * u.kPa).to_value(u.bar),
-        230: (509.28 * u.kPa).to_value(u.bar),
-        250: (1029.6 * u.kPa).to_value(u.bar),
-        270: (1874.0 * u.kPa).to_value(u.bar),
-        290: (3154.8 * u.kPa).to_value(u.bar),
+        210: (2.1852 * u.bar),
+        230: (5.0928 * u.bar),
+        250: (10.296 * u.bar),
+        270: (18.740 * u.bar),
+        290: (31.548 * u.bar),
 
     }
 
-    # Run for 2.5 ns (1 fs timestep)
+    # Run for 2.5 ns (1 fs timestep) and 0.5 ns eq
     nstepseq = 500000
-    nstepsprod = 5000000
+    nstepsprod = 2500000
 
     # Load samples from Latin hypercube
-    lh_samples = np.genfromtxt("../../analysis/csv/r41-density-iter1-params.csv",delimiter=",",skip_header=1,)[:, 1:]
+    lh_samples = np.genfromtxt("../../LHS_200_x_6.csv",delimiter=",",skip_header=1,)[:, 1:]
 
     # Define bounds on sigma/epsilon
-    bounds_sigma = np.asarray([[2.0, 4.0], [2.5, 3.5], [1.5, 3.0]])  # C1 # F1 # H1 
+    bounds_sigma = np.asarray([[2.0, 4.0], [2.0, 4.0], [1.5, 3.0]])  # C1 # F1 # H1 
 
     bounds_epsilon = np.asarray(
         [[10.0,75.0], [15.0, 50.0], [2.0, 10.0]])  # C1 # F1 # H1
