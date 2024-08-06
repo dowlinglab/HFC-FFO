@@ -130,4 +130,5 @@ dmypy.json
 
 #Signac workspaces
 *workspace*
-*.signac
+*.signac*
+*signac_project_document*
