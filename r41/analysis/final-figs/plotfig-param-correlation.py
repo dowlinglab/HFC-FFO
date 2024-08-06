@@ -17,17 +17,17 @@ matplotlib.rc("font", serif="Arial")
 
 sys.path.append("../")
 
-from utils.r32 import R32Constants
+from utils.r41 import R41Constants
 from utils.id_new_samples import prepare_df_vle
 from utils.analyze_samples import prepare_df_vle_errors
 from utils.plot import plot_property, render_mpl_table
 
-R32 = R32Constants()
+R41 = R41Constants()
 
 iternum = 3
 csv_path = "../csv/"
 in_csv_names = [
-    "r32-vle-iter" + str(i) + "-results.csv" for i in range(1, iternum + 1)
+    "r41-vle-iter" + str(i) + "-results.csv" for i in range(1, iternum + 1)
 ]
 
 # Read files
@@ -36,12 +36,12 @@ df_csvs = [
     for in_csv_name in in_csv_names
 ]
 df_csv = pd.concat(df_csvs)
-df_all = prepare_df_vle(df_csv, R32)
+df_all = prepare_df_vle(df_csv, R41)
 
 def main():
 
     # Create a dataframe with one row per parameter set
-    df_paramsets = prepare_df_vle_errors(df_all, R32)
+    df_paramsets = prepare_df_vle_errors(df_all, R41)
     
     best_liqdens = df_paramsets.sort_values('mape_liq_density').iloc[0]
     best_vapdens = df_paramsets.sort_values('mape_vap_density').iloc[0]
@@ -53,11 +53,11 @@ def main():
     pairs = np.zeros((n_paramsets, 4, 2))
     count = 0
     for i in range(n_paramsets):
-        params = df_paramsets[list(R32.param_names)].iloc[i].values
-        params_liqdens = best_liqdens[list(R32.param_names)].values
-        params_vapdens = best_vapdens[list(R32.param_names)].values
-        params_pvap = best_pvap[list(R32.param_names)].values
-        params_hvap = best_hvap[list(R32.param_names)].values
+        params = df_paramsets[list(R41.param_names)].iloc[i].values
+        params_liqdens = best_liqdens[list(R41.param_names)].values
+        params_vapdens = best_vapdens[list(R41.param_names)].values
+        params_pvap = best_pvap[list(R41.param_names)].values
+        params_hvap = best_hvap[list(R41.param_names)].values
 
         dist_liqdens = np.sum(np.abs(params_liqdens - params))
         dist_vapdens = np.sum(np.abs(params_vapdens - params))

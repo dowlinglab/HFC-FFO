@@ -26,12 +26,12 @@ def main():
 
     data_f = dff[list(R41.param_names)].values
     param_bounds = R41.param_bounds
-    param_bounds[:2] = param_bounds[:2] * NM_TO_ANGSTROM
-    param_bounds[2:] = param_bounds[2:] * KJMOL_TO_K
+    param_bounds[:3] = param_bounds[:3] * NM_TO_ANGSTROM
+    param_bounds[3:] = param_bounds[3:] * KJMOL_TO_K
     final_f = values_scaled_to_real(data_f, param_bounds)
     print(final_f)
     final = pd.DataFrame(final_f)
-    final.columns = ['sigma_C1(A)','sigma_F1','epsilon_C1(K)','epsilon_F1']
+    final.columns = ['sigma_C1(A)','sigma_F1','sigma_H1', 'epsilon_C1(K)','epsilon_F1', 'epsilon_H1']
     final.to_csv('r41-finalff.csv',index=False)
 
 if __name__ == "__main__":

@@ -8,60 +8,60 @@ import seaborn
 sys.path.append("../")
 
 from scipy.stats import linregress
-from utils.r14 import R14Constants
+from utils.r41 import R41Constants
 from matplotlib.ticker import MultipleLocator, AutoMinorLocator
 
-R14 = R14Constants()
+R41 = R41Constants()
 
 matplotlib.rc("font", family="sans-serif")
 matplotlib.rc("font", serif="Arial")
 
-df_r14 = pd.read_csv("../csv/r14-pareto-iter2.csv", index_col=0)
-df_r14 = df_r14.loc[45]
-print(df_r14)
-df_r14_gaff = pd.read_csv("../../run/gaff/results.csv", index_col=False)
+df_r41 = pd.read_csv("../csv/r41-pareto-iter2.csv", index_col=0)
+df_r41 = df_r41.loc[45]
+print(df_r41)
+df_r41_gaff = pd.read_csv("../../run/gaff/results.csv", index_col=False)
 # Add https://doi.org/10.1021/jp9072137
-df_r14_lit = pd.read_csv("../csv/r14-lit.csv", index_col=False)
+df_r41_lit = pd.read_csv("../csv/r41-lit.csv", index_col=False)
 
 def main():
 
     # Plot VLE envelopes
     fig, ax2 = plt.subplots(1, 1, figsize=(6,6))
-    temps_r14 = R14.expt_liq_density.keys()
+    temps_r41 = R41.expt_liq_density.keys()
 
-    #clrs = seaborn.color_palette('bright', n_colors=len(df_r14))
+    #clrs = seaborn.color_palette('bright', n_colors=len(df_r41))
     #np.random.seed(11)
     #np.random.shuffle(clrs)
 
-    for temp in temps_r14:
-        print(df_r14.loc[f"sim_liq_density_{float(temp):.0f}K"])
+    for temp in temps_r41:
+        print(df_r41.loc[f"sim_liq_density_{float(temp):.0f}K"])
         ax2.scatter(
-            df_r14.loc[f"sim_liq_density_{float(temp):.0f}K"],
+            df_r41.loc[f"sim_liq_density_{float(temp):.0f}K"],
             temp,
             c='blue',
             s=160,
             alpha=0.7,
         )
         ax2.scatter(
-            df_r14.loc[f"sim_vap_density_{float(temp):.0f}K"],
+            df_r41.loc[f"sim_vap_density_{float(temp):.0f}K"],
             temp,
             c='blue',
             s=160,
             alpha=0.7,
         )
     ax2.scatter(
-        df_r14.loc["sim_rhoc"],
-        df_r14.loc["sim_Tc"],
+        df_r41.loc["sim_rhoc"],
+        df_r41.loc["sim_Tc"],
         c='blue',
         s=160,
         alpha=0.7,
     )
 
-    tc, rhoc = calc_critical(df_r14_gaff)
+    tc, rhoc = calc_critical(df_r41_gaff)
     print("GAFF: ", tc, " K ",rhoc)
     ax2.scatter(
-        df_r14_gaff["liq_density"],
-        df_r14_gaff["temperature"],
+        df_r41_gaff["liq_density"],
+        df_r41_gaff["temperature"],
         c='gray',
         s=120,
         alpha=0.7,
@@ -69,8 +69,8 @@ def main():
         label="GAFF",
     )
     ax2.scatter(
-        df_r14_gaff["vap_density"],
-        df_r14_gaff["temperature"],
+        df_r41_gaff["vap_density"],
+        df_r41_gaff["temperature"],
         c='gray',
         s=120,
         alpha=0.7,
@@ -85,11 +85,11 @@ def main():
         marker='s',
     )
 
-    tc, rhoc = calc_critical(df_r14_lit)
+    tc, rhoc = calc_critical(df_r41_lit)
     print(tc,rhoc)
     ax2.scatter(
-        df_r14_lit["liq_density"],
-        df_r14_lit["temperature"],
+        df_r41_lit["liq_density"],
+        df_r41_lit["temperature"],
         c='#0989d9',
         s=160,
         alpha=0.7,
@@ -97,8 +97,8 @@ def main():
         label="Potoff et al.",
     )
     ax2.scatter(
-        df_r14_lit["vap_density"],
-        df_r14_lit["temperature"],
+        df_r41_lit["vap_density"],
+        df_r41_lit["temperature"],
         c='#0989d9',
         s=160,
         alpha=0.7,
@@ -113,10 +113,10 @@ def main():
         marker='^',
     )
 
-    '''tc, rhoc = calc_critical(df_r14_trappe)
+    '''tc, rhoc = calc_critical(df_r41_trappe)
     ax2.scatter(
-        df_r14_trappe["liq_density"],
-        df_r14_trappe["temperature"],
+        df_r41_trappe["liq_density"],
+        df_r41_trappe["temperature"],
         c='red',
         s=160,
         alpha=0.7,
@@ -124,8 +124,8 @@ def main():
         label="TraPPE",
     )
     ax2.scatter(
-        df_r14_trappe["vap_density"],
-        df_r14_trappe["temperature"],
+        df_r41_trappe["vap_density"],
+        df_r41_trappe["temperature"],
         c='red',
         s=160,
         alpha=0.7,
@@ -141,8 +141,8 @@ def main():
     )'''
 
     ax2.scatter(
-        R14.expt_liq_density.values(),
-        R14.expt_liq_density.keys(),
+        R41.expt_liq_density.values(),
+        R41.expt_liq_density.keys(),
         color="black",
         marker="x",
         linewidths=2,
@@ -150,14 +150,14 @@ def main():
         label="Experiment",
     )
     ax2.scatter(
-        R14.expt_vap_density.values(),
-        R14.expt_vap_density.keys(),
+        R41.expt_vap_density.values(),
+        R41.expt_vap_density.keys(),
         color="black",
         marker="x",
         linewidths=2,
         s=200,
     )
-    ax2.scatter(R14.expt_rhoc, R14.expt_Tc, color="black", marker="x", linewidths=2, s=200)
+    ax2.scatter(R41.expt_rhoc, R41.expt_Tc, color="black", marker="x", linewidths=2, s=200)
 
     ax2.set_xlim(-50, 1850)
     ax2.xaxis.set_major_locator(MultipleLocator(500))
@@ -182,10 +182,10 @@ def main():
     #ax1.text(0.08, 0.82, "a", fontsize=40, transform=ax1.transAxes)
     #ax1.text(0.5, 0.82, "HFC-32", fontsize=34, transform=ax1.transAxes)
     #ax2.text(0.08, 0.82, "a", fontsize=40, transform=ax2.transAxes)
-    ax2.text(0.7,  0.82, "R-14", fontsize=30, transform=ax2.transAxes)
+    ax2.text(0.5,  0.82, "HFC-41", fontsize=30, transform=ax2.transAxes)
     fig.subplots_adjust(bottom=0.2, top=0.75, left=0.15, right=0.95, wspace=0.55)
 
-    fig.savefig("pdfs/fig3_r14-results-vle.png",dpi=300)
+    fig.savefig("pdfs/fig3_r41-results-vle.png",dpi=300)
 
 
 
@@ -211,7 +211,7 @@ def main():
         df_r32_gaff["T_K"],
         df_r32_gaff["pvap_bar"],
         c='gray',
-        s=14,
+        s=41,
         alpha=0.7,
         label="GAFF",
         marker='s',
@@ -268,7 +268,7 @@ def main():
         df_r32_gaff["T_K"],
         df_r32_gaff["hvap_kJmol"] / R32.molecular_weight * 1000.0,
         c='gray',
-        s=14,
+        s=41,
         alpha=0.7,
         marker='s',
     )
@@ -304,29 +304,29 @@ def main():
     axs[1,0].set_xlabel("T (K)", fontsize=16, labelpad=8)
     axs[1,0].set_ylabel(r"$\mathregular{\Delta H_{vap}}$ (kJ/kg)", fontsize=16, labelpad=8)
 
-    clrs = seaborn.color_palette('bright', n_colors=len(df_r14))
+    clrs = seaborn.color_palette('bright', n_colors=len(df_r41))
     np.random.seed(11)
     np.random.shuffle(clrs)
 
-    for temp in temps_r14:
+    for temp in temps_r41:
         axs[0,1].scatter(
-            np.tile(temp, len(df_r14)),
-            df_r14.filter(regex=(f"Pvap_{float(temp):.0f}K")),
+            np.tile(temp, len(df_r41)),
+            df_r41.filter(regex=(f"Pvap_{float(temp):.0f}K")),
             c=clrs,
             s=70,
             alpha=0.2,
         )
     axs[0,1].scatter(
-        df_r14_gaff["T_K"],
-        df_r14_gaff["pvap_bar"],
+        df_r41_gaff["T_K"],
+        df_r41_gaff["pvap_bar"],
         c='gray',
-        s=14,
+        s=41,
         alpha=0.7,
         marker='s',
     )
     axs[0,1].scatter(
-        R14.expt_Pvap.keys(),
-        R14.expt_Pvap.values(),
+        R41.expt_Pvap.keys(),
+        R41.expt_Pvap.values(),
         color="black",
         marker="x",
         s=80,
@@ -349,25 +349,25 @@ def main():
     axs[0,1].set_ylabel(r"$\mathregular{P_{vap}}$ (bar)", fontsize=16, labelpad=8)
 
     # Plot Enthalpy of Vaporization
-    for temp in temps_r14:
+    for temp in temps_r41:
         axs[1,1].scatter(
-            np.tile(temp, len(df_r14)),
-            df_r14.filter(regex=(f"Hvap_{float(temp):.0f}K")),
+            np.tile(temp, len(df_r41)),
+            df_r41.filter(regex=(f"Hvap_{float(temp):.0f}K")),
             c=clrs,
             s=70,
             alpha=0.2,
         )
     axs[1,1].scatter(
-        df_r14_gaff["T_K"],
-        df_r14_gaff["hvap_kJmol"] / R14.molecular_weight * 1000.0,
+        df_r41_gaff["T_K"],
+        df_r41_gaff["hvap_kJmol"] / R41.molecular_weight * 1000.0,
         c='gray',
-        s=14,
+        s=41,
         alpha=0.7,
         marker='s',
     )
     axs[1,1].scatter(
-        R14.expt_Hvap.keys(),
-        R14.expt_Hvap.values(),
+        R41.expt_Hvap.keys(),
+        R41.expt_Hvap.values(),
         color="black",
         marker="x",
         s=80,
@@ -394,13 +394,13 @@ def main():
     axs[0,0].text(0.56, 0.08, "HFC-32", fontsize=16, transform=axs[0,0].transAxes)
 
     axs[0,1].text(0.08, 0.8, "b", fontsize=20, transform=axs[0,1].transAxes)
-    axs[0,1].text(0.5, 0.8, "HFC-14", fontsize=16, transform=axs[0,1].transAxes)
+    axs[0,1].text(0.5, 0.8, "HFC-41", fontsize=16, transform=axs[0,1].transAxes)
 
     axs[1,0].text(0.08, 0.08, "c", fontsize=20, transform=axs[1,0].transAxes)
     axs[1,0].text(0.56, 0.08, "HFC-32", fontsize=16, transform=axs[1,0].transAxes)
 
     axs[1,1].text(0.08, 0.8, "d", fontsize=20, transform=axs[1,1].transAxes)
-    axs[1,1].text(0.5, 0.8, "HFC-14", fontsize=16, transform=axs[1,1].transAxes)
+    axs[1,1].text(0.5, 0.8, "HFC-41", fontsize=16, transform=axs[1,1].transAxes)
 
 
     axs[0,0].legend(loc="lower left", bbox_to_anchor=(0.25, 1.05), ncol=3, fontsize=12, handletextpad=0.1, markerscale=0.8, edgecolor="dimgrey")

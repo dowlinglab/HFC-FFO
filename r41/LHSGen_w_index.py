@@ -8,7 +8,7 @@ n=200
 sampler = qmc.LatinHypercube(d)
 sample = sampler.random(n)
 sample = pd.DataFrame(sample)
-sample.columns = ['sigma_C1','sigma_F1','epsilon_C1','epsilon_F1'] #change to sigma and epsilon name of different atom types
+sample.columns = ['sigma_C1','sigma_F1', 'sigma_H1', 'epsilon_C1','epsilon_F1', 'epsilon_H1'] #change to sigma and epsilon name of different atom types
 #sample.set_index('sigma_C1')
 
 filename = 'LHS_'+str(n)+'_x_'+str(d)+'.csv'

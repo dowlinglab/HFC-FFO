@@ -18,10 +18,10 @@ from fffit.utils import (
 
 sys.path.append("../")
 
-from utils.r32 import R32Constants
+from utils.r41 import R41Constants
 from utils.id_new_samples import prepare_df_vle
 
-R32 = R32Constants()
+R41 = R41Constants()
 
 matplotlib.rc("font", family="sans-serif")
 matplotlib.rc("font", serif="Arial")
@@ -30,13 +30,13 @@ iternum = 3
 gp_shuffle_seed = 7579596
 
 csv_path = "/scratch365/rdefever/hfcs-fffit/hfcs-fffit/analysis/csv/"
-in_csv_names = ["r32-vle-iter" + str(i) + "-results.csv" for i in range(1, iternum+1)]
-out_csv_name = "r32-vle-iter" + str(iternum + 1) + "-params.csv"
+in_csv_names = ["r41-vle-iter" + str(i) + "-results.csv" for i in range(1, iternum+1)]
+out_csv_name = "r41-vle-iter" + str(iternum + 1) + "-params.csv"
 
 # Read files
 df_csvs = [pd.read_csv(csv_path + in_csv_name, index_col=0) for in_csv_name in in_csv_names]
 df_csv = pd.concat(df_csvs)
-df_all = prepare_df_vle(df_csv, R32)
+df_all = prepare_df_vle(df_csv, R41)
 
 
 def main():
@@ -44,9 +44,9 @@ def main():
     seaborn.set_palette("Paired")
 
     # Liquid density first
-    param_names = list(R32.param_names) + ["temperature"]
+    param_names = list(R41.param_names) + ["temperature"]
     property_name = "sim_liq_density"
-    property_bounds = R32.liq_density_bounds
+    property_bounds = R41.liq_density_bounds
 
     # Extract train/test data
     x_train, y_train, x_test, y_test = shuffle_and_split(
@@ -61,7 +61,7 @@ def main():
     model = run_gpflow_scipy(
         x_train,
         y_train,
-        gpflow.kernels.RBF(lengthscales=np.ones(R32.n_params + 1)),
+        gpflow.kernels.RBF(lengthscales=np.ones(R41.n_params + 1)),
     )
 
     # Use model to predict results
@@ -127,9 +127,9 @@ def main():
     fig.savefig("pdfs/fig1-surrogate-liquiddensity.pdf")
 
     # Vapor density next
-    param_names = list(R32.param_names) + ["temperature"]
+    param_names = list(R41.param_names) + ["temperature"]
     property_name = "sim_vap_density"
-    property_bounds = R32.vap_density_bounds
+    property_bounds = R41.vap_density_bounds
 
     # Extract train/test data
     x_train, y_train, x_test, y_test = shuffle_and_split(
@@ -144,7 +144,7 @@ def main():
     model = run_gpflow_scipy(
         x_train,
         y_train,
-        gpflow.kernels.RBF(lengthscales=np.ones(R32.n_params + 1)),
+        gpflow.kernels.RBF(lengthscales=np.ones(R41.n_params + 1)),
     )
 
     # Use model to predict results
