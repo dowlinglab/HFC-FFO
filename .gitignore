@@ -132,3 +132,4 @@ dmypy.json
 *workspace*
 *.signac*
 *signac_project_document*
+*Project-*o.*
