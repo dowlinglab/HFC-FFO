@@ -126,7 +126,7 @@ def prod_complete(job):
 @Project.post(em_complete)
 @Project.post(eq_complete)
 @Project.post(prod_complete)
-@Project.operation
+@Project.operation(with_job = True, cmd=True)
 def simulate(job):
     """Run the minimization, equilibration, and production simulations"""
 
