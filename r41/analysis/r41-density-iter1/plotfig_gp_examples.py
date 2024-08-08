@@ -48,7 +48,7 @@ out_csv_name = "r41-density-iter" + str(iternum + 1) + "-params.csv"
 
 df_csvs = [pd.read_csv(csv_path + in_csv_name, index_col=0) for in_csv_name in in_csv_names]
 df_csv = pd.concat(df_csvs)
-df_all, df_liq, df_vap = prepare_df_density(df_csv, R41,liquid_density_threshold=1100)
+df_all, df_liq, df_vap = prepare_df_density(df_csv, R41,liquid_density_threshold=500)
 df_all = df_liq #Set df_all to df_liq to only plot liquid GP parity plots
 
 ### Fit GP Model to liquid density

@@ -219,7 +219,7 @@ model = run_gpflow_scipy(
 ### Step 3: Find new parameters for MD simulations
 
 # SVM to classify hypercube regions as liquid or vapor
-latin_hypercube = np.loadtxt("LHS_500000_x_4.csv", delimiter=",")
+latin_hypercube = np.loadtxt("../../LHS_500000_x_6.csv", delimiter=",")
 liquid_samples, vapor_samples = classify_samples(latin_hypercube, classifier)
 # Find the lowest MSE points from the GP in both sets
 ranked_liquid_samples = rank_samples(liquid_samples, model, R41, "sim_liq_density")

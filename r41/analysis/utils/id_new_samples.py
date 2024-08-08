@@ -17,7 +17,7 @@ def prepare_df_density(df_csv, molecule, liquid_density_threshold):
     ----------
     df_csv : pd.DataFrame
         The dataframe as loaded from a CSV file with the signac results
-    molecule : R32Constants, R125Constants
+    molecule : RXXConstants
         An instance of a molecule constants class
     liquid_density_threshold : float
         Density threshold (kg/m^3) for distinguishing liquid and vapor
@@ -94,7 +94,7 @@ def prepare_df_vle(df_csv, molecule):
     ----------
     df_csv : pd.DataFrame
         The dataframe as loaded from a CSV file with the signac results
-    molecule : R32Constants, R125Constants
+    molecule : RXXConstants
         An instance of a molecule constants class
     n_molecules : int
         The number of molecules in the simulation
@@ -243,7 +243,7 @@ def rank_samples(samples, gp_model, molecule, property_name, property_offset=0.0
         Samples to rank
     gp_model : gpflow.model
         GP model to predict the property_name of each sample
-    molecule : R32Constants, R125Constants
+    molecule : RXXConstants
         An instance of a molecule constants class
     property_name : string
         The name of the property of interest. Valid options are
