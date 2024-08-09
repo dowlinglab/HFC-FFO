@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn
-from sklearn.metrics import plot_confusion_matrix
+from sklearn.metrics import ConfusionMatrixDisplay
 
 from sklearn import svm
 import scipy.optimize as optimize
@@ -48,7 +48,7 @@ cl_shuffle_seed = 6928457 #classifier
 
 liquid_density_threshold = 200  # kg/m^3  ##>500 is liquid; <500 is gas. used for classifier
 
-csv_path = "/scratch365/nwang2/ff_development/HFC_143a_FFO_FF/r50/analysis/csv/"
+csv_path = "/scratch365/mcarlozo/HFC-FFO/r50/analysis/csv/"
 in_csv_name = "r50-density-iter" + str(iternum) + "-results.csv" 
 
 # Read file
@@ -75,6 +75,6 @@ classifier = svm.SVC(kernel="rbf")
 classifier.fit(x_train, y_train)
 test_score = classifier.score(x_test, y_test)
 print(f"Classifer is {test_score*100.0}% accurate on the test set.")
-plot_confusion_matrix(classifier, x_test, y_test)  
+ConfusionMatrixDisplay.from_estimator(classifier, x_test, y_test)  
 plt.savefig("classifier.pdf")
 
