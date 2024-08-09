@@ -5,6 +5,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn
 from sklearn.metrics import ConfusionMatrixDisplay
+from skmultilearn.model_selection import iterative_train_test_split
 
 from sklearn import svm
 import scipy.optimize as optimize
@@ -36,6 +37,66 @@ from utils.id_new_samples import (
 
 R41 = R41Constants()
 
+def shuffle_split_strat(df, param_names, property_name, fraction_train=0.8, shuffle_seed=None):
+    """Randomly shuffle the DataFrame and extracts the train and test sets
+
+    Parameters
+    ----------
+    df : pandas.DataFrame
+        The pandas dataframe with the samples
+    param_names : list-like
+        names of the parameters to extract from the dataframe (x_data)
+    property_name : string
+        Name of the property to extract from the dataframe (y_data)
+    fraction_train : float, optional, default = 0.8
+        Fraction of sample to use as training data. Remainder is test data.
+    shuffle_seed : int, optional, default = None
+        seed for random number generator for shuffle
+
+    Returns
+    -------
+    x_train : np.ndarray
+        Training inputs
+    y_train : np.ndarray
+        Training results
+    x_test : np.ndarray
+        Testing inputs
+    y_test : np.ndarray
+        Testing results
+    """
+    if fraction_train < 0.0 or fraction_train > 1.0:
+        raise ValueError("`fraction_train` must be between 0 and 1.")
+    else:
+        fraction_test = 1.0 - fraction_train
+
+    try:
+        prp_idx = df.columns.get_loc(property_name)
+    except KeyError:
+        raise ValueError(
+            "`property_name` does not match any headers of `df`"
+        )
+    if type(param_names) not in (list, tuple):
+        raise TypeError("`param_names` must be a list or tuple")
+    else:
+        param_names = list(param_names)
+
+    data = df[param_names + [property_name]].values
+    # total_entries = data.shape[0]
+    # train_entries = int(total_entries * fraction_train)
+    # Shuffle the data before splitting train/test sets
+    # if shuffle_seed is not None:
+    #     np.random.seed(shuffle_seed)
+    # np.random.shuffle(data)
+
+    # x_train = data[:train_entries, :-1].astype(np.float64)
+    # y_train = data[:train_entries, -1].astype(np.float64)
+    # x_test = data[train_entries:, :-1].astype(np.float64)
+    # y_test = data[train_entries:, -1].astype(np.float64)
+
+    x_train, x_test, y_train, y_test = iterative_train_test_split(data[:,:-1], data[:,-1], test_size = 1-fraction_train, random_state = shuffle_seed)
+
+    return x_train, y_train, x_test, y_test
+
 def opt_dist(distance, top_samples, constants, target_num, rand_seed = None, eval = False):
     """
     Calculates the distance between points such that exactly a target number of points are chosen for the next iteration
@@ -57,7 +118,7 @@ def opt_dist(distance, top_samples, constants, target_num, rand_seed = None, eva
     if len(top_samples) <= target_num:
         print("Trying dist =", distance)
         
-    top_samp0 = top_samples
+    top_samp0 = top_samples.copy()
     if rand_seed != None:
         np.random.seed(rand_seed)
     new_points = pd.DataFrame()
@@ -84,16 +145,19 @@ def opt_dist(distance, top_samples, constants, target_num, rand_seed = None, eva
         top_samples.drop(
             index=top_samples.index[points_to_remove], inplace=True
         )
+    
 #     error = target_num - len(new_points)
-    len_new_points = len(new_points)
     
 #     print("Error = ",error)
 #     return error
     if eval == True:
+        if len(new_points) > target_num:
+            #randomly remove extra points
+            new_points = new_points.sample(n=target_num, random_state=rand_seed)
         return new_points
     else:
 #         return error
-        return len_new_points
+        return len(new_points)
 
 
 def bisection(lower_bound, upper_bound, error_tol, top_samples, constants, target_num, rand_seed = None, verbose = False):
@@ -104,7 +168,7 @@ def bisection(lower_bound, upper_bound, error_tol, top_samples, constants, targe
     -----------
         lower_bound: float, lower bound of the distance, must be > 0
         upper_bound: float, lower bound of the distance, must be > lower_bound
-        error_tol: floar, tolerance of error
+        error_tol: float, tolerance of error
         top_samples: pandas data frame, Collection of top liquid/vapor sampes
         constants: utils.r41.R41Constants, contains the infromation for a certain refrigerant
         target_num: int, the number of samples to choose next
@@ -115,27 +179,25 @@ def bisection(lower_bound, upper_bound, error_tol, top_samples, constants, targe
         midpoint: The distance that satisfies the error criteria based on the target number
 
     """
-    assert len(top_samples) > target_num, "Ensure you have more samples than the target number!"
+    assert len(top_samples) >= target_num, "Ensure you have at least as many samples as the target number!"
     #Initialize Termination criteria and add assert statements
     assert lower_bound >= 0, "Lower bound must be greater than 0"
     assert lower_bound < upper_bound, "Lower bound must be less than the upper bound"
     
-        #Set error of upper and lower bound
-#         print("Low B", lower_bound)
-#         print("High B", upper_bound)
+    #Set error of upper and lower bound
+    # print("Low B", lower_bound)
+    # print("High B", upper_bound)
     eval_lower_bound = opt_dist(lower_bound, top_samples, constants, target_num, rand_seed)
     eval_upper_bound = opt_dist(upper_bound, top_samples, constants, target_num, rand_seed)
-#     print("Low Eval",eval_lower_bound )
-#     print("High Eval",eval_upper_bound )
+    # print("Low Eval",eval_lower_bound )
+    # print("High Eval",eval_upper_bound )
     
     #Throw Error if initial guesses are bad
-    if not eval_lower_bound > target_num > eval_upper_bound:
+    if not (eval_lower_bound >= target_num >= eval_upper_bound):
         print("Increase Length of Upper Bound. Given bounds do not include the root!")
-
-    terminate = False
     
     #While error > tolerance
-    while terminate == False:
+    while (upper_bound - lower_bound) > error_tol:
         #Find the midpoint and evaluate it    
         midpoint = (lower_bound + upper_bound)/2
 #         print("Mid B", midpoint)
@@ -147,25 +209,28 @@ def bisection(lower_bound, upper_bound, error_tol, top_samples, constants, targe
         
         # Set the upper or lower bound depending on sign
         if eval_midpoint == target_num:
-            #Terminate loop if error < error_tol
-            terminate = abs(eval_midpoint) < error_tol 
-            break      
-        elif  eval_midpoint < target_num:
+            #Terminate loop if correct number of points is found
+            break   
+        elif eval_midpoint < target_num:
             upper_bound = midpoint
         else:
             lower_bound = midpoint
-        if (upper_bound - lower_bound) < error_tol:
-            print("Bounds have collapsed and the number of points is", eval_midpoint)
-            break
-        
- 
-    return midpoint, error
+
+    final_distance = lower_bound
+    final_eval = opt_dist(final_distance, top_samples, constants, target_num, rand_seed)
+    if final_eval < target_num:
+        final_distance = upper_bound  # Just in case lower_bound fails, use upper_bound
+        final_eval = opt_dist(final_distance, top_samples, constants, target_num, rand_seed)
+
+    return final_distance, final_eval - target_num
+
 ############################# QUANTITIES TO EDIT #############################
 ##############################################################################
 
 iternum = 1
-cl_shuffle_seed = 6928457 #classifier
-gp_shuffle_seed = 3945872 #GP seed 
+cl_shuffle_seed = 20 #classifier
+gp_shuffle_seed = 1 #GP seed 
+dist_seed = 1 #Distance seed
 
 ##############################################################################
 ##############################################################################
@@ -202,7 +267,6 @@ print(f"Classifer is {test_score*100.0}% accurate on the test set.")
 ConfusionMatrixDisplay.from_estimator(classifier, x_test, y_test)  
 plt.savefig("classifier.pdf")
 
-
 ### Fit GP Model
 # Create training/test set
 param_names = list(R41.param_names) + ["temperature"]
@@ -226,86 +290,86 @@ print(latin_hypercube.shape)
 liquid_samples, vapor_samples = classify_samples(latin_hypercube, classifier)
 
 # Find the lowest MSE points from the GP in both sets
-# ranked_liquid_samples = rank_samples(liquid_samples, model, R41, "sim_liq_density")
-# ranked_vapor_samples = rank_samples(vapor_samples, model, R41, "sim_liq_density")#both l and g compared to liquid density
+ranked_liquid_samples = rank_samples(liquid_samples, model, R41, "sim_liq_density")
+ranked_vapor_samples = rank_samples(vapor_samples, model, R41, "sim_liq_density")#both l and g compared to liquid density
 
-# # Make a set of the lowest MSE parameter sets
-# top_liquid_samples = ranked_liquid_samples[
-#     ranked_liquid_samples["mse"] < 625.0
-# ]
-# top_vapor_samples = ranked_vapor_samples[ranked_vapor_samples["mse"] < 625.0]
-# print(
-#     "There are:",
-#     top_liquid_samples.shape[0],
-#     "liquid parameter sets which produce densities within 25 kg/m$^2$ of experimental densities",
-# )
-# print(
-#     "There are:",
-#     top_vapor_samples.shape[0],
-#     " vapor parameter sets which produce densities within 25 kg/m$^2$ of experimental densities",
-# )
+# Make a set of the lowest MSE parameter sets
+top_liquid_samples = ranked_liquid_samples[
+    ranked_liquid_samples["mse"] < 625.0
+]
+top_vapor_samples = ranked_vapor_samples[ranked_vapor_samples["mse"] < 625.0]
+print(
+    "There are:",
+    top_liquid_samples.shape[0],
+    "liquid parameter sets which produce densities within 25 kg/m$^2$ of experimental densities",
+)
+print(
+    "There are:",
+    top_vapor_samples.shape[0],
+    " vapor parameter sets which produce densities within 25 kg/m$^2$ of experimental densities",
+)
 
-# #### Visualization: Low MSE parameter sets
-# # Create a pairplot of the top "liquid" parameter values
-# column_names = list(R41.param_names)
-# g = seaborn.pairplot(top_liquid_samples.drop(columns=["mse"]))
-# g.set(xlim=(-0.1, 1.1), ylim=(-0.1, 1.1))
-# g.savefig("liq_mse_below625.pdf")
+#### Visualization: Low MSE parameter sets
+# Create a pairplot of the top "liquid" parameter values
+column_names = list(R41.param_names)
+g = seaborn.pairplot(top_liquid_samples.drop(columns=["mse"]))
+g.set(xlim=(-0.1, 1.1), ylim=(-0.1, 1.1))
+g.savefig("liq_mse_below625.pdf")
 
-# # Create a pairplot of the top "vapor" parameter values
-# column_names = list(R41.param_names)
-# g = seaborn.pairplot(top_vapor_samples.drop(columns=["mse"]))
-# g.set(xlim=(-0.1, 1.1), ylim=(-0.1, 1.1))
-# g.savefig("vap_mse_below625.pdf")
+# Create a pairplot of the top "vapor" parameter values
+column_names = list(R41.param_names)
+g = seaborn.pairplot(top_vapor_samples.drop(columns=["mse"]))
+g.set(xlim=(-0.1, 1.1), ylim=(-0.1, 1.1))
+g.savefig("vap_mse_below625.pdf")
 
-# new_liquid_params = [
-#     top_liquid_samples.drop(columns=["mse"])
-# ]
-# new_vapor_params = [
-#     top_vapor_samples.drop(columns=["mse"])
-# ]
+new_liquid_params = [
+    top_liquid_samples.drop(columns=["mse"])
+]
+new_vapor_params = [
+    top_vapor_samples.drop(columns=["mse"])
+]
 
-# # Concatenate into a single dataframe and save to CSV
-# new_liquid_params = pd.concat(new_liquid_params)
-# new_liquid_params.to_csv(csv_path + out_top_liquid_csv_name)
-# new_vapor_params = pd.concat(new_vapor_params)
-# new_vapor_params.to_csv(csv_path + out_top_vapor_csv_name)
-# top_liq = pd.read_csv(csv_path + out_top_liquid_csv_name, delimiter = ",", index_col = 0)
-# top_vap = pd.read_csv(csv_path + out_top_vapor_csv_name, delimiter = ",", index_col = 0)
+# Concatenate into a single dataframe and save to CSV
+new_liquid_params = pd.concat(new_liquid_params)
+new_liquid_params.to_csv(csv_path + out_top_liquid_csv_name)
+new_vapor_params = pd.concat(new_vapor_params)
+new_vapor_params.to_csv(csv_path + out_top_vapor_csv_name)
+top_liq = pd.read_csv(csv_path + out_top_liquid_csv_name, delimiter = ",", index_col = 0)
+top_vap = pd.read_csv(csv_path + out_top_vapor_csv_name, delimiter = ",", index_col = 0)
 
-# top_liq = top_liq.reset_index(drop=True)
-# top_vap = top_vap.reset_index(drop=True)
+top_liq = top_liq.reset_index(drop=True)
+top_vap = top_vap.reset_index(drop=True)
 
-# from numpy.linalg import norm
-# dist_seed = 115
-# target_num_v = 96
-# target_num_l = 104 # just for liquid; vapor less than 100 and use all
+from numpy.linalg import norm
 
-# zero_array = np.zeros(top_liq.shape[1])
-# one_array = np.ones(top_liq.shape[1])
-# ub_array = one_array - zero_array
+target_total = 200
+target_num_l = np.minimum(100, len(top_liq)) # just for liquid; vapor less than 100 and use all
+target_num_v = target_total - target_num_l
 
-# # lower_bound = 1e-8
-# lower_bound = 0
-# #IL norm between the highest high parameter space, and lowest low parameter space value
-# upper_bound = norm(ub_array, 1) # This number will be 10, the number of dimensions
-# error_tol = 1e-5
+zero_array = np.zeros(top_liq.shape[1])
+one_array = np.ones(top_liq.shape[1])
+ub_array = one_array - zero_array
 
-# distance_opt_v,number_points_v = bisection(lower_bound, upper_bound, error_tol, top_vap, R41, target_num_v, dist_seed)
-# print('\nRequired Distance for vapor is : %0.8f and there are %0.1f points too few' % (distance_opt_v, number_points_v) )
+# lower_bound = 1e-8
+lower_bound = 0
+#IL norm between the highest high parameter space, and lowest low parameter space value
+upper_bound = norm(ub_array, 1) # This number will be 10, the number of dimensions
+error_tol = 1e-8
 
-# if len(top_liq) > target_num_l:
-#     distance_opt_l,number_points_l = bisection(lower_bound, upper_bound, error_tol, top_liq, R41, target_num_l, dist_seed)
-#     print('\nRequired Distance for liquid is : %0.8f and there are %0.1f points too few' % (distance_opt_l, number_points_l) )
+distance_opt_v,number_points_v = bisection(lower_bound, upper_bound, error_tol, top_vap, R41, target_num_v, dist_seed)
+print('\nRequired Distance for vapor is : %0.8f and there are %0.1f points too many' % (distance_opt_v, number_points_v) )
 
-#     new_points_l = opt_dist(distance_opt_l, top_liq, R41, target_num_l, rand_seed=dist_seed , eval = True)
-        
-#     print(len(new_points_l), "top liquid density points are left after removing similar points using a distance of", np.round(distance_opt_l,5))
+distance_opt_l,number_points_l = bisection(lower_bound, upper_bound, error_tol, top_liq, R41, target_num_l, dist_seed)
+print('\nRequired Distance for liquid is : %0.8f and there are %0.1f points too many' % (distance_opt_l, number_points_l) )
 
-# new_points_v = opt_dist(distance_opt_v, top_vap, R41, target_num_v, rand_seed=dist_seed , eval = True)
+new_points_l = opt_dist(distance_opt_l, top_liq, R41, target_num_l, rand_seed=dist_seed , eval = True)
     
-# print(len(new_points_v), "top vapor density points are left after removing similar points using a distance of", np.round(distance_opt_v,5))
+print(len(new_points_l), "top liquid density points are left after removing similar points using a distance of", np.round(distance_opt_l,5))
 
-# pd.concat([top_liq,new_points_v], axis=0).to_csv(csv_path + out_csv_name)
-# # pd.concat([new_points_l,new_points_v], axis=0).to_csv(csv_path + out_csv_name)
+new_points_v = opt_dist(distance_opt_v, top_vap, R41, target_num_v, rand_seed=dist_seed , eval = True)
+    
+print(len(new_points_v), "top vapor density points are left after removing similar points using a distance of", np.round(distance_opt_v,5))
+
+pd.concat([top_liq,new_points_v], axis=0).to_csv(csv_path + out_csv_name)
+# pd.concat([new_points_l,new_points_v], axis=0).to_csv(csv_path + out_csv_name)
 
