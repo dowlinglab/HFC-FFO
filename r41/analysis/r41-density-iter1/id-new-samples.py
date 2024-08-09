@@ -228,7 +228,7 @@ def bisection(lower_bound, upper_bound, error_tol, top_samples, constants, targe
 ##############################################################################
 
 iternum = 1
-cl_shuffle_seed = 20 #classifier
+cl_shuffle_seed = 97 #classifier
 gp_shuffle_seed = 1 #GP seed 
 dist_seed = 1 #Distance seed
 
@@ -343,8 +343,10 @@ top_vap = top_vap.reset_index(drop=True)
 from numpy.linalg import norm
 
 target_total = 200
-target_num_l = np.minimum(100, len(top_liq)) # just for liquid; vapor less than 100 and use all
+#We want to have as many liquid points as possible, but no more than 200 total and the rest vapor
+target_num_l = np.minimum(200, len(top_liq))
 target_num_v = target_total - target_num_l
+print(target_num_l, target_num_v)
 
 zero_array = np.zeros(top_liq.shape[1])
 one_array = np.ones(top_liq.shape[1])
