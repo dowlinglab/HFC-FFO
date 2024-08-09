@@ -137,12 +137,13 @@ def shuffle_split_strat(df, param_names, property_name, fraction_train=0.8, shuf
 ##############################################################################
 
 iternum =1
-cl_shuffle_seed = 97  #classifier #Use seed 97 for class2 and seed 2 for class1
+cl_shuffle_seed1 = 2  #classifier #Use seed 97 for class2 and seed 2 for class1
+cl_shuffle_seed2 = 97 
 
 ##############################################################################
 ##############################################################################
 
-liquid_density_threshold = 500 # kg/m^3  ##>500 is liquid; <500 is gas. used for classifier
+liquid_density_threshold = 400 # kg/m^3  ##>500 is liquid; <500 is gas. used for classifier
 
 csv_path = "../csv/"
 in_csv_name = "r41-density-iter" + str(iternum) + "-results.csv" 
@@ -167,7 +168,7 @@ property_name = "is_liquid"
 
 #Stratified sampling
 x_train, y_train, x_test, y_test = shuffle_split_strat(
-    df_all, param_names, property_name, shuffle_seed=cl_shuffle_seed
+    df_all, param_names, property_name, shuffle_seed=cl_shuffle_seed1
 )
 pd.DataFrame(y_train).to_csv("y_train_strat.csv")
 classifier = svm.SVC(kernel="rbf")
@@ -180,7 +181,7 @@ liquid_samples, vapor_samples = classify_samples(latin_hypercube, classifier)
 
 #Shuffle and split
 x_train2, y_train2, x_test2, y_test2 = shuffle_and_split(
-    df_all, param_names, property_name, shuffle_seed=cl_shuffle_seed
+    df_all, param_names, property_name, shuffle_seed=cl_shuffle_seed2
 )
 pd.DataFrame(y_train2).to_csv("y_train_reg.csv")
 classifier2 = svm.SVC(kernel="rbf")

@@ -235,7 +235,7 @@ dist_seed = 1 #Distance seed
 ##############################################################################
 ##############################################################################
 
-liquid_density_threshold = 500  # kg/m^3  ##>500 is liquid; <500 is gas. used for classifier
+liquid_density_threshold = 400  # kg/m^3  ##>500 is liquid; <500 is gas. used for classifier
 
 csv_path = "../csv/"
 in_csv_names = ["r41-density-iter" + str(i) + "-results.csv" for i in range(1, iternum+1)]
