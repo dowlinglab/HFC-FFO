@@ -286,7 +286,6 @@ model = run_gpflow_scipy(
 
 # SVM to classify hypercube regions as liquid or vapor
 latin_hypercube = np.genfromtxt("../../LHS_500000_x_6.csv",delimiter=",",skip_header=1,)[:, 1:]
-print(latin_hypercube.shape)
 liquid_samples, vapor_samples = classify_samples(latin_hypercube, classifier)
 
 # Find the lowest MSE points from the GP in both sets
