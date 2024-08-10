@@ -13,8 +13,8 @@
   <Angle class1="h1" class2="c3" class3="h1" angle="1.9120082" k="327.85584464"/>
  </HarmonicAngleForce>
  <NonbondedForce coulomb14scale="0.833333" lj14scale="0.5">
-  <Atom type="C1" charge="0.119281"  sigma="0.340000" epsilon="0.322119"/>
-  <Atom type="F1" charge="-0.274252" sigma="0.280000" epsilon="0.235989"/>
-  <Atom type="H1" charge="0.051657"  sigma="0.240000" epsilon="0.058999"/>
+  <Atom type="C1" charge="0.119281"  sigma="0.340000" epsilon="0.457728"/>
+  <Atom type="F1" charge="-0.274252" sigma="0.311800" epsilon="0.255221"/>
+  <Atom type="H1" charge="0.051657"  sigma="0.247100" epsilon="0.065693"/>
  </NonbondedForce>
 </ForceField>

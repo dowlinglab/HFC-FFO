@@ -33,7 +33,7 @@ def create_system(job):
     import shutil
 
     r41 = mbuild.load("CF", smiles=True)
-    system = mbuild.fill_box(r41, n_compounds=300, density=600)
+    system = mbuild.fill_box(r41, n_compounds=300, density=700)
 
     ff = foyer.Forcefield(job.fn("ff.xml"))
 

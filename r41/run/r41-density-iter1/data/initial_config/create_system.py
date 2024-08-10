@@ -10,7 +10,7 @@ def main():
         inp.write(content)
 
     r41 = mbuild.load("CF", smiles=True)
-    system = mbuild.fill_box(r41, n_compounds=300, density=600,seed=12345,overlap=0.3)
+    system = mbuild.fill_box(r41, n_compounds=300, density=700,seed=12345,overlap=0.3)
 
     ff = foyer.Forcefield("ff.xml")
 
@@ -47,12 +47,12 @@ def _generate_r41_xml():
  </NonbondedForce>
 </ForceField>
 """.format(
-        sigma_C1=(3.4 * u.Angstrom).in_units(u.nm).value,
-        sigma_F1=(2.8 * u.Angstrom).in_units(u.nm).value,
-        sigma_H1=(2.4 * u.Angstrom).in_units(u.nm).value,
-        epsilon_C1=(38.742 * u.K * u.kb).in_units("kJ/mol").value,
-        epsilon_F1=(28.383 * u.K * u.kb).in_units("kJ/mol").value,
-        epsilon_H1=(7.096 * u.K * u.kb).in_units("kJ/mol").value,
+        sigma_C1=(3.400 * u.Angstrom).in_units(u.nm).value,
+        sigma_F1=(3.118 * u.Angstrom).in_units(u.nm).value,
+        sigma_H1=(2.471 * u.Angstrom).in_units(u.nm).value,
+        epsilon_C1=(55.052 * u.K * u.kb).in_units("kJ/mol").value,
+        epsilon_F1=(30.696 * u.K * u.kb).in_units("kJ/mol").value,
+        epsilon_H1=(7.901 * u.K * u.kb).in_units("kJ/mol").value,
     ) #these values don't matter since they'll be replaced by LHS. Just need to be valid XML 
 
 
