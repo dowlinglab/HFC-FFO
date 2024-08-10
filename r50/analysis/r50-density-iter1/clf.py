@@ -77,4 +77,6 @@ test_score = classifier.score(x_test, y_test)
 print(f"Classifer is {test_score*100.0}% accurate on the test set.")
 ConfusionMatrixDisplay.from_estimator(classifier, x_test, y_test)  
 plt.savefig("classifier.pdf")
+latin_hypercube = np.loadtxt("LHS_500000_x_4.csv", delimiter=",")
+liquid_samples, vapor_samples = classify_samples(latin_hypercube, classifier)
 
