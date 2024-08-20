@@ -139,7 +139,7 @@ def shuffle_split_strat(df, param_names, property_name, fraction_train=0.8, shuf
 iternum =1
 cl_shuffle_seed1 = 2  #classifier #Use seed 97 for class2 and seed 2 for class1
 cl_shuffle_seed2 = 97 
-cl_shuffle_seed = 6928457
+cl_shuffle_seed = 1
 
 ##############################################################################
 ##############################################################################
@@ -169,7 +169,7 @@ x_train, y_train, x_test, y_test = shuffle_and_split(
 )
 
 # Create and fit classifier
-classifier = svm.SVC(kernel="rbf")
+classifier = svm.SVC(kernel="rbf", class_weight="balanced")
 classifier.fit(x_train, y_train)
 test_score = classifier.score(x_test, y_test)
 print(f"Classifer is {test_score*100.0}% accurate on the test set.")
