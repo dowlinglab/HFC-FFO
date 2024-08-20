@@ -139,6 +139,7 @@ def shuffle_split_strat(df, param_names, property_name, fraction_train=0.8, shuf
 iternum =1
 cl_shuffle_seed1 = 2  #classifier #Use seed 97 for class2 and seed 2 for class1
 cl_shuffle_seed2 = 97 
+cl_shuffle_seed = 6928457
 
 ##############################################################################
 ##############################################################################
@@ -150,9 +151,7 @@ in_csv_name = "r41-density-iter" + str(iternum) + "-results.csv"
 
 # Read file
 df_csv = pd.read_csv(csv_path + in_csv_name, index_col=0)
-latin_hypercube = np.genfromtxt("../../LHS_500000_x_6.csv",delimiter=",",skip_header=1,)[:, 1:]
 
-#df_csv = pd.concat(df_csvs)
 df_all, df_liquid, df_vapor = prepare_df_density(
     df_csv, R41, liquid_density_threshold
 )
@@ -165,29 +164,59 @@ print("Total number of simulations: ",df_all.shape[0])
 # Create training/test set
 param_names = list(R41.param_names) + ["temperature"]
 property_name = "is_liquid"
-
-#Stratified sampling
-x_train, y_train, x_test, y_test = shuffle_split_strat(
-    df_all, param_names, property_name, shuffle_seed=cl_shuffle_seed1
+x_train, y_train, x_test, y_test = shuffle_and_split(
+    df_all, param_names, property_name, shuffle_seed=cl_shuffle_seed
 )
-pd.DataFrame(y_train).to_csv("y_train_strat.csv")
+
+# Create and fit classifier
 classifier = svm.SVC(kernel="rbf")
 classifier.fit(x_train, y_train)
 test_score = classifier.score(x_test, y_test)
 print(f"Classifer is {test_score*100.0}% accurate on the test set.")
 ConfusionMatrixDisplay.from_estimator(classifier, x_test, y_test)  
-plt.savefig("classifier_strat.pdf")
+plt.savefig("classifier.pdf")
+latin_hypercube = np.genfromtxt("../../LHS_500000_x_6.csv",delimiter=",",skip_header=1,)[:, 1:]
 liquid_samples, vapor_samples = classify_samples(latin_hypercube, classifier)
 
-#Shuffle and split
-x_train2, y_train2, x_test2, y_test2 = shuffle_and_split(
-    df_all, param_names, property_name, shuffle_seed=cl_shuffle_seed2
-)
-pd.DataFrame(y_train2).to_csv("y_train_reg.csv")
-classifier2 = svm.SVC(kernel="rbf")
-classifier2.fit(x_train2, y_train2)
-test_score2 = classifier2.score(x_test2, y_test2)
-print(f"Classifer is {test_score2*100.0}% accurate on the test set.")
-ConfusionMatrixDisplay.from_estimator(classifier2, x_test2, y_test2)  
-plt.savefig("classifier_shuff.pdf")
-liquid_samples, vapor_samples = classify_samples(latin_hypercube, classifier2)
+
+
+
+#df_csv = pd.concat(df_csvs)
+# df_all, df_liquid, df_vapor = prepare_df_density(
+#     df_csv, R41, liquid_density_threshold
+# )
+# print("There are ",df_liquid.shape[0], " liquid simulations.")
+# print("There are ",df_vapor.shape[0]," vapor simulations.")
+# print("Total number of simulations: ",df_all.shape[0])
+
+# ### Step 2: Fit classifier and GP models
+
+# # Create training/test set
+# param_names = list(R41.param_names) + ["temperature"]
+# property_name = "is_liquid"
+
+# #Stratified sampling
+# x_train, y_train, x_test, y_test = shuffle_split_strat(
+#     df_all, param_names, property_name, shuffle_seed=cl_shuffle_seed1
+# )
+# pd.DataFrame(y_train).to_csv("y_train_strat.csv")
+# classifier = svm.SVC(kernel="rbf")
+# classifier.fit(x_train, y_train)
+# test_score = classifier.score(x_test, y_test)
+# print(f"Classifer is {test_score*100.0}% accurate on the test set.")
+# ConfusionMatrixDisplay.from_estimator(classifier, x_test, y_test)  
+# plt.savefig("classifier_strat.pdf")
+# liquid_samples, vapor_samples = classify_samples(latin_hypercube, classifier)
+
+# #Shuffle and split
+# x_train2, y_train2, x_test2, y_test2 = shuffle_and_split(
+#     df_all, param_names, property_name, shuffle_seed=cl_shuffle_seed2
+# )
+# pd.DataFrame(y_train2).to_csv("y_train_reg.csv")
+# classifier2 = svm.SVC(kernel="rbf")
+# classifier2.fit(x_train2, y_train2)
+# test_score2 = classifier2.score(x_test2, y_test2)
+# print(f"Classifer is {test_score2*100.0}% accurate on the test set.")
+# ConfusionMatrixDisplay.from_estimator(classifier2, x_test2, y_test2)  
+# plt.savefig("classifier_shuff.pdf")
+# liquid_samples, vapor_samples = classify_samples(latin_hypercube, classifier2)
