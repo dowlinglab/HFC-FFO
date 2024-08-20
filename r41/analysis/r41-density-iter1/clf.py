@@ -169,16 +169,15 @@ x_train, y_train, x_test, y_test = shuffle_and_split(
 )
 
 # Create and fit classifier
+print("Seed: ",cl_shuffle_seed)
 classifier = svm.SVC(kernel="rbf", class_weight="balanced")
 classifier.fit(x_train, y_train)
 test_score = classifier.score(x_test, y_test)
 print(f"Classifer is {test_score*100.0}% accurate on the test set.")
-ConfusionMatrixDisplay.from_estimator(classifier, x_test, y_test)  
+ConfusionMatrixDisplay.from_estimator(classifier, x_test, y_test, display_labels = ["Vapor", "Liquid"])  
 plt.savefig("classifier.pdf")
 latin_hypercube = np.genfromtxt("../../LHS_500000_x_6.csv",delimiter=",",skip_header=1,)[:, 1:]
 liquid_samples, vapor_samples = classify_samples(latin_hypercube, classifier)
-
-
 
 
 #df_csv = pd.concat(df_csvs)

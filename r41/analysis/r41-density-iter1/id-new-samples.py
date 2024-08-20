@@ -260,11 +260,11 @@ x_train, y_train, x_test, y_test = shuffle_and_split(
 )
 
 # Create and fit classifier
-classifier = svm.SVC(kernel="rbf")
+classifier = svm.SVC(kernel="rbf", class_weight="balanced")
 classifier.fit(x_train, y_train)
 test_score = classifier.score(x_test, y_test)
 print(f"Classifer is {test_score*100.0}% accurate on the test set.")
-ConfusionMatrixDisplay.from_estimator(classifier, x_test, y_test)  
+ConfusionMatrixDisplay.from_estimator(classifier, x_test, y_test, display_labels = ["Vapor", "Liquid"])  
 plt.savefig("classifier.pdf")
 
 ### Fit GP Model
