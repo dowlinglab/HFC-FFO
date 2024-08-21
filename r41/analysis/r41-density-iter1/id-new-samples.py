@@ -229,7 +229,7 @@ def bisection(lower_bound, upper_bound, error_tol, top_samples, constants, targe
 
 iternum = 1
 cl_shuffle_seed = 1 #classifier
-gp_shuffle_seed = 1 #GP seed 
+gp_shuffle_seed = 42 #GP seed 
 dist_seed = 1 #Distance seed
 
 ##############################################################################
