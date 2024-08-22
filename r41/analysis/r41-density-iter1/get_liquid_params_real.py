@@ -89,6 +89,20 @@ df_all["is_liquid"] = df_all["md_density"].apply(
     lambda x: x > liquid_density_threshold
 )
 
+# df_liquid2 = df_all[df_all["is_liquid"] == True]
+# scaled_param_values = values_real_to_scaled(
+#         df_liquid2[list(molecule.param_names)], molecule.param_bounds
+#     )
+# df_liquid2[list(molecule.param_names)] = scaled_param_values
+# column_names = list(R41.param_names)
+# #Drop the last four columns
+# df_liquid2 = df_liquid2.drop(columns=["md_density", "expt_density", "is_liquid", "temperature"])
+# #Remove duplocate rows
+# df_liquid2 = df_liquid2.drop_duplicates()
+# g = seaborn.pairplot(df_liquid2)
+# g.set(xlim=(-0.1, 1.1), ylim=(-0.1, 1.1))
+# g.savefig("liq_samples_scl.pdf")
+
 #Scale sigmas and epsilons to preferred units
 # Extract the columns to be transformed
 theta_guess = df_all[list(R41.param_names)].to_numpy()
@@ -99,7 +113,6 @@ transformed_values = values_real_to_pref(theta_guess)
 # Update the DataFrame with the transformed values
 df_all[list(R41.param_names)] = transformed_values
 
-# df_all[list(molecule.param_names)] = scaled_param_values
 # Split out vapor and liquid samples
 df_liquid = df_all[df_all["is_liquid"] == True]
 df_vapor = df_all[df_all["is_liquid"] == False]
@@ -112,10 +125,16 @@ df_liquid.to_csv(csv_path + out_csv_name)
 df_liquid = df_liquid.drop(columns=["md_density", "expt_density", "is_liquid", "temperature"])
 #Remove duplocate rows
 df_liquid = df_liquid.drop_duplicates()
-
-print(df_liquid.head())
-
 column_names = list(R41.param_names)
 g = seaborn.pairplot(df_liquid)
-g.set(xlim=(-0.1, 1.1), ylim=(-0.1, 1.1))
+# g.set(xlim=(-0.1, 1.1), ylim=(-0.1, 1.1))
 g.savefig("liq_samples.pdf")
+
+
+#Drop the last four columns
+df_vapor = df_vapor.drop(columns=["md_density", "expt_density", "is_liquid", "temperature"])
+#Remove duplocate rows
+df_vapor = df_vapor.drop_duplicates()
+g = seaborn.pairplot(df_vapor)
+# g.set(xlim=(-0.1, 1.1), ylim=(-0.1, 1.1))
+g.savefig("vap_samples.pdf")
