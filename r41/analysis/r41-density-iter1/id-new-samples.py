@@ -300,12 +300,12 @@ top_vapor_samples = ranked_vapor_samples[ranked_vapor_samples["mse"] < 625.0]
 print(
     "There are:",
     top_liquid_samples.shape[0],
-    "liquid parameter sets which produce densities within 25 kg/m$^2$ of experimental densities",
+    "liquid parameter sets which produce densities within 25 kg/m$^3$ of experimental densities",
 )
 print(
     "There are:",
     top_vapor_samples.shape[0],
-    " vapor parameter sets which produce densities within 25 kg/m$^2$ of experimental densities",
+    " vapor parameter sets which produce densities within 25 kg/m$^3$ of experimental densities",
 )
 
 #### Visualization: Low MSE parameter sets
@@ -357,20 +357,18 @@ lower_bound = 0
 upper_bound = norm(ub_array, 1) # This number will be 10, the number of dimensions
 error_tol = 1e-8
 
-distance_opt_v,number_points_v = bisection(lower_bound, upper_bound, error_tol, top_vap, R41, target_num_v, dist_seed)
-print('\nRequired Distance for vapor is : %0.8f and there are %0.1f points too many' % (distance_opt_v, number_points_v) )
-
-distance_opt_l,number_points_l = bisection(lower_bound, upper_bound, error_tol, top_liq, R41, target_num_l, dist_seed)
-print('\nRequired Distance for liquid is : %0.8f and there are %0.1f points too many' % (distance_opt_l, number_points_l) )
-
-new_points_l = opt_dist(distance_opt_l, top_liq, R41, target_num_l, rand_seed=dist_seed , eval = True)
-    
-print(len(new_points_l), "top liquid density points are left after removing similar points using a distance of", np.round(distance_opt_l,5))
-
-new_points_v = opt_dist(distance_opt_v, top_vap, R41, target_num_v, rand_seed=dist_seed , eval = True)
-    
-print(len(new_points_v), "top vapor density points are left after removing similar points using a distance of", np.round(distance_opt_v,5))
-
-pd.concat([top_liq,new_points_v], axis=0).to_csv(csv_path + out_csv_name)
-# pd.concat([new_points_l,new_points_v], axis=0).to_csv(csv_path + out_csv_name)
+#If we have enough liquid samples, we want to find the distance that will give us the target number of liquid samples
+if len(top_liq) >= target_total:
+    distance_opt_l,number_points_l = bisection(lower_bound, upper_bound, error_tol, top_liq, R41, target_num_l, dist_seed)
+    print('\nRequired Distance for liquid is : %0.8f and there are %0.1f points too many' % (distance_opt_l, number_points_l) )
+    new_points_l = opt_dist(distance_opt_l, top_liq, R41, target_num_l, rand_seed=dist_seed , eval = True) 
+    print(len(new_points_l), "top liquid density points are left after removing similar points using a distance of", np.round(distance_opt_l,5))
+    new_points_l.to_csv(csv_path + out_csv_name)
+#If we don't we want to find the vapor sets to add
+else:
+    distance_opt_v,number_points_v = bisection(lower_bound, upper_bound, error_tol, top_vap, R41, target_num_v, dist_seed)
+    print('\nRequired Distance for vapor is : %0.8f and there are %0.1f points too many' % (distance_opt_v, number_points_v) )
+    new_points_v = opt_dist(distance_opt_v, top_vap, R41, target_num_v, rand_seed=dist_seed , eval = True)
+    print(len(new_points_v), "top vapor density points are left after removing similar points using a distance of", np.round(distance_opt_v,5))
+    pd.concat([top_liq, new_points_v], axis=0).to_csv(csv_path + out_csv_name)
 
