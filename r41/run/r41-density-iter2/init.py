@@ -33,7 +33,7 @@ def init_project():
     nstepseq = 500000
     nstepsprod = 2500000
 
-    # Load samples from Latin hypercube
+    # Load samples from last iteration
     lh_samples = np.genfromtxt("../../analysis/csv/r41-density-iter2-params.csv",delimiter=",",skip_header=1,)[:, 1:]
 
     # Define bounds on sigma/epsilon
