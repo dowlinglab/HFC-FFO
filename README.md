@@ -127,7 +127,7 @@ To run liquid density iterations, follow the following steps:
    ```
 7. Run simulation
    ```
-     python python project.py submit -o simulate --bundle=24 --parallel
+     python project.py submit -o simulate --bundle=24 --parallel
    ```  
 8. Calculate density
    ```
