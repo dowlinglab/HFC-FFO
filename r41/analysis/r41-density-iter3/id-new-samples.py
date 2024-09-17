@@ -227,11 +227,11 @@ def bisection(lower_bound, upper_bound, error_tol, top_samples, constants, targe
 ############################# QUANTITIES TO EDIT #############################
 ##############################################################################
 
-iternum = 2
+iternum = 3
 cl_shuffle_seed = 1 #classifier
 gp_shuffle_seed = 42 #GP seed 
 dist_seed = 1 #Distance seed
-save_fig = False
+save_fig = True
 ##############################################################################
 ##############################################################################
 
