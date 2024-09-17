@@ -299,6 +299,11 @@ top_liquid_samples = ranked_liquid_samples[
     ranked_liquid_samples["mse"] < 625.0
 ]
 top_vapor_samples = ranked_vapor_samples[ranked_vapor_samples["mse"] < 625.0]
+
+# top_liquid_samples2 = ranked_liquid_samples[
+#     ranked_liquid_samples["mse"] < 100.0
+# ]
+# top_vapor_samples2 = ranked_vapor_samples[ranked_vapor_samples["mse"] < 100.0]
 print(
     "There are:",
     top_liquid_samples.shape[0],
@@ -310,17 +315,17 @@ print(
     " vapor parameter sets which produce densities within 25 kg/m$^3$ of experimental densities",
 )
 
-print(
-    "There are:",
-    top_liquid_samples.shape[0],
-    "liquid parameter sets which produce densities within 10 kg/m$^3$ of experimental densities",
-)
-print(
-    "There are:",
-    top_vapor_samples.shape[0],
-    " vapor parameter sets which produce densities within 10 kg/m$^3$ of experimental densities",
-)
-'''
+# print(
+#     "There are:",
+#     top_liquid_samples2.shape[0],
+#     "liquid parameter sets which produce densities within 10 kg/m$^3$ of experimental densities",
+# )
+# print(
+#     "There are:",
+#     top_vapor_samples2.shape[0],
+#     " vapor parameter sets which produce densities within 10 kg/m$^3$ of experimental densities",
+# )
+
 #### Visualization: Low MSE parameter sets
 # Create a pairplot of the top "liquid" parameter values
 column_names = list(R41.param_names)
@@ -389,4 +394,4 @@ else:
     print(len(new_points_v), "top vapor density points are left after removing similar points using a distance of", np.round(distance_opt_v,5))
     if save_fig:
         pd.concat([top_liq, new_points_v], axis=0).to_csv(csv_path + out_csv_name)
-'''
+
