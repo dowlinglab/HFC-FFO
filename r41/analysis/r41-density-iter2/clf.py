@@ -147,10 +147,11 @@ cl_shuffle_seed = 1
 liquid_density_threshold = 400 # kg/m^3  ##>500 is liquid; <500 is gas. used for classifier
 
 csv_path = "../csv/"
-in_csv_name = "r41-density-iter" + str(iternum) + "-results.csv" 
+in_csv_names = ["r41-density-iter" + str(i) + "-results.csv" for i in range(1, iternum+1)]
 
 # Read file
-df_csv = pd.read_csv(csv_path + in_csv_name, index_col=0)
+df_csvs = [pd.read_csv(csv_path + in_csv_name, index_col=0) for in_csv_name in in_csv_names]
+df_csv = pd.concat(df_csvs)
 
 df_all, df_liquid, df_vapor = prepare_df_density(
     df_csv, R41, liquid_density_threshold

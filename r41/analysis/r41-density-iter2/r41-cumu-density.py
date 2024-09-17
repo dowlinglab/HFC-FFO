@@ -62,7 +62,7 @@ def main():
         alpha=0.4,
         label="LD-1",
     )
-    '''ax.plot(
+    ax.plot(
         dfs_paramsets[1].sort_values(name)[name],
         np.arange(1, 201,1),
         '-s',
@@ -71,6 +71,7 @@ def main():
         alpha=0.4,
         label="LD-2",
     )
+    '''
     ax.plot(
         dfs_paramsets[2].sort_values(name)[name],
         np.arange(1, 201,1),

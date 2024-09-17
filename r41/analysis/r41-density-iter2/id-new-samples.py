@@ -231,7 +231,7 @@ iternum = 2
 cl_shuffle_seed = 1 #classifier
 gp_shuffle_seed = 42 #GP seed 
 dist_seed = 1 #Distance seed
-
+save_fig = False
 ##############################################################################
 ##############################################################################
 
@@ -260,12 +260,14 @@ x_train, y_train, x_test, y_test = shuffle_and_split(
 )
 
 # Create and fit classifier
-classifier = svm.SVC(kernel="rbf", class_weight="balanced")
+#class_weight "balanced" used because there are fewer liquid than vapor samples in the LHS sets
+classifier = svm.SVC(kernel="rbf", class_weight="balanced") 
 classifier.fit(x_train, y_train)
 test_score = classifier.score(x_test, y_test)
 print(f"Classifer is {test_score*100.0}% accurate on the test set.")
 ConfusionMatrixDisplay.from_estimator(classifier, x_test, y_test, display_labels = ["Vapor", "Liquid"])  
-plt.savefig("classifier.pdf")
+if save_fig:
+    plt.savefig("classifier.pdf")
 
 ### Fit GP Model
 # Create training/test set
@@ -308,18 +310,31 @@ print(
     " vapor parameter sets which produce densities within 25 kg/m$^3$ of experimental densities",
 )
 
+print(
+    "There are:",
+    top_liquid_samples.shape[0],
+    "liquid parameter sets which produce densities within 10 kg/m$^3$ of experimental densities",
+)
+print(
+    "There are:",
+    top_vapor_samples.shape[0],
+    " vapor parameter sets which produce densities within 10 kg/m$^3$ of experimental densities",
+)
+'''
 #### Visualization: Low MSE parameter sets
 # Create a pairplot of the top "liquid" parameter values
 column_names = list(R41.param_names)
 g = seaborn.pairplot(top_liquid_samples.drop(columns=["mse"]))
 g.set(xlim=(-0.1, 1.1), ylim=(-0.1, 1.1))
-g.savefig("liq_mse_below625.pdf")
+if save_fig:
+    g.savefig("liq_mse_below625.pdf")
 
 # Create a pairplot of the top "vapor" parameter values
 column_names = list(R41.param_names)
 g = seaborn.pairplot(top_vapor_samples.drop(columns=["mse"]))
 g.set(xlim=(-0.1, 1.1), ylim=(-0.1, 1.1))
-g.savefig("vap_mse_below625.pdf")
+if save_fig:
+    g.savefig("vap_mse_below625.pdf")
 
 new_liquid_params = [
     top_liquid_samples.drop(columns=["mse"])
@@ -330,9 +345,10 @@ new_vapor_params = [
 
 # Concatenate into a single dataframe and save to CSV
 new_liquid_params = pd.concat(new_liquid_params)
-new_liquid_params.to_csv(csv_path + out_top_liquid_csv_name)
 new_vapor_params = pd.concat(new_vapor_params)
-new_vapor_params.to_csv(csv_path + out_top_vapor_csv_name)
+if save_fig:
+    new_liquid_params.to_csv(csv_path + out_top_liquid_csv_name)
+    new_vapor_params.to_csv(csv_path + out_top_vapor_csv_name)
 top_liq = pd.read_csv(csv_path + out_top_liquid_csv_name, delimiter = ",", index_col = 0)
 top_vap = pd.read_csv(csv_path + out_top_vapor_csv_name, delimiter = ",", index_col = 0)
 
@@ -363,12 +379,14 @@ if len(top_liq) >= target_total:
     print('\nRequired Distance for liquid is : %0.8f and there are %0.1f points too many' % (distance_opt_l, number_points_l) )
     new_points_l = opt_dist(distance_opt_l, top_liq, R41, target_num_l, rand_seed=dist_seed , eval = True) 
     print(len(new_points_l), "top liquid density points are left after removing similar points using a distance of", np.round(distance_opt_l,5))
-    new_points_l.to_csv(csv_path + out_csv_name)
+    if save_fig:
+        new_points_l.to_csv(csv_path + out_csv_name)
 #If we don't we want to find the vapor sets to add
 else:
     distance_opt_v,number_points_v = bisection(lower_bound, upper_bound, error_tol, top_vap, R41, target_num_v, dist_seed)
     print('\nRequired Distance for vapor is : %0.8f and there are %0.1f points too many' % (distance_opt_v, number_points_v) )
     new_points_v = opt_dist(distance_opt_v, top_vap, R41, target_num_v, rand_seed=dist_seed , eval = True)
     print(len(new_points_v), "top vapor density points are left after removing similar points using a distance of", np.round(distance_opt_v,5))
-    pd.concat([top_liq, new_points_v], axis=0).to_csv(csv_path + out_csv_name)
-
+    if save_fig:
+        pd.concat([top_liq, new_points_v], axis=0).to_csv(csv_path + out_csv_name)
+'''
