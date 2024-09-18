@@ -1,0 +1,63 @@
+;
+;   File system.top  was generated
+;   By user: mcarlozo (240668)
+;   On host:maginnfe.crc.nd.edu 
+;   At date:Tue. August  2 15:47:02 2024 
+;
+;   This is a standalone topology file
+;
+;   Created by:
+;   ParmEd:       create_system.py, VERSION4.2.2 
+;   Executable:   create_system.py
+;   Library dir:  /afs/crc.nd.edu/group/maginn/group_members/Ryan_DeFever/software/gromacs-2020/gromacs-dp/share/gromacs/top
+;   Command line:
+;     create_system.py
+;
+
+[ defaults ]
+; nbfunc        comb-rule       gen-pairs       fudgeLJ fudgeQQ
+1               2               no              0.5          0.833333    
+
+[ atomtypes ]
+; name    at.num    mass    charge ptype  sigma      epsilon
+C1             6  12.010780  0.00000000  A           0.34       0.322119
+F1             9  18.998403  0.00000000  A           0.28       0.235989
+H1             1   1.007947  0.00000000  A           0.24       0.058999
+
+
+[ moleculetype ]
+; Name            nrexcl
+RES          3
+
+[ atoms ]
+;   nr       type  resnr residue  atom   cgnr    charge       mass  typeB    chargeB      massB
+; residue    1 RES rtp RES q 0.0
+    1         C1      1    RES      C      1 0.11928100  12.010780   ; qtot 0.119281
+    2         F1      1    RES      F      2 -0.27425200  18.998403   ; qtot -0.154971
+    3         H1      1    RES      H      3 0.05165700   1.007947   ; qtot -0.103314
+    4         H1      1    RES      H      4 0.05165700   1.007947   ; qtot -0.051657
+    5         H1      1    RES      H      5 0.05165700   1.007947   ; qtot 0.000000
+
+[ bonds ]
+;    ai     aj funct         c0         c1         c2         c3
+      1      2     1   0.13440 304427.360000
+      1      3     1   0.10930 281080.350000
+      1      4     1   0.10930 281080.350000
+      1      5     1   0.10930 281080.350000
+
+[ angles ]
+;    ai     aj     ak funct         c0         c1         c2         c3
+      2      1      3     1   107.8500001 431.537179
+      2      1      4     1   107.8500001 431.537179
+      2      1      5     1   107.8500001 431.537179
+      3      1      4     1   109.5500003 327.855845
+      3      1      5     1   109.5500003 327.855845
+      4      1      5     1   109.5500003 327.855845
+
+[ system ]
+; Name
+Generic title
+
+[ molecules ]
+; Compound       #mols
+RES                300
