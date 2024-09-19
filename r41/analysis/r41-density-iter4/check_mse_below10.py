@@ -227,7 +227,7 @@ def bisection(lower_bound, upper_bound, error_tol, top_samples, constants, targe
 ##############################################################################
 iternum = 4
 dist_seed = 1 #Distance seed
-save_fig = False
+save_fig = True
 out_csv_name = "r41-vle-iter1-params.csv"
 ##############################################################################
 ##############################################################################
@@ -284,7 +284,7 @@ top_param_set = df_mse[df_mse["mse"] < 100]
 
 from numpy.linalg import norm
 
-target_num_l = 25
+target_num_l = 13
 zero_array = np.zeros(top_param_set.shape[1])
 one_array = np.ones(top_param_set.shape[1])
 ub_array = one_array - zero_array
