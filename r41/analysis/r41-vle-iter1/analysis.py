@@ -28,16 +28,13 @@ iternum = 1
 ##############################################################################
 ##############################################################################
 
-csv_path = "/scratch365/mcarlozo/HFC-FFO/r41/analysis/csv/"
-in_csv_names = [
-    "r41-vle-iter" + str(i) + "-results.csv" for i in range(1, iternum + 1)
-]
+csv_path = "../csv/"
+in_csv_names = ["r41-vle-iter" + str(i) + "-results.csv" for i in range(1, iternum + 1)]
 out_csv_name = "r41-vle-iter" + str(iternum + 1) + "-params.csv"
 
 # Read files
 df_csvs = [
-    pd.read_csv(csv_path + in_csv_name, index_col=0)
-    for in_csv_name in in_csv_names
+    pd.read_csv(csv_path + in_csv_name, index_col=0) for in_csv_name in in_csv_names
 ]
 df_csv = pd.concat(df_csvs)
 df_all = prepare_df_vle(df_csv, R41)
@@ -58,20 +55,28 @@ def main():
         R41.vap_density_bounds,
         axis_name="Vapor Density [kg/m$^3$]",
     )
-    plot_property(
-        df_all, "Pvap", R41.Pvap_bounds, axis_name="Vapor Pressure [bar]"
-    )
+    plot_property(df_all, "Pvap", R41.Pvap_bounds, axis_name="Vapor Pressure [bar]")
     plot_property(
         df_all,
         "Hvap",
         R41.Hvap_bounds,
         axis_name="Enthalpy of vaporization [kJ/kg]",
     )
-    d = pd.DataFrame({'T':list(values_scaled_to_real(df_all["temperature"],R41.temperature_bounds)) , 'sim_Pvap':list(values_scaled_to_real(df_all["sim_Pvap"], R41.Pvap_bounds)) }, columns=['T', 'sim_Pvap'])
-    #print(d.loc[d['T'] == 240])
+    d = pd.DataFrame(
+        {
+            "T": list(
+                values_scaled_to_real(df_all["temperature"], R41.temperature_bounds)
+            ),
+            "sim_Pvap": list(
+                values_scaled_to_real(df_all["sim_Pvap"], R41.Pvap_bounds)
+            ),
+        },
+        columns=["T", "sim_Pvap"],
+    )
+    # print(d.loc[d['T'] == 240])
     # Create a dataframe with one row per parameter set
     df_paramsets = prepare_df_vle_errors(df_all, R41)
-    #print(df_paramsets["sim_Pvap_240K"])
+    # print(df_paramsets["sim_Pvap_240K"])
     # Plot MSE for each property
     fig, (ax1, ax2, ax3, ax4, ax5, ax6) = plt.subplots(6, figsize=(5, 10))
     fig.suptitle("Mean square errors", y=1.05, x=0.6)
@@ -139,7 +144,9 @@ def main():
     }
     for name, label in names.items():
         ax.plot(
-            range(df_paramsets.shape[0]), df_paramsets[name], label=label,
+            range(df_paramsets.shape[0]),
+            df_paramsets[name],
+            label=label,
         )
     ax.set_xlabel("Index (Unsorted)", fontsize=16, labelpad=15)
     ax.set_ylabel("Mean abs. % error", fontsize=16, labelpad=15)
@@ -156,15 +163,13 @@ def main():
             df_paramsets.sort_values("mape_vap_density")[name],
             label=label,
         )
-    ax.set_xlabel(
-        "Index (Sorted by vapor density MAPE)", fontsize=16, labelpad=15
-    )
+    ax.set_xlabel("Index (Sorted by vapor density MAPE)", fontsize=16, labelpad=15)
     ax.set_ylabel("Mean abs. % error", fontsize=16, labelpad=15)
     ax.tick_params(axis="both", labelsize=12)
     fig.legend(fontsize=12)
     fig.tight_layout()
     fig.savefig("figs/mape_sorted.png", dpi=300)
-    
+
     # Plot VLE envelopes
     # Generate colors for param sets
     phi = np.linspace(0, 2 * np.pi, len(df_paramsets))
@@ -221,7 +226,7 @@ def main():
         s=80,
     )
     ax.scatter(R41.expt_rhoc, R41.expt_Tc, color="black", marker="x", s=80)
-    '''ax.scatter(
+    """ax.scatter(
         R41.trappe_liq_density.values(),
         R41.trappe_liq_density.keys(),
         color="red",
@@ -235,7 +240,7 @@ def main():
         marker="x",
         s=80,
     )
-    ax.scatter(R41.trappe_rhoc, R41.expt_Tc, color="red", marker="x", s=80)'''
+    ax.scatter(R41.trappe_rhoc, R41.expt_Tc, color="red", marker="x", s=80)"""
 
     fig.tight_layout()
     fig.savefig("figs/vle-envelope.png", dpi=300)
@@ -263,13 +268,13 @@ def main():
         marker="x",
         s=80,
     )
-    '''ax.scatter(
+    """ax.scatter(
         R41.trappe_Pvap.keys(),
         R41.trappe_Pvap.values(),
         color="red",
         marker="x",
         s=80,
-    )'''
+    )"""
 
     fig.tight_layout()
     fig.savefig("figs/Pvap.png", dpi=300)
@@ -336,6 +341,7 @@ def main():
         grid.axes[i, j].set_visible(False)
 
     grid.savefig("figs/mape_pairs.png")
+
 
 if __name__ == "__main__":
     main()

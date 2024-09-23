@@ -9,6 +9,7 @@ import copy
 
 sys.path.append("../../analysis/")
 from utils.r41 import R41Constants
+
 sys.path.remove("../../analysis/")
 
 R41 = R41Constants()
@@ -74,11 +75,10 @@ def liqbox_equilibrated(job):
     "Confirm liquid box equilibration completed"
 
     import numpy as np
+
     with job:
         try:
-            thermo_data = np.genfromtxt(
-                        "npt.eq.out.prp", skip_header=3
-                    )
+            thermo_data = np.genfromtxt("npt.eq.out.prp", skip_header=3)
             completed = int(thermo_data[-1][0]) == job.sp.nsteps_liqeq
         except:
             completed = False
@@ -99,6 +99,7 @@ def equilibrate_liqbox(job):
     import foyer
     import mosdef_cassandra as mc
     import unyt as u
+
     ff = foyer.Forcefield(job.fn("ff.xml"))
 
     # Load the compound and apply the ff
@@ -123,9 +124,7 @@ def equilibrate_liqbox(job):
     new_prob_volume = 1.0 / job.sp.N_liq
     moves.prob_volume = new_prob_volume
 
-    moves.prob_translate = (
-        moves.prob_translate + orig_prob_volume - new_prob_volume
-    )
+    moves.prob_translate = moves.prob_translate + orig_prob_volume - new_prob_volume
 
     # Define thermo output props
     thermo_props = [
@@ -175,7 +174,9 @@ def extract_final_liqbox(job):
 
     import subprocess
 
-    n_atoms = job.sp.N_liq * R41.n_atoms # number of atom per molecule; need to adjust!!!!!
+    n_atoms = (
+        job.sp.N_liq * R41.n_atoms
+    )  # number of atom per molecule; need to adjust!!!!!
     cmd = [
         "tail",
         "-n",
@@ -202,9 +203,7 @@ def gemc_equil_complete(job):
     import numpy as np
 
     try:
-        thermo_data = np.genfromtxt(
-            job.fn("equil.out.box1.prp"), skip_header=2
-        )
+        thermo_data = np.genfromtxt(job.fn("equil.out.box1.prp"), skip_header=2)
         completed = int(thermo_data[-1][0]) == job.sp.nsteps_eq
     except:
         completed = False
@@ -217,7 +216,7 @@ def gemc_equil_complete(job):
 def gemc_prod_complete(job):
     "Confirm gemc production has completed"
     import numpy as np
-    
+
     try:
         thermo_data = np.genfromtxt(job.fn("prod.out.box1.prp"), skip_header=3)
         completed = int(thermo_data[-1][0]) == job.sp.nsteps_prod
@@ -230,14 +229,15 @@ def gemc_prod_complete(job):
 
 @Project.pre.after(extract_final_liqbox)
 @Project.post(gemc_prod_complete)
-@Project.operation(directives={"omp_num_threads": 12})
+@Project.operation(directives={"omp_num_threads": 2})
 def run_gemc(job):
     "Run gemc"
-    
+
     import mbuild
     import foyer
     import mosdef_cassandra as mc
     import unyt as u
+
     ff = foyer.Forcefield(job.fn("ff.xml"))
 
     # Load the compound and apply the ff
@@ -250,7 +250,7 @@ def run_gemc(job):
     with job:
         liq_box = mbuild.formats.xyz.read_xyz(job.fn("npt.final.xyz"))
 
-    liq_box.box = mbuild.Box(lengths=[boxl, boxl, boxl], angles=[90., 90., 90.])
+    liq_box.box = mbuild.Box(lengths=[boxl, boxl, boxl], angles=[90.0, 90.0, 90.0])
     liq_box.periodicity = [True, True, True]
 
     boxv = job.doc.vapboxl  # nm
@@ -280,12 +280,8 @@ def run_gemc(job):
     moves.prob_volume = new_prob_volume
     moves.prob_swap = new_prob_swap
 
-    moves.prob_translate = (
-        moves.prob_translate + orig_prob_volume - new_prob_volume
-    )
-    moves.prob_translate = (
-        moves.prob_translate + orig_prob_swap - new_prob_swap
-    )
+    moves.prob_translate = moves.prob_translate + orig_prob_volume - new_prob_volume
+    moves.prob_translate = moves.prob_translate + orig_prob_swap - new_prob_swap
 
     # Define thermo output props
     thermo_props = [
@@ -302,9 +298,9 @@ def run_gemc(job):
         "run_name": "gemc.eq",
         "charge_style": "ewald",
         "rcut_min": 1.0 * u.angstrom,
-        "charge_cutoff_box2": 0.4 * (boxl_vap * u.nanometer).to("angstrom"),
+        "charge_cutoff_box2": 0.4 * (boxv * u.nanometer).to("angstrom"),
         "vdw_cutoff_box1": 12.0 * u.angstrom,
-        "vdw_cutoff_box2": 0.4 * (boxl_vap * u.nanometer).to("angstrom"),
+        "vdw_cutoff_box2": 0.4 * (boxv * u.nanometer).to("angstrom"),
         "units": "sweeps",
         "steps_per_sweep": job.sp.N_liq + job.sp.N_vap,
         "coord_freq": 500,
@@ -325,19 +321,19 @@ def run_gemc(job):
         )
 
         # Adjust custom args for production
-        #custom_args["run_name"] = "prod"
-        #custom_args["restart_name"] = "equil"
-        
+        # custom_args["run_name"] = "prod"
+        # custom_args["restart_name"] = "equil"
+
         # Run production
         mc.restart(
-            #system=system,
+            # system=system,
             restart_from="gemc.eq",
-            #moveset=moves,
+            # moveset=moves,
             run_type="production",
             total_run_length=job.sp.nsteps_prod,
             run_name="prod",
-            #temperature=job.sp.T * u.K,
-            #**custom_args
+            # temperature=job.sp.T * u.K,
+            # **custom_args
         )
 
 
@@ -394,7 +390,7 @@ def calculate_props(job):
     nmols_vap_ave = np.mean(nmols_vap)
 
     # calculate enthalpy of vaporization
-    Hvap = (vap_enthalpy/nmols_vap) - (liq_enthalpy/nmols_liq)
+    Hvap = (vap_enthalpy / nmols_vap) - (liq_enthalpy / nmols_liq)
     Hvap_ave = np.mean(Hvap)
 
     # save average density
@@ -411,7 +407,7 @@ def calculate_props(job):
         "liq_density": liq_density,
         "vap_density": vap_density,
         "Pvap": Pvap,
-        "Hvap" : Hvap,
+        "Hvap": Hvap,
         "liq_enthalpy": liq_enthalpy,
         "vap_enthalpy": vap_enthalpy,
         "nmols_liq": nmols_liq,
@@ -427,12 +423,11 @@ def calculate_props(job):
                 zip(means_est, vars_est, vars_err)
             ):
                 ferr.write(
-                    "{}\t{}\t{}\t{}\n".format(
-                        nblk_ops, mean_est, var_est, var_err
-                    )
+                    "{}\t{}\t{}\t{}\n".format(nblk_ops, mean_est, var_est, var_err)
                 )
 
         job.doc[name + "_unc"] = np.max(np.sqrt(vars_est))
+
 
 #####################################################################
 ################# HELPER FUNCTIONS BEYOND THIS POINT ################
@@ -466,10 +461,10 @@ def _generate_r41_xml(job):
         epsilon_C1=job.sp.epsilon_C1,
         epsilon_F1=job.sp.epsilon_F1,
         epsilon_H1=job.sp.epsilon_H1,
-        
     )
 
     return content
+
 
 if __name__ == "__main__":
     Project().main()

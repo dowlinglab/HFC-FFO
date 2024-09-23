@@ -30,30 +30,32 @@ R41 = R41Constants()
 ##############################################################################
 
 iternum = 1
+
+
 ##############################################################################
 ##############################################################################
-def opt_dist(distance, top_samples, constants, target_num, rand_seed = None, eval = False):
+def opt_dist(distance, top_samples, constants, target_num, rand_seed=None, eval=False):
     """
     Calculates the distance between points such that exactly a target number of points are chosen for the next iteration
-    
+
     Parameters:
     -----------
         distance: float, The allowable minimum distance between points
         top_samples: pandas data frame, Collection of top liquid/vapor sampes
-        constants: utils.r143a.R143aConstants, contains the infromation for a certain refrigerant
+        constants: utils.r41.R41Constants, contains the infromation for a certain refrigerant
         target_num: int, the number of samples to choose next
         rand_seed: int, the seed number to use: None by default
         eval: bool, Determines whether error is calculated or new_points is returned
-    
+
     Returns:
         error: float, The squared error between the target value and number of new_points
         OR
-        new_points: pandas data frame, a pandas data frame containing the number of points to be used 
+        new_points: pandas data frame, a pandas data frame containing the number of points to be used
     """
     if len(top_samples) <= target_num:
         print("Trying dist =", distance)
-        
-    top_samp0 = top_samples
+
+    top_samp0 = top_samples.copy()
     if rand_seed != None:
         np.random.seed(rand_seed)
     new_points = pd.DataFrame()
@@ -61,7 +63,8 @@ def opt_dist(distance, top_samples, constants, target_num, rand_seed = None, eva
     while len(top_samples > 0):
         # Shuffle the pareto points
         top_samples = top_samples.sample(frac=1)
-        new_points = new_points.append(top_samples.iloc[[0]])
+        new_samples_top = pd.DataFrame(top_samples.iloc[[0]])
+        new_points = pd.concat([new_points, new_samples_top])
         # Remove anything within distance
         l1_norm = np.sum(
             np.abs(
@@ -70,111 +73,152 @@ def opt_dist(distance, top_samples, constants, target_num, rand_seed = None, eva
             ),
             axis=1,
         )
-        points_to_remove = np.where(l1_norm <= distance)[0] #Changed to <= to get zero bc to work
-        discarded_points = discarded_points.append(
-            top_samples.iloc[points_to_remove]
-        )
-        top_samples.drop(
-            index=top_samples.index[points_to_remove], inplace=True
-        )
-#     error = target_num - len(new_points)
-    len_new_points = len(new_points)
-    
-#     print("Error = ",error)
-#     return error
+        points_to_remove = np.where(l1_norm <= distance)[
+            0
+        ]  # Changed to <= to get zero bc to work
+        points_to_remove_df = pd.DataFrame(top_samples.iloc[points_to_remove])
+        discarded_points = pd.concat([discarded_points, points_to_remove_df])
+        # discarded_points = discarded_points.append(
+        #     top_samples.iloc[points_to_remove]
+        # )
+        top_samples.drop(index=top_samples.index[points_to_remove], inplace=True)
+
+    #     error = target_num - len(new_points)
+
+    #     print("Error = ",error)
+    #     return error
     if eval == True:
+        if len(new_points) > target_num:
+            # randomly remove extra points
+            new_points = new_points.sample(n=target_num, random_state=rand_seed)
         return new_points
     else:
-#         return error
-        return len_new_points
+        #         return error
+        return len(new_points)
 
-def bisection(lower_bound, upper_bound, error_tol, top_samples, constants, target_num, rand_seed = None, verbose = False):
+
+def bisection(
+    lower_bound,
+    upper_bound,
+    error_tol,
+    top_samples,
+    constants,
+    target_num,
+    rand_seed=None,
+    verbose=False,
+):
     """
-    approximates a root of a function bounded by lower_bound and upper_bound to within a tolerance 
-    
+    approximates a root of a function bounded by lower_bound and upper_bound to within a tolerance
+
     Parameters:
     -----------
         lower_bound: float, lower bound of the distance, must be > 0
         upper_bound: float, lower bound of the distance, must be > lower_bound
-        error_tol: floar, tolerance of error
+        error_tol: float, tolerance of error
         top_samples: pandas data frame, Collection of top liquid/vapor sampes
-        constants: utils.r143a.R143aConstants, contains the infromation for a certain refrigerant
+        constants: utils.r41.R41Constants, contains the infromation for a certain refrigerant
         target_num: int, the number of samples to choose next
         rand_seed: int, the seed number to use: None by default
-        
+
     Returns:
     --------
         midpoint: The distance that satisfies the error criteria based on the target number
 
     """
-    assert len(top_samples) > target_num, "Ensure you have more samples than the target number!"
-    #Initialize Termination criteria and add assert statements
+    assert (
+        len(top_samples) >= target_num
+    ), "Ensure you have at least as many samples as the target number!"
+    # Initialize Termination criteria and add assert statements
     assert lower_bound >= 0, "Lower bound must be greater than 0"
     assert lower_bound < upper_bound, "Lower bound must be less than the upper bound"
-    
-        #Set error of upper and lower bound
-#         print("Low B", lower_bound)
-#         print("High B", upper_bound)
-    eval_lower_bound = opt_dist(lower_bound, top_samples, constants, target_num, rand_seed)
-    eval_upper_bound = opt_dist(upper_bound, top_samples, constants, target_num, rand_seed)
-#     print("Low Eval",eval_lower_bound )
-#     print("High Eval",eval_upper_bound )
-    
-    #Throw Error if initial guesses are bad
-    if not eval_lower_bound > target_num > eval_upper_bound:
+
+    # Set error of upper and lower bound
+    # print("Low B", lower_bound)
+    # print("High B", upper_bound)
+    eval_lower_bound = opt_dist(
+        lower_bound, top_samples, constants, target_num, rand_seed
+    )
+    eval_upper_bound = opt_dist(
+        upper_bound, top_samples, constants, target_num, rand_seed
+    )
+    # print("Low Eval",eval_lower_bound )
+    # print("High Eval",eval_upper_bound )
+
+    # Throw Error if initial guesses are bad
+    if not (eval_lower_bound >= target_num >= eval_upper_bound):
         print("Increase Length of Upper Bound. Given bounds do not include the root!")
 
-    terminate = False
-    
-    #While error > tolerance
-    while terminate == False:
-        #Find the midpoint and evaluate it    
-        midpoint = (lower_bound + upper_bound)/2
-#         print("Mid B", midpoint)
-        eval_midpoint = opt_dist(midpoint, top_samples, constants, target_num, rand_seed)
-#         print("Mid Eval", eval_midpoint)
-        error =  target_num - eval_midpoint   
+    # While error > tolerance
+    while (upper_bound - lower_bound) > error_tol:
+        # Find the midpoint and evaluate it
+        midpoint = (lower_bound + upper_bound) / 2
+        #         print("Mid B", midpoint)
+        eval_midpoint = opt_dist(
+            midpoint, top_samples, constants, target_num, rand_seed
+        )
+        #         print("Mid Eval", eval_midpoint)
+        error = target_num - eval_midpoint
         if verbose == True:
-            print('distance = %0.6f and error = %0.6f' % (midpoint, error))
-        
+            print("distance = %0.6f and error = %0.6f" % (midpoint, error))
+
         # Set the upper or lower bound depending on sign
         if eval_midpoint == target_num:
-            #Terminate loop if error < error_tol
-            terminate = abs(eval_midpoint) < error_tol 
-            break      
-        elif  eval_midpoint < target_num:
+            # Terminate loop if correct number of points is found
+            break
+        elif eval_midpoint < target_num:
             upper_bound = midpoint
         else:
             lower_bound = midpoint
-        if (upper_bound - lower_bound) < error_tol:
-            print("Bounds have collapsed and the number of points is", eval_midpoint)
-            break
-        
- 
-    return midpoint, error
 
-liquid_density_threshold = 500  # kg/m^3
+    final_distance = lower_bound
+    final_eval = opt_dist(final_distance, top_samples, constants, target_num, rand_seed)
+    if final_eval < target_num:
+        final_distance = upper_bound  # Just in case lower_bound fails, use upper_bound
+        final_eval = opt_dist(
+            final_distance, top_samples, constants, target_num, rand_seed
+        )
+
+    return final_distance, final_eval - target_num
+
+
+liquid_density_threshold = 400  # kg/m^3
 
 
 # Read VLE files
-csv_path = "/scratch365/mcarlozo/HFC-FFO/r41/analysis/csv/"
+csv_path = "../csv/"
 out_csv_name = "r41-vle-iter" + str(iternum + 1) + "-params.csv"
 
-vle_mses = pd.read_csv(csv_path + "vle_mses.csv",index_col=0)
+vle_mses = pd.read_csv(csv_path + "vle_mses.csv", index_col=0)
 
 # Find new points for next iteration
+# pareto_points = vle_mses[vle_mses["is_pareto"] == True]
+# print(f"A total of {len(pareto_points)} pareto efficient points were found.")
+# new_points = pareto_points.sort_values("mse_liq_density").iloc[[0]]
+# new_points = new_points.append(pareto_points.sort_values("mse_vap_density").iloc[[0]])
+# new_points = new_points.append(pareto_points.sort_values("mse_Hvap").iloc[[0]])
+# new_points = new_points.append(pareto_points.sort_values("mse_Pvap").iloc[[0]])
+# pareto_points.drop(index=new_points.index, inplace=True)
+
 pareto_points = vle_mses[vle_mses["is_pareto"] == True]
 print(f"A total of {len(pareto_points)} pareto efficient points were found.")
-new_points = pareto_points.sort_values("mse_liq_density").iloc[[0]]
-new_points = new_points.append(
-    pareto_points.sort_values("mse_vap_density").iloc[[0]]
+
+# Select points based on different criteria and concatenate them
+new_points = pd.concat(
+    [
+        pareto_points.sort_values("mse_liq_density").iloc[[0]],
+        pareto_points.sort_values("mse_vap_density").iloc[[0]],
+        pareto_points.sort_values("mse_Hvap").iloc[[0]],
+        pareto_points.sort_values("mse_Pvap").iloc[[0]],
+    ],
 )
-new_points = new_points.append(pareto_points.sort_values("mse_Hvap").iloc[[0]])
-new_points = new_points.append(pareto_points.sort_values("mse_Pvap").iloc[[0]])
+
+# Drop the selected points from pareto_points
 pareto_points.drop(index=new_points.index, inplace=True)
 
+
 from numpy.linalg import norm
-dist_seed = 115
+
+dist_seed = 1
 target_num = 25
 
 zero_array = np.zeros(pareto_points.shape[1])
@@ -183,14 +227,21 @@ ub_array = one_array - zero_array
 
 # lower_bound = 1e-8
 lower_bound = 0
-#IL norm between the highest high parameter space, and lowest low parameter space value
-upper_bound = norm(ub_array, 1) # This number will be 8, the number of dimensions
+# IL norm between the highest high parameter space, and lowest low parameter space value
+upper_bound = norm(ub_array, 1)  # This number will be 8, the number of dimensions
 error_tol = 1e-5
 
-distance_opt, number_points = bisection(lower_bound, upper_bound, error_tol, pareto_points, R41, target_num, dist_seed)
-print('\nRequired Distance for vapor is : %0.8f and there are %0.1f points too few' % (distance_opt, number_points) )
+distance_opt, number_points = bisection(
+    lower_bound, upper_bound, error_tol, pareto_points, R41, target_num, dist_seed
+)
+print(
+    "\nRequired Distance for vapor is : %0.8f and there are %0.1f points too few"
+    % (distance_opt, number_points)
+)
 
-new_points = opt_dist(distance_opt, pareto_points, R41, target_num, rand_seed=dist_seed , eval = True)
+new_points = opt_dist(
+    distance_opt, pareto_points, R41, target_num, rand_seed=dist_seed, eval=True
+)
 
 # Save to CSV
 new_points.drop(
