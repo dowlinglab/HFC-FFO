@@ -24,31 +24,29 @@ from utils.plot import plot_property, render_mpl_table
 
 R41 = R41Constants()
 
-iternum = 3
+iternum = 1
 csv_path = "../csv/"
-in_csv_names = [
-    "r41-vle-iter" + str(i) + "-results.csv" for i in range(1, iternum + 1)
-]
+in_csv_names = ["r41-vle-iter" + str(i) + "-results.csv" for i in range(1, iternum + 1)]
 
 # Read files
 df_csvs = [
-    pd.read_csv(csv_path + in_csv_name, index_col=0)
-    for in_csv_name in in_csv_names
+    pd.read_csv(csv_path + in_csv_name, index_col=0) for in_csv_name in in_csv_names
 ]
 df_csv = pd.concat(df_csvs)
 df_all = prepare_df_vle(df_csv, R41)
+
 
 def main():
 
     # Create a dataframe with one row per parameter set
     df_paramsets = prepare_df_vle_errors(df_all, R41)
-    
-    best_liqdens = df_paramsets.sort_values('mape_liq_density').iloc[0]
-    best_vapdens = df_paramsets.sort_values('mape_vap_density').iloc[0]
-    best_pvap = df_paramsets.sort_values('mape_Pvap').iloc[0]
-    best_hvap = df_paramsets.sort_values('mape_Hvap').iloc[0]
 
-    #Calculate l1 norm between parameter set values
+    best_liqdens = df_paramsets.sort_values("mape_liq_density").iloc[0]
+    best_vapdens = df_paramsets.sort_values("mape_vap_density").iloc[0]
+    best_pvap = df_paramsets.sort_values("mape_Pvap").iloc[0]
+    best_hvap = df_paramsets.sort_values("mape_Hvap").iloc[0]
+
+    # Calculate l1 norm between parameter set values
     n_paramsets = len(df_paramsets)
     pairs = np.zeros((n_paramsets, 4, 2))
     count = 0
@@ -64,10 +62,10 @@ def main():
         dist_pvap = np.sum(np.abs(params_pvap - params))
         dist_hvap = np.sum(np.abs(params_hvap - params))
 
-        err_liqdens = df_paramsets['mape_liq_density'].iloc[i]
-        err_vapdens = df_paramsets['mape_vap_density'].iloc[i]
-        err_pvap = df_paramsets['mape_Pvap'].iloc[i]
-        err_hvap = df_paramsets['mape_Hvap'].iloc[i]
+        err_liqdens = df_paramsets["mape_liq_density"].iloc[i]
+        err_vapdens = df_paramsets["mape_vap_density"].iloc[i]
+        err_pvap = df_paramsets["mape_Pvap"].iloc[i]
+        err_hvap = df_paramsets["mape_Hvap"].iloc[i]
 
         pairs[count, 0, :] = [dist_liqdens, err_liqdens]
         pairs[count, 1, :] = [dist_vapdens, err_vapdens]
@@ -75,93 +73,78 @@ def main():
         pairs[count, 3, :] = [dist_hvap, err_hvap]
 
         count += 1
-    
-    fig, axs = plt.subplots(2,2)
-    axs[0,0].scatter(
-        pairs[:, 0, 0],
-        pairs[:, 0, 1],
-        alpha=0.5,
-        s=20,
-        c="C3"
+
+    fig, axs = plt.subplots(2, 2)
+    axs[0, 0].scatter(pairs[:, 0, 0], pairs[:, 0, 1], alpha=0.5, s=20, c="C3")
+    axs[0, 1].scatter(pairs[:, 1, 0], pairs[:, 1, 1], alpha=0.5, s=20, c="C3")
+    axs[1, 0].scatter(pairs[:, 2, 0], pairs[:, 2, 1], alpha=0.5, s=20, c="C3")
+    axs[1, 1].scatter(pairs[:, 3, 0], pairs[:, 3, 1], alpha=0.5, s=20, c="C3")
+    axs[0, 0].text(0.78, 0.8, "(a)", fontsize=18, transform=axs[0, 0].transAxes)
+    axs[0, 1].text(0.78, 0.8, "(b)", fontsize=18, transform=axs[0, 1].transAxes)
+    axs[1, 0].text(0.78, 0.8, "(c)", fontsize=18, transform=axs[1, 0].transAxes)
+    axs[1, 1].text(0.78, 0.8, "(d)", fontsize=18, transform=axs[1, 1].transAxes)
+
+    axs[0, 0].set_xlim(-0.1, 2.5)
+    axs[0, 0].xaxis.set_major_locator(MultipleLocator(1))
+    axs[0, 0].xaxis.set_minor_locator(AutoMinorLocator(2))
+    axs[0, 0].yaxis.set_minor_locator(AutoMinorLocator(2))
+    axs[0, 0].tick_params(
+        "both", direction="in", which="both", length=2, labelsize=12, pad=5
     )
-    axs[0,1].scatter(
-        pairs[:, 1, 0],
-        pairs[:, 1, 1],
-        alpha=0.5,
-        s=20,
-        c="C3"
+    axs[0, 0].tick_params("both", which="major", length=4)
+    axs[0, 0].xaxis.set_ticks_position("both")
+    axs[0, 0].yaxis.set_ticks_position("both")
+
+    axs[0, 0].set_xlabel(r"$L_1$ norm", fontsize=12)
+    axs[0, 0].set_ylabel(r"MAPE $\rho^l_\mathrm{sat}$", fontsize=12)
+
+    axs[0, 1].set_xlim(-0.1, 2.5)
+    axs[0, 1].xaxis.set_major_locator(MultipleLocator(1))
+    axs[0, 1].xaxis.set_minor_locator(AutoMinorLocator(2))
+    axs[0, 1].yaxis.set_minor_locator(AutoMinorLocator(2))
+    axs[0, 1].tick_params(
+        "both", direction="in", which="both", length=2, labelsize=12, pad=5
     )
-    axs[1,0].scatter(
-        pairs[:, 2, 0],
-        pairs[:, 2, 1],
-        alpha=0.5,
-        s=20,
-        c="C3"
+    axs[0, 1].tick_params("both", which="major", length=4)
+    axs[0, 1].xaxis.set_ticks_position("both")
+    axs[0, 1].yaxis.set_ticks_position("both")
+
+    axs[0, 1].set_xlabel(r"$L_1$ norm", fontsize=12)
+    axs[0, 1].set_ylabel(r"MAPE $\rho^v_\mathrm{sat}$", fontsize=12)
+
+    axs[1, 0].set_xlim(-0.1, 2.5)
+    axs[1, 0].xaxis.set_major_locator(MultipleLocator(1))
+    axs[1, 0].xaxis.set_minor_locator(AutoMinorLocator(2))
+    axs[1, 0].yaxis.set_minor_locator(AutoMinorLocator(2))
+    axs[1, 0].tick_params(
+        "both", direction="in", which="both", length=2, labelsize=12, pad=5
     )
-    axs[1,1].scatter(
-        pairs[:, 3, 0],
-        pairs[:, 3, 1],
-        alpha=0.5,
-        s=20,
-        c="C3"
+    axs[1, 0].tick_params("both", which="major", length=4)
+    axs[1, 0].xaxis.set_ticks_position("both")
+    axs[1, 0].yaxis.set_ticks_position("both")
+
+    axs[1, 0].set_xlabel(r"$L_1$ norm", fontsize=12)
+    axs[1, 0].set_ylabel(r"MAPE $P_\mathrm{vap}$", fontsize=12)
+
+    axs[1, 1].set_xlim(-0.1, 2.5)
+    axs[1, 1].xaxis.set_major_locator(MultipleLocator(1))
+    axs[1, 1].xaxis.set_minor_locator(AutoMinorLocator(2))
+    axs[1, 1].yaxis.set_minor_locator(AutoMinorLocator(2))
+    axs[1, 1].tick_params(
+        "both", direction="in", which="both", length=2, labelsize=12, pad=5
     )
-    axs[0,0].text(0.78, 0.8, "(a)", fontsize=18, transform=axs[0,0].transAxes)
-    axs[0,1].text(0.78, 0.8, "(b)", fontsize=18, transform=axs[0,1].transAxes)
-    axs[1,0].text(0.78, 0.8, "(c)", fontsize=18, transform=axs[1,0].transAxes)
-    axs[1,1].text(0.78, 0.8, "(d)", fontsize=18, transform=axs[1,1].transAxes)
+    axs[1, 1].tick_params("both", which="major", length=4)
+    axs[1, 1].xaxis.set_ticks_position("both")
+    axs[1, 1].yaxis.set_ticks_position("both")
 
-    axs[0,0].set_xlim(-0.1,2.5)
-    axs[0,0].xaxis.set_major_locator(MultipleLocator(1))
-    axs[0,0].xaxis.set_minor_locator(AutoMinorLocator(2))
-    axs[0,0].yaxis.set_minor_locator(AutoMinorLocator(2))
-    axs[0,0].tick_params("both", direction="in", which="both", length=2, labelsize=12, pad=5)
-    axs[0,0].tick_params("both", which="major", length=4)
-    axs[0,0].xaxis.set_ticks_position("both")
-    axs[0,0].yaxis.set_ticks_position("both")
+    axs[1, 1].set_xlabel(r"$L_1$ norm", fontsize=12)
+    axs[1, 1].set_ylabel(r"MAPE $H_\mathrm{vap}$", fontsize=12)
 
-    axs[0,0].set_xlabel(r"$L_1$ norm", fontsize=12)
-    axs[0,0].set_ylabel(r"MAPE $\rho^l_\mathrm{sat}$", fontsize=12)
-
-    axs[0,1].set_xlim(-0.1,2.5)
-    axs[0,1].xaxis.set_major_locator(MultipleLocator(1))
-    axs[0,1].xaxis.set_minor_locator(AutoMinorLocator(2))
-    axs[0,1].yaxis.set_minor_locator(AutoMinorLocator(2))
-    axs[0,1].tick_params("both", direction="in", which="both", length=2, labelsize=12, pad=5)
-    axs[0,1].tick_params("both", which="major", length=4)
-    axs[0,1].xaxis.set_ticks_position("both")
-    axs[0,1].yaxis.set_ticks_position("both")
-
-    axs[0,1].set_xlabel(r"$L_1$ norm", fontsize=12)
-    axs[0,1].set_ylabel(r"MAPE $\rho^v_\mathrm{sat}$", fontsize=12)
-
-    axs[1,0].set_xlim(-0.1,2.5)
-    axs[1,0].xaxis.set_major_locator(MultipleLocator(1))
-    axs[1,0].xaxis.set_minor_locator(AutoMinorLocator(2))
-    axs[1,0].yaxis.set_minor_locator(AutoMinorLocator(2))
-    axs[1,0].tick_params("both", direction="in", which="both", length=2, labelsize=12, pad=5)
-    axs[1,0].tick_params("both", which="major", length=4)
-    axs[1,0].xaxis.set_ticks_position("both")
-    axs[1,0].yaxis.set_ticks_position("both")
-
-    axs[1,0].set_xlabel(r"$L_1$ norm", fontsize=12)
-    axs[1,0].set_ylabel(r"MAPE $P_\mathrm{vap}$", fontsize=12)
-
-    axs[1,1].set_xlim(-0.1,2.5)
-    axs[1,1].xaxis.set_major_locator(MultipleLocator(1))
-    axs[1,1].xaxis.set_minor_locator(AutoMinorLocator(2))
-    axs[1,1].yaxis.set_minor_locator(AutoMinorLocator(2))
-    axs[1,1].tick_params("both", direction="in", which="both", length=2, labelsize=12, pad=5)
-    axs[1,1].tick_params("both", which="major", length=4)
-    axs[1,1].xaxis.set_ticks_position("both")
-    axs[1,1].yaxis.set_ticks_position("both")
-
-    axs[1,1].set_xlabel(r"$L_1$ norm", fontsize=12)
-    axs[1,1].set_ylabel(r"MAPE $H_\mathrm{vap}$", fontsize=12)
-
-
-
-    fig.subplots_adjust(bottom=0.15, top=0.88, left=0.15, right=0.95, wspace=0.55, hspace=0.5)
+    fig.subplots_adjust(
+        bottom=0.15, top=0.88, left=0.15, right=0.95, wspace=0.55, hspace=0.5
+    )
     fig.savefig("pdfs/fig_paramcorrelation.pdf")
+
 
 if __name__ == "__main__":
     main()

@@ -29,23 +29,25 @@ from utils.id_new_samples import prepare_df_vle
 
 R41 = R41Constants()
 
-pdf = PdfPages('pdfs/fig_gp_examples.pdf')
+pdf = PdfPages("pdfs/fig_gp_examples.pdf")
 
 ############################# QUANTITIES TO EDIT #############################
 ##############################################################################
 
-iternum = 2
-gp_shuffle_seed = 8278573
+iternum = 1
+gp_shuffle_seed = 42
 
 ##############################################################################
 ##############################################################################
 
 csv_path = "../csv/"
-in_csv_names = ["r41-vle-iter" + str(i) + "-results.csv" for i in range(1, iternum+1)]
+in_csv_names = ["r41-vle-iter" + str(i) + "-results.csv" for i in range(1, iternum + 1)]
 out_csv_name = "r41-vle-iter" + str(iternum + 1) + "-params.csv"
 
 # Read files
-df_csvs = [pd.read_csv(csv_path + in_csv_name, index_col=0) for in_csv_name in in_csv_names]
+df_csvs = [
+    pd.read_csv(csv_path + in_csv_name, index_col=0) for in_csv_name in in_csv_names
+]
 df_csv = pd.concat(df_csvs)
 df_all = prepare_df_vle(df_csv, R41)
 
@@ -108,19 +110,33 @@ for param_name in R41.param_names:
     del figs
 
 # Loop over test params
-for test_params in x_test[:,:R41.n_params]:
+for test_params in x_test[:, : R41.n_params]:
     train_points = []
     test_points = []
     # Locate rows where parameter set == test parameter set
-    matches = np.unique(np.where((df_all[list(R41.param_names)] == test_params).all(axis=1))[0])
+    matches = np.unique(
+        np.where((df_all[list(R41.param_names)] == test_params).all(axis=1))[0]
+    )
     # Loop over all matches -- these will be different temperatures
     for match in matches:
         # If the match (including T) is in the test set, then append to test points
-        if np.where((df_all.values[match,:R41.n_params+1] == x_test[:,:R41.n_params+1]).all(axis=1))[0].shape[0] == 1:
-            test_points.append([df_all["temperature"].iloc[match],df_all[property_name].iloc[match]])
+        if (
+            np.where(
+                (
+                    df_all.values[match, : R41.n_params + 1]
+                    == x_test[:, : R41.n_params + 1]
+                ).all(axis=1)
+            )[0].shape[0]
+            == 1
+        ):
+            test_points.append(
+                [df_all["temperature"].iloc[match], df_all[property_name].iloc[match]]
+            )
         # Else append to train points
         else:
-            train_points.append([df_all["temperature"].iloc[match],df_all[property_name].iloc[match]])
+            train_points.append(
+                [df_all["temperature"].iloc[match], df_all[property_name].iloc[match]]
+            )
 
     pdf.savefig(
         plot_model_vs_test(
@@ -130,7 +146,7 @@ for test_params in x_test[:,:R41.n_params]:
             np.asarray(test_points),
             R41.temperature_bounds,
             R41.liq_density_bounds,
-            property_name="Liquid Density [kg/m^3]"
+            property_name="Liquid Density [kg/m^3]",
         )
     )
 
@@ -194,19 +210,33 @@ for param_name in R41.param_names:
 
 
 # Loop over test params
-for test_params in x_test[:,:R41.n_params]:
+for test_params in x_test[:, : R41.n_params]:
     train_points = []
     test_points = []
     # Locate rows where parameter set == test parameter set
-    matches = np.unique(np.where((df_all[list(R41.param_names)] == test_params).all(axis=1))[0])
+    matches = np.unique(
+        np.where((df_all[list(R41.param_names)] == test_params).all(axis=1))[0]
+    )
     # Loop over all matches -- these will be different temperatures
     for match in matches:
         # If the match (including T) is in the test set, then append to test points
-        if np.where((df_all.values[match,:R41.n_params+1] == x_test[:,:R41.n_params+1]).all(axis=1))[0].shape[0] == 1:
-            test_points.append([df_all["temperature"].iloc[match],df_all[property_name].iloc[match]])
+        if (
+            np.where(
+                (
+                    df_all.values[match, : R41.n_params + 1]
+                    == x_test[:, : R41.n_params + 1]
+                ).all(axis=1)
+            )[0].shape[0]
+            == 1
+        ):
+            test_points.append(
+                [df_all["temperature"].iloc[match], df_all[property_name].iloc[match]]
+            )
         # Else append to train points
         else:
-            train_points.append([df_all["temperature"].iloc[match],df_all[property_name].iloc[match]])
+            train_points.append(
+                [df_all["temperature"].iloc[match], df_all[property_name].iloc[match]]
+            )
 
     pdf.savefig(
         plot_model_vs_test(
@@ -216,7 +246,7 @@ for test_params in x_test[:,:R41.n_params]:
             np.asarray(test_points),
             R41.temperature_bounds,
             R41.vap_density_bounds,
-            property_name="Vapor Density [kg/m^3]"
+            property_name="Vapor Density [kg/m^3]",
         )
     )
 
@@ -280,19 +310,33 @@ for param_name in R41.param_names:
 
 
 # Loop over test params
-for test_params in x_test[:,:R41.n_params]:
+for test_params in x_test[:, : R41.n_params]:
     train_points = []
     test_points = []
     # Locate rows where parameter set == test parameter set
-    matches = np.unique(np.where((df_all[list(R41.param_names)] == test_params).all(axis=1))[0])
+    matches = np.unique(
+        np.where((df_all[list(R41.param_names)] == test_params).all(axis=1))[0]
+    )
     # Loop over all matches -- these will be different temperatures
     for match in matches:
         # If the match (including T) is in the test set, then append to test points
-        if np.where((df_all.values[match,:R41.n_params+1] == x_test[:,:R41.n_params+1]).all(axis=1))[0].shape[0] == 1:
-            test_points.append([df_all["temperature"].iloc[match],df_all[property_name].iloc[match]])
+        if (
+            np.where(
+                (
+                    df_all.values[match, : R41.n_params + 1]
+                    == x_test[:, : R41.n_params + 1]
+                ).all(axis=1)
+            )[0].shape[0]
+            == 1
+        ):
+            test_points.append(
+                [df_all["temperature"].iloc[match], df_all[property_name].iloc[match]]
+            )
         # Else append to train points
         else:
-            train_points.append([df_all["temperature"].iloc[match],df_all[property_name].iloc[match]])
+            train_points.append(
+                [df_all["temperature"].iloc[match], df_all[property_name].iloc[match]]
+            )
 
     pdf.savefig(
         plot_model_vs_test(
@@ -302,7 +346,7 @@ for test_params in x_test[:,:R41.n_params]:
             np.asarray(test_points),
             R41.temperature_bounds,
             R41.Pvap_bounds,
-            property_name="Vapor pressure [bar]"
+            property_name="Vapor pressure [bar]",
         )
     )
 
@@ -366,19 +410,33 @@ for param_name in R41.param_names:
     del figs
 
 # Loop over test params
-for test_params in x_test[:,:R41.n_params]:
+for test_params in x_test[:, : R41.n_params]:
     train_points = []
     test_points = []
     # Locate rows where parameter set == test parameter set
-    matches = np.unique(np.where((df_all[list(R41.param_names)] == test_params).all(axis=1))[0])
+    matches = np.unique(
+        np.where((df_all[list(R41.param_names)] == test_params).all(axis=1))[0]
+    )
     # Loop over all matches -- these will be different temperatures
     for match in matches:
         # If the match (including T) is in the test set, then append to test points
-        if np.where((df_all.values[match,:R41.n_params+1] == x_test[:,:R41.n_params+1]).all(axis=1))[0].shape[0] == 1:
-            test_points.append([df_all["temperature"].iloc[match],df_all[property_name].iloc[match]])
+        if (
+            np.where(
+                (
+                    df_all.values[match, : R41.n_params + 1]
+                    == x_test[:, : R41.n_params + 1]
+                ).all(axis=1)
+            )[0].shape[0]
+            == 1
+        ):
+            test_points.append(
+                [df_all["temperature"].iloc[match], df_all[property_name].iloc[match]]
+            )
         # Else append to train points
         else:
-            train_points.append([df_all["temperature"].iloc[match],df_all[property_name].iloc[match]])
+            train_points.append(
+                [df_all["temperature"].iloc[match], df_all[property_name].iloc[match]]
+            )
 
     pdf.savefig(
         plot_model_vs_test(
@@ -388,9 +446,8 @@ for test_params in x_test[:,:R41.n_params]:
             np.asarray(test_points),
             R41.temperature_bounds,
             R41.Hvap_bounds,
-            property_name="Enthalpy of vaporization [kJ/kg]"
+            property_name="Enthalpy of vaporization [kJ/kg]",
         )
     )
 
 pdf.close()
-

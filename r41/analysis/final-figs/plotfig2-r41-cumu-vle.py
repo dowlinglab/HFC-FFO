@@ -21,20 +21,17 @@ matplotlib.rc("font", serif="Arial")
 ############################# QUANTITIES TO EDIT #############################
 ##############################################################################
 
-iternum = 2
+iternum = 1
 
 ##############################################################################
 ##############################################################################
 
 csv_path = "../csv/"
-in_csv_names = [
-    "r41-vle-iter" + str(i) + "-results.csv" for i in range(1, iternum + 1)
-]
+in_csv_names = ["r41-vle-iter" + str(i) + "-results.csv" for i in range(1, iternum + 1)]
 
 # Read files
 df_csvs = [
-    pd.read_csv(csv_path + in_csv_name, index_col=0)
-    for in_csv_name in in_csv_names
+    pd.read_csv(csv_path + in_csv_name, index_col=0) for in_csv_name in in_csv_names
 ]
 dfs = [prepare_df_vle(df_csv, R41) for df_csv in df_csvs]
 
@@ -54,26 +51,26 @@ def main():
     }
 
     # Plot MAPE sorted by each property
-    fig, axes = plt.subplots(6, 1, figsize=(4,7))
-    piter=0
+    fig, axes = plt.subplots(6, 1, figsize=(4, 7))
+    piter = 0
     for name, label in names.items():
         axes[piter].plot(
             dfs_paramsets[0].sort_values(name)[name],
-            np.arange(1, 26,1),
-            '-o',
+            np.arange(1, len(dfs_paramsets[0].sort_values(name)[name]) + 1, 1),
+            "-o",
             markersize=6,
             alpha=0.4,
             label="VLE-1",
         )
-        axes[piter].plot(
+        """axes[piter].plot(
             dfs_paramsets[1].sort_values(name)[name],
             np.arange(1, 26, 1),
-            '-o',
+            "-o",
             markersize=6,
             alpha=0.4,
             label="VLE-2",
         )
-        '''axes[piter].plot(
+        axes[piter].plot(
             dfs_paramsets[2].sort_values(name)[name],
             np.arange(1, 26, 1),
             '-o',
@@ -96,36 +93,47 @@ def main():
             markersize=6,
             alpha=0.4,
             label="VLE-5",
-        )'''
+        )"""
         axes[piter].text(
-            19.6, 2.5,
+            19.6,
+            15,
             label,
             verticalalignment="bottom",
             horizontalalignment="right",
             fontsize=16,
         )
-        axes[piter].set_ylim(0,28)
-        axes[piter].set_xlim(0,20)
-        axes[piter].set_yticks([0,10,20])
-        axes[piter].set_yticks([5,15], minor=True)
+        axes[piter].set_ylim(0, 28)
+        axes[piter].set_xlim(0, 20)
+        axes[piter].set_yticks([0, 10, 20])
+        axes[piter].set_yticks([5, 15], minor=True)
         axes[piter].xaxis.set_major_locator(MultipleLocator(5))
         axes[piter].xaxis.set_minor_locator(AutoMinorLocator(5))
-        axes[piter].tick_params("both", direction="in", which="both", labelbottom=False, length=2, labelsize=16)
+        axes[piter].tick_params(
+            "both",
+            direction="in",
+            which="both",
+            labelbottom=False,
+            length=2,
+            labelsize=16,
+        )
         axes[piter].tick_params("both", which="major", length=4)
         axes[piter].xaxis.set_ticks_position("both")
         axes[piter].yaxis.set_ticks_position("both")
-        piter +=1
+        piter += 1
 
-    text = axes[5].set_ylabel(r"$N_\mathrm{cumu.}$ parameter sets", fontsize=20, labelpad=14)
+    text = axes[5].set_ylabel(
+        r"$N_\mathrm{cumu.}$ parameter sets", fontsize=20, labelpad=14
+    )
     text.set_y(3)
-    axes[0].set_title(r"HFC-41",fontsize=16)
+    axes[0].set_title(r"HFC-41", fontsize=16)
     axes[5].set_xlabel("Property MAPE", fontsize=20, labelpad=10)
     axes[5].tick_params(labelbottom=True)
-    plt.subplots_adjust(hspace=.0)
-    plt.subplots_adjust(left = 0.18, right=0.92, top=0.84, bottom=0.15)
-    #axes[0].legend(fontsize=16, loc=(0.1,1.07), ncol=2, columnspacing=1, handletextpad=0.5)
+    plt.subplots_adjust(hspace=0.0)
+    plt.subplots_adjust(left=0.18, right=0.92, top=0.84, bottom=0.15)
+    # axes[0].legend(fontsize=16, loc=(0.1,1.07), ncol=2, columnspacing=1, handletextpad=0.5)
     fig.set_size_inches(5, 6)
-    fig.savefig("pdfs/fig2_r41-cumu-vle.png",dpi=300)
+    fig.savefig("pdfs/fig1_r41-cumu-vle.png", dpi=300)
+
 
 if __name__ == "__main__":
     main()

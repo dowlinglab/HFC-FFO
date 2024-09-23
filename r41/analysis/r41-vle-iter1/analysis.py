@@ -185,8 +185,8 @@ def main():
     ax.set_xlabel("Density [kg/m$^3$]", fontsize=16, labelpad=15)
     ax.set_ylabel("Temperature [K]", fontsize=16, labelpad=15)
     ax.tick_params(axis="both", labelsize=12)
-    ax.set_xlim(0, 2000)
-    ax.set_ylim(120, 300)
+    # ax.set_xlim(0, 2000)
+    # ax.set_ylim(120, 300)
 
     temps = R41.expt_liq_density.keys()
     for temp in temps:
@@ -250,8 +250,8 @@ def main():
     ax.set_xlabel("Temperature [K]", fontsize=16, labelpad=15)
     ax.set_ylabel("Vapor Pressure [bar]", fontsize=16, labelpad=15)
     ax.tick_params(axis="both", labelsize=12)
-    ax.set_xlim(120, 220)
-    ax.set_ylim(0, 40)
+    # ax.set_xlim(120, 220)
+    # ax.set_ylim(0, 40)
 
     for temp in temps:
         ax.scatter(
@@ -285,7 +285,7 @@ def main():
     ax.set_xlabel("Temperature [K]", fontsize=16, labelpad=15)
     ax.set_ylabel("Enthalpy of Vaporization [kJ/kg]", fontsize=16, labelpad=15)
     ax.tick_params(axis="both", labelsize=12)
-    ax.set_xlim(120, 220)
+    # ax.set_xlim(120, 220)
 
     for temp in temps:
         ax.scatter(

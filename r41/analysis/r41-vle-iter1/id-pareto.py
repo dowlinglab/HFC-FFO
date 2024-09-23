@@ -30,19 +30,17 @@ iternum = 1
 ##############################################################################
 ##############################################################################
 
-csv_path = "/scratch365/mcarlozo/HFC-FFO/r41/analysis/csv/"
-in_csv_names = [
-    "r41-vle-iter" + str(i) + "-results.csv" for i in range(1, iternum + 1)
-]
+csv_path = "../csv/"
+in_csv_names = ["r41-vle-iter" + str(i) + "-results.csv" for i in range(1, iternum + 1)]
 out_csv_name = "r41-pareto-iter1.csv"
 
 # Read files
 df_csvs = [
-    pd.read_csv(csv_path + in_csv_name, index_col=0)
-    for in_csv_name in in_csv_names
+    pd.read_csv(csv_path + in_csv_name, index_col=0) for in_csv_name in in_csv_names
 ]
 df_csv = pd.concat(df_csvs)
 df_all = prepare_df_vle(df_csv, R41)
+
 
 def main():
 
@@ -51,12 +49,23 @@ def main():
 
     # ID pareto points
     result, pareto_points, dominated_points = find_pareto_set(
-        df_paramsets.filter(["mse_liq_density", "mse_vap_density", "mse_Pvap", "mse_Hvap", "mse_Tc", "mse_rhoc"]).values,
-        is_pareto_efficient
+        df_paramsets.filter(
+            [
+                "mse_liq_density",
+                "mse_vap_density",
+                "mse_Pvap",
+                "mse_Hvap",
+                "mse_Tc",
+                "mse_rhoc",
+            ]
+        ).values,
+        is_pareto_efficient,
     )
     df_paramsets = df_paramsets.join(pd.DataFrame(result, columns=["is_pareto"]))
 
-    df_paramsets[df_paramsets["is_pareto"]==True].to_csv(csv_path + "/" + out_csv_name)
+    df_paramsets[df_paramsets["is_pareto"] == True].to_csv(
+        csv_path + "/" + out_csv_name
+    )
 
 
 if __name__ == "__main__":
