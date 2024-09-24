@@ -3,7 +3,7 @@ import pandas as pd
 
 def main():
 
-    r41 = pd.read_csv("../csv/r41-pareto-iter1.csv", index_col=0)
+    r41 = pd.read_csv("../csv/r41-pareto-iter2.csv", index_col=0)
 
     r41_final = r41.drop(
         columns=[
@@ -50,7 +50,7 @@ def main():
     ]
 
     # Save CSV files
-    r41_final.to_csv("../csv/r41-final-iter1.csv")
+    r41_final.to_csv("../csv/r41-final-iter2.csv")
 
 
 if __name__ == "__main__":

@@ -26,7 +26,7 @@ share/python-wheels/
 .installed.cfg
 *.egg
 MANIFEST
-*r41/analysis/r41-vle-iter1/figs/*.png
+*r41/analysis/r41-vle-iter*/figs/*.png
 
 # PyInstaller
 #  Usually these files are written by a python script from a template

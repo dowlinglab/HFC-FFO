@@ -21,7 +21,7 @@ matplotlib.rc("font", serif="Arial")
 ############################# QUANTITIES TO EDIT #############################
 ##############################################################################
 
-iternum = 1
+iternum = 2
 
 ##############################################################################
 ##############################################################################
@@ -62,7 +62,7 @@ def main():
             alpha=0.4,
             label="VLE-1",
         )
-        """axes[piter].plot(
+        axes[piter].plot(
             dfs_paramsets[1].sort_values(name)[name],
             np.arange(1, 26, 1),
             "-o",
@@ -70,7 +70,7 @@ def main():
             alpha=0.4,
             label="VLE-2",
         )
-        axes[piter].plot(
+        """axes[piter].plot(
             dfs_paramsets[2].sort_values(name)[name],
             np.arange(1, 26, 1),
             '-o',
@@ -132,7 +132,7 @@ def main():
     plt.subplots_adjust(left=0.18, right=0.92, top=0.84, bottom=0.15)
     # axes[0].legend(fontsize=16, loc=(0.1,1.07), ncol=2, columnspacing=1, handletextpad=0.5)
     fig.set_size_inches(5, 6)
-    fig.savefig("pdfs/fig1_r41-cumu-vle.png", dpi=300)
+    fig.savefig("pdfs/fig_r41-cumu-vle.png", dpi=300)
 
 
 if __name__ == "__main__":
