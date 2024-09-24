@@ -16,7 +16,7 @@ from matplotlib import ticker
 R41 = R41Constants()
 
 NM_TO_ANGSTROM = 10
-K_B = 0.008314 # J/MOL K
+K_B = 0.008314  # J/MOL K
 KJMOL_TO_K = 1.0 / K_B
 
 
@@ -31,9 +31,16 @@ def main():
     final_f = values_scaled_to_real(data_f, param_bounds)
     print(final_f)
     final = pd.DataFrame(final_f)
-    final.columns = ['sigma_C1(A)','sigma_F1','sigma_H1', 'epsilon_C1(K)','epsilon_F1', 'epsilon_H1']
-    final.to_csv('r41-finalff.csv',index=False)
+    final.columns = [
+        "sigma_C1(A)",
+        "sigma_F1",
+        "sigma_H1",
+        "epsilon_C1(K)",
+        "epsilon_F1",
+        "epsilon_H1",
+    ]
+    final.to_csv("r41-finalff.csv", index=False)
+
 
 if __name__ == "__main__":
     main()
-
