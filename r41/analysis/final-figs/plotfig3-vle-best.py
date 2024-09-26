@@ -17,11 +17,11 @@ matplotlib.rc("font", family="sans-serif")
 matplotlib.rc("font", serif="Arial")
 
 df_r41 = pd.read_csv("../csv/r41-pareto-iter2.csv", index_col=0)
-df_r41 = df_r41.loc[45]
+df_r41 = df_r41.loc[0]
 print(df_r41)
-df_r41_gaff = pd.read_csv("../../run/gaff/results.csv", index_col=False)
+# df_r41_gaff = pd.read_csv("../../run/gaff/results.csv", index_col=False)
 # Add https://doi.org/10.1021/jp9072137
-df_r41_lit = pd.read_csv("../csv/r41-lit.csv", index_col=False)
+# df_r41_lit = pd.read_csv("../csv/r41-lit.csv", index_col=False)
 
 def main():
 
@@ -57,61 +57,61 @@ def main():
         alpha=0.7,
     )
 
-    tc, rhoc = calc_critical(df_r41_gaff)
-    print("GAFF: ", tc, " K ",rhoc)
-    ax2.scatter(
-        df_r41_gaff["liq_density"],
-        df_r41_gaff["temperature"],
-        c='gray',
-        s=120,
-        alpha=0.7,
-        marker='s',
-        label="GAFF",
-    )
-    ax2.scatter(
-        df_r41_gaff["vap_density"],
-        df_r41_gaff["temperature"],
-        c='gray',
-        s=120,
-        alpha=0.7,
-        marker='s',
-    )
-    ax2.scatter(
-        rhoc,
-        tc,
-        c='gray',
-        s=120,
-        alpha=0.7,
-        marker='s',
-    )
+    # tc, rhoc = calc_critical(df_r41_gaff)
+    # print("GAFF: ", tc, " K ",rhoc)
+    # ax2.scatter(
+    #     df_r41_gaff["liq_density"],
+    #     df_r41_gaff["temperature"],
+    #     c='gray',
+    #     s=120,
+    #     alpha=0.7,
+    #     marker='s',
+    #     label="GAFF",
+    # )
+    # ax2.scatter(
+    #     df_r41_gaff["vap_density"],
+    #     df_r41_gaff["temperature"],
+    #     c='gray',
+    #     s=120,
+    #     alpha=0.7,
+    #     marker='s',
+    # )
+    # ax2.scatter(
+    #     rhoc,
+    #     tc,
+    #     c='gray',
+    #     s=120,
+    #     alpha=0.7,
+    #     marker='s',
+    # )
 
-    tc, rhoc = calc_critical(df_r41_lit)
-    print(tc,rhoc)
-    ax2.scatter(
-        df_r41_lit["liq_density"],
-        df_r41_lit["temperature"],
-        c='#0989d9',
-        s=160,
-        alpha=0.7,
-        marker='^',
-        label="Potoff et al.",
-    )
-    ax2.scatter(
-        df_r41_lit["vap_density"],
-        df_r41_lit["temperature"],
-        c='#0989d9',
-        s=160,
-        alpha=0.7,
-        marker='^',
-    )
-    ax2.scatter(
-        rhoc,
-        tc,
-        c='#0989d9',
-        s=160,
-        alpha=0.7,
-        marker='^',
-    )
+    # tc, rhoc = calc_critical(df_r41_lit)
+    # print(tc,rhoc)
+    # ax2.scatter(
+    #     df_r41_lit["liq_density"],
+    #     df_r41_lit["temperature"],
+    #     c='#0989d9',
+    #     s=160,
+    #     alpha=0.7,
+    #     marker='^',
+    #     label="Potoff et al.",
+    # )
+    # ax2.scatter(
+    #     df_r41_lit["vap_density"],
+    #     df_r41_lit["temperature"],
+    #     c='#0989d9',
+    #     s=160,
+    #     alpha=0.7,
+    #     marker='^',
+    # )
+    # ax2.scatter(
+    #     rhoc,
+    #     tc,
+    #     c='#0989d9',
+    #     s=160,
+    #     alpha=0.7,
+    #     marker='^',
+    # )
 
     '''tc, rhoc = calc_critical(df_r41_trappe)
     ax2.scatter(
@@ -159,11 +159,11 @@ def main():
     )
     ax2.scatter(R41.expt_rhoc, R41.expt_Tc, color="black", marker="x", linewidths=2, s=200)
 
-    ax2.set_xlim(-50, 1850)
+    # ax2.set_xlim(-50, 1850)
     ax2.xaxis.set_major_locator(MultipleLocator(500))
     ax2.xaxis.set_minor_locator(AutoMinorLocator(4))
     
-    ax2.set_ylim(120,280)
+    # ax2.set_ylim(120,280)
     ax2.yaxis.set_major_locator(MultipleLocator(40))
     ax2.yaxis.set_minor_locator(AutoMinorLocator(4))
     

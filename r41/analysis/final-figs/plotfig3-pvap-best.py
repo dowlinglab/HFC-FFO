@@ -17,11 +17,11 @@ matplotlib.rc("font", family="sans-serif")
 matplotlib.rc("font", serif="Arial")
 
 df_r41 = pd.read_csv("../csv/r41-pareto-iter2.csv", index_col=0)
-df_r41 = df_r41.loc[45]
+df_r41 = df_r41.loc[0]
 print(df_r41)
-df_r41_gaff = pd.read_csv("../../run/gaff/results.csv", index_col=False)
+# df_r41_gaff = pd.read_csv("../../run/gaff/results.csv", index_col=False)
 # Add https://doi.org/10.1021/jp9072137
-df_r41_lit = pd.read_csv("../csv/r41-lit.csv", index_col=False)
+# df_r41_lit = pd.read_csv("../csv/r41-lit.csv", index_col=False)
 
 def main():
 
@@ -155,7 +155,7 @@ def main():
 
 
     # Plot Pvap / Hvap
-    fig, axs = plt.subplots(nrows=1, ncols=2,figsize=(12,6))
+    fig, axs = plt.subplots(nrows=1, ncols=2,figsize=(6,6))
     #fig, ax1 = plt.subplots(1, 1, figsize=(6,6))
     clrs = seaborn.color_palette('bright', n_colors=len(df_r41))
     np.random.seed(11)
@@ -171,24 +171,24 @@ def main():
             s=70,
             alpha=0.7,
         )
-    axs[0].scatter(
-        df_r41_gaff["temperature"],
-        df_r41_gaff["Pvap"],
-        c='gray',
-        s=70,
-        alpha=0.7,
-        label="GAFF",
-        marker='s',
-    )
-    axs[0].scatter(
-        df_r41_lit["temperature"],
-        df_r41_lit["Pvap"],
-        c='#0989d9',
-        s=70,
-        alpha=0.7,
-        label="Potoff et al.",
-        marker='^',
-    )
+    # axs[0].scatter(
+    #     df_r41_gaff["temperature"],
+    #     df_r41_gaff["Pvap"],
+    #     c='gray',
+    #     s=70,
+    #     alpha=0.7,
+    #     label="GAFF",
+    #     marker='s',
+    # )
+    # axs[0].scatter(
+    #     df_r41_lit["temperature"],
+    #     df_r41_lit["Pvap"],
+    #     c='#0989d9',
+    #     s=70,
+    #     alpha=0.7,
+    #     label="Potoff et al.",
+    #     marker='^',
+    # )
     axs[0].scatter(
         R41.expt_Pvap.keys(),
         R41.expt_Pvap.values(),
@@ -198,11 +198,11 @@ def main():
         s=80,
     )
 
-    axs[0].set_xlim(120,230)
+    # axs[0].set_xlim(120,230)
     axs[0].xaxis.set_major_locator(MultipleLocator(40))
     axs[0].xaxis.set_minor_locator(AutoMinorLocator(4))
 
-    axs[0].set_ylim(-2,35)
+    # axs[0].set_ylim(-2,35)
     axs[0].yaxis.set_major_locator(MultipleLocator(10))
     axs[0].yaxis.set_minor_locator(AutoMinorLocator(5))
 
@@ -230,23 +230,23 @@ def main():
             s=70,
             alpha=0.7,
         )
-    axs[1].scatter(
-        df_r41_gaff["temperature"],
-        df_r41_gaff["Hvap"] / R41.molecular_weight * 1000.0,
-        c='gray',
-        s=70,
-        alpha=0.7,
-        marker='s',
-    )
-    print(df_r41_gaff["temperature"],df_r41_gaff["Hvap"] / R41.molecular_weight * 1000.0)
-    axs[1].scatter(
-        df_r41_lit["temperature"],
-        df_r41_lit["Hvap"] ,#kj/kg
-        c='#0989d9',
-        s=70,
-        alpha=0.7,
-        marker='^',
-    )
+    # axs[1].scatter(
+    #     df_r41_gaff["temperature"],
+    #     df_r41_gaff["Hvap"] / R41.molecular_weight * 1000.0,
+    #     c='gray',
+    #     s=70,
+    #     alpha=0.7,
+    #     marker='s',
+    # )
+    # print(df_r41_gaff["temperature"],df_r41_gaff["Hvap"] / R41.molecular_weight * 1000.0)
+    # axs[1].scatter(
+    #     df_r41_lit["temperature"],
+    #     df_r41_lit["Hvap"] ,#kj/kg
+    #     c='#0989d9',
+    #     s=70,
+    #     alpha=0.7,
+    #     marker='^',
+    # )
     axs[1].scatter(
         R41.expt_Hvap.keys(),
         R41.expt_Hvap.values(),
@@ -255,11 +255,11 @@ def main():
         s=80,
     )
 
-    axs[1].set_xlim(120,230)
+    # axs[1].set_xlim(120,230)
     axs[1].xaxis.set_major_locator(MultipleLocator(40))
     axs[1].xaxis.set_minor_locator(AutoMinorLocator(4))
 
-    axs[1].set_ylim(20,210)
+    # axs[1].set_ylim(20,210)
     axs[1].yaxis.set_major_locator(MultipleLocator(100))
     axs[1].yaxis.set_minor_locator(AutoMinorLocator(5))
 
